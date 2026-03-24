@@ -18,12 +18,14 @@ package com.android.documentsui.testing;
 
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
@@ -32,8 +34,11 @@ import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.loaders.SummariesViewModel;
 
 import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
 
 public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
@@ -43,14 +48,29 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     public boolean mDeleteHappened;
     public boolean mRequestDisablingQuietModeHappened;
     public boolean throwAtCreateApprovedHandlerIntent = false;
+    public boolean returnNullApprovedHandlerIntent = false;
 
     public DocumentInfo nextRootDocument;
+
+    // TODO(b/464388012): Reference actual intent category when it's available.
+    public static final String APPROVED_HANDLER_CATEGORY =
+            "android.provider.category.APPROVED_DOCUMENT_HANDLER";
 
     public TestActionHandler() {
         this(TestEnv.create());
     }
 
     public TestActionHandler(TestEnv env) {
+        this(env, createMockSummariesViewModel());
+    }
+
+    private static SummariesViewModel createMockSummariesViewModel() {
+        SummariesViewModel mock = mock(SummariesViewModel.class);
+        doReturn(new MutableLiveData<>()).when(mock).getSummariesLiveData();
+        return mock;
+    }
+
+    public TestActionHandler(TestEnv env, SummariesViewModel summariesViewModel) {
         super(
                 TestActivity.create(env),
                 env.state,
@@ -64,6 +84,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
                 mock(Runnable.class),
                 null);
 
+        mSummariesViewModel = summariesViewModel;
         mEnv = env;
     }
 
@@ -111,10 +132,17 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     }
 
     @Override
-    public Intent createApprovedHandlerIntent(ComponentName handler) {
+    public @Nullable Intent createApprovedHandlerIntent(ComponentName handler) {
         if (throwAtCreateApprovedHandlerIntent) {
             throw new UnsupportedOperationException();
         }
-        return new Intent();
+        if (returnNullApprovedHandlerIntent) {
+            return null;
+        }
+
+        final Intent intent = new Intent();
+        intent.setComponent(handler);
+        intent.addCategory(APPROVED_HANDLER_CATEGORY);
+        return intent;
     }
 }

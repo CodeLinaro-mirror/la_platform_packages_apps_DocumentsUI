@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"מידע על המסמך"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"הצגת קבצים מוסתרים"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"לא להציג קבצים מוסתרים"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"רענון"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"הצגת עמודת התיאור"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"לא להציג את עמודת התיאור"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"הצגה ב-<xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"לא ניתן לשתף יותר מ-<xliff:g id="COUNT">%1$d</xliff:g> קבצים"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"הפעולה אינה מותרת"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"הפעולה אסורה"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"פתיחה באמצעות…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"לא נמצאה אפליקציה"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏לא מותקנות אפליקציות נתמכות. אפשר להתקין אפליקציה נתמכת מחנות Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏חיפוש בחנות Play"</string>
     <string name="share_via" msgid="8725082736005677161">"שיתוף באמצעות"</string>
@@ -246,8 +247,7 @@
       <item quantity="other">הקבצים הבאים הומרו לפורמט אחר: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{הקובץ הזה הומר לפורמט אחר:}one{הקבצים האלה הומרו לפורמט אחר:}two{הקבצים האלה הומרו לפורמט אחר:}other{הקבצים האלה הומרו לפורמט אחר:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{פריט אחד נוסף ללוח}one{‫# פריטים נוספו ללוח}two{‫# פריטים נוספו ללוח}other{‫# פריטים נוספו ללוח}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"לקריאה בלבד"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"אפשר לצפות בקבצים האלה, אבל יש פעולות שלא ניתן לעשות"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"הארכיון הזה נמצא במיקום לקריאה בלבד ואי-אפשר לחלץ אותו לכאן."</string>

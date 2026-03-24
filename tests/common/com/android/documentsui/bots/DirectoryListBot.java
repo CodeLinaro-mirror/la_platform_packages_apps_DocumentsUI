@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -361,6 +362,19 @@ public class DirectoryListBot extends Bots.BaseBot {
         final UiObject messageTextView = findPlaceholderMessageTextView();
         assertTrue(messageTextView.exists());
         assertEquals(message, messageTextView.getText());
+    }
+
+    /** Checks that the no results page is displayed. */
+    public void waitAndAssertNoResultsMessage(String rootTitle) throws UiObjectNotFoundException {
+        String message;
+        if (isUseMaterial3FlagEnabled()) {
+            message = mContext.getString(getRes(R.string.no_results));
+        } else {
+            // When the flag is off, the message includes the root title.
+            message = String.format(mContext.getString(R.string.no_results), rootTitle);
+        }
+
+        waitAndAssertPlaceholderMessageText(message);
     }
 
     private UiObject findHeaderMessageTextView() {

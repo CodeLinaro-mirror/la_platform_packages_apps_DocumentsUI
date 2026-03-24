@@ -74,7 +74,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier,
             Injector<?> injector,
-            ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocHandlers approvedDocHandlers) {
 
         super(
                 searchManager,
@@ -99,7 +99,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     public void updateContextMenu(Menu menu, SelectionDetails selectionDetails) {
         super.updateContextMenu(menu, selectionDetails);
-        if (isUseApprovedDocumentHandlerEnabled()) {
+        if (isUseApprovedDocumentHandlerEnabled() && mApprovedDocHandlers != null) {
             mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selectionDetails);
         }
     }
@@ -139,6 +139,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                         stringSupplier.apply(getRes(R.string.menu_new_window)),
                         KeyEvent.KEYCODE_N,
                         KeyEvent.META_CTRL_ON));
+        if (isUseMaterial3FlagEnabled()) {
+            group.addItem(
+                    new KeyboardShortcutInfo(
+                            stringSupplier.apply(getRes(R.string.menu_refresh)),
+                            KeyEvent.KEYCODE_R,
+                            KeyEvent.META_CTRL_ON));
+            group.addItem(
+                    new KeyboardShortcutInfo(
+                            stringSupplier.apply(getRes(R.string.menu_rename)),
+                            KeyEvent.KEYCODE_ENTER,
+                            KeyEvent.META_CTRL_ON));
+        }
         data.add(group);
     }
 

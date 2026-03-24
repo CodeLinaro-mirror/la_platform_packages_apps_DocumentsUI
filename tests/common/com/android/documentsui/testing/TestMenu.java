@@ -181,4 +181,9 @@ public abstract class TestMenu implements Menu {
         addMenuItem(itemId, item.setTitle(title));
         return item;
     }
+
+    @Override
+    public void removeItem(int id) {
+        items.remove(id);
+    }
 }

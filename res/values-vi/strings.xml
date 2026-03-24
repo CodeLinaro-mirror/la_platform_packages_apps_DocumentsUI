@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Xem thông tin"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Hiện các tệp bị ẩn"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Không hiện các tệp bị ẩn"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Làm mới"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Hiện cột mô tả"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Không hiện cột mô tả"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Xem trong <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Bạn không thể chia sẻ quá <xliff:g id="COUNT">%1$d</xliff:g> tệp"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Thao tác này không được phép"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Không được thực hiện thao tác này"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Mở bằng…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Không tìm thấy ứng dụng"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Chưa cài đặt ứng dụng được hỗ trợ nào. Hãy thử cài đặt một ứng dụng trên Cửa hàng Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Tìm kiếm trên Cửa hàng Google Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Chia sẻ qua"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Tệp này đã được chuyển đổi sang định dạng khác: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tệp này đã được chuyển sang một định dạng khác:}other{Những tệp này đã được chuyển sang một định dạng khác:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Đã thêm # mục vào Bảng nhớ tạm}other{Đã thêm # mục vào Bảng nhớ tạm}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Chỉ có thể đọc"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Bạn có thể xem các tệp này nhưng một số thao tác không được hỗ trợ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tệp lưu trữ này ở vị trí chỉ đọc và không thể giải nén tại đây."</string>

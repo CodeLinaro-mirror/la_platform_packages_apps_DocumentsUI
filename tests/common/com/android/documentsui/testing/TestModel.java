@@ -55,6 +55,7 @@ public class TestModel extends Model {
     private MatrixCursor mCursor;
     @Nullable private String[] mIds = null;
     private final Set<String> mSyncInProgressModelIds = new HashSet<>();
+    private boolean mHasLimitedFunctionalityWhenOffline = false;
 
     public TestModel(UserId userId, String authority, Features features) {
         super(features);
@@ -196,5 +197,15 @@ public class TestModel extends Model {
     /** Removes the id to the `mSyncInProgressModelIds` set. */
     public void removeSyncInProgressModelId(String modelId) {
         mSyncInProgressModelIds.remove(modelId);
+    }
+
+    /** Returns the test value for hasLimitedFunctionalityWhenOffline. */
+    public boolean hasLimitedFunctionalityWhenOffline() {
+        return mHasLimitedFunctionalityWhenOffline;
+    }
+
+    /** Sets the test value for hasLimitedFunctionalityWhenOffline. */
+    public void setHasLimitedFunctionalityWhenOffline(boolean hasLimitedFunctionalityWhenOffline) {
+        mHasLimitedFunctionalityWhenOffline = hasLimitedFunctionalityWhenOffline;
     }
 }

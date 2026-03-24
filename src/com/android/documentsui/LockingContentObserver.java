@@ -24,6 +24,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * A custom {@link ContentObserver} which constructed by a {@link ContentLock}
  * and a {@link Runnable} callback. It will callback when it's onChange and ContentLock is unlock.
@@ -32,10 +34,23 @@ public final class LockingContentObserver extends ContentObserver {
     private final ContentLock mLock;
     private final Runnable mContentChangedCallback;
 
+    /** Remembers if the change notifications are paused. */
+    private final AtomicBoolean mPaused = new AtomicBoolean(false);
+
     public LockingContentObserver(ContentLock lock, Runnable contentChangedCallback) {
         super(new Handler(Looper.getMainLooper()));
         mLock = lock;
         mContentChangedCallback = contentChangedCallback;
+    }
+
+    /**
+     * Sets whether this observer is paused or not. In the paused state the change notifications are
+     * not propagated at all.
+     *
+     * @param paused Whether or not the observer is paused.
+     */
+    public void setPaused(boolean paused) {
+        mPaused.set(paused);
     }
 
     @Override
@@ -45,6 +60,12 @@ public final class LockingContentObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange) {
+        if (mPaused.get()) {
+            if (DEBUG) {
+                Log.d(TAG, "Change dropped due to pause.");
+            }
+            return;
+        }
         if (DEBUG) {
             Log.d(TAG, "Content updated.");
         }

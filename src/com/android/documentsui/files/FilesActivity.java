@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -40,7 +41,9 @@ import android.view.View;
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.selection.Selection;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.ActionModeController;
@@ -82,6 +85,7 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
 
 import kotlin.Unit;
+import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,6 +157,35 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
+        ApprovedDocHandlers approvedDocHandlers = null;
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            approvedDocHandlers =
+                    new ViewModelProvider(
+                            this,
+                            new ViewModelProvider.Factory() {
+                                @Override
+                                public <T extends ViewModel> T create(Class<T> modelClass) {
+                                    return (T)
+                                            new ApprovedDocHandlers(
+                                                    FilesActivity.this.getApplicationContext(),
+                                                    mInjector,
+                                                    Dispatchers.getIO());
+                                }
+                            })
+                    .get(ApprovedDocHandlers.class);
+
+            approvedDocHandlers.getUpdateEvents().observe(
+                    this,
+                    unit -> {
+                        if (mInjector.selectionBarController != null) {
+                            mInjector.selectionBarController.invalidate();
+                        }
+                        if (mInjector.menuManager != null) {
+                            mInjector.menuManager.updateContextMenu();
+                        }
+                    });
+        }
+
         mInjector.focusManager =
                 new FocusManager(
                         mInjector.features,
@@ -178,7 +211,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mInjector.getModel()::getItemUri,
                         mInjector.getModel()::getItemCount,
                         mInjector,
-                        new ApprovedDocHandlers(this, getSelectedUser(), mInjector));
+                        approvedDocHandlers);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
@@ -505,6 +538,8 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
     @Override
     public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+        if (DEBUG) Log.d(TAG, "onKeyShortcut: " + keyCode + ", " + event);
+
         // TODO: All key events should be statically bound using alphabeticShortcut.
         // But not working.
 
@@ -527,10 +562,28 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 case KeyEvent.KEYCODE_C:
                     mInjector.actions.copyToClipboard();
                     return true;
+                case KeyEvent.KEYCODE_R:
+                case KeyEvent.KEYCODE_REFRESH:
+                    {
+                        if (!isUseMaterial3FlagEnabled()) break;
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) dir.onRefresh();
+                    }
+                    return true;
                 case KeyEvent.KEYCODE_V:
-                    DirectoryFragment dir = getDirectoryFragment();
-                    if (dir != null) {
-                        dir.pasteFromClipboard();
+                    {
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) dir.pasteFromClipboard();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_ENTER:
+                    {
+                        if (!isUseMaterial3FlagEnabled()) break;
+                        final Selection<String> selected = mInjector.actions.getSelectedOrFocused();
+                        if (selected.size() != 1) return true;
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir == null) return true;
+                        dir.renameDocuments(selected);
                     }
                     return true;
             }

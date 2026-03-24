@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Zobrazit informace"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Zobrazit skryté soubory"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Nezobrazovat skryté soubory"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Obnovit"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Zobrazit sloupec s popisem"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Nezobrazovat sloupec s popisem"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Zobrazit ve službě <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Sdílet lze maximálně tento počet souborů: <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Akce není povolena"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Akce není povolena"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Otevřít pomocí aplikace…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Nebyla nalezena žádná aplikace"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nejsou nainstalovány žádné podporované aplikace. Zkuste si nějakou nainstalovat z Obchodu Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Vyhledat v Obchodě Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Sdílet pomocí"</string>
@@ -257,8 +258,7 @@
       <item quantity="one">Tento soubor byl převeden do jiného formátu: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Soubor byl převeden do jiného formátu:}few{Soubory byly převedeny do jiného formátu:}many{Soubory byly převedeny do jiného formátu:}other{Soubory byly převedeny do jiného formátu:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Do schránky byla přidána # položka}few{Do schránky byly přidány # položky}many{Do schránky bylo přidáno # položky}other{Do schránky bylo přidáno # položek}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Pouze pro čtení"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Tyhle soubory můžete zobrazit, ale některé akce nejsou podporovány"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archiv je v umístění jen pro čtení a nelze ho tu rozbalit."</string>
@@ -328,8 +328,8 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka</item>
     </plurals>
     <string name="delete_forever_dialog_title" msgid="799779565921010957">"Smazat navždy?"</string>
-    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Dokument <xliff:g id="NAME">{name}</xliff:g> bude navždy smazán. Akci nelze vrátit zpět.}few{# dokumenty budou navždy smazány. Akci nelze vrátit zpět.}many{# dokumentu bude navždy smazáno. Akci nelze vrátit zpět.}other{# dokumentů bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
-    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Dokument <xliff:g id="NAME">{name}</xliff:g> bude navždy smazán. Akci nelze vrátit zpět.}few{# položky v koši budou navždy smazány. Akci nelze vrátit zpět.}many{# položky v koši bude navždy smazáno. Akci nelze vrátit zpět.}other{# položek v koši bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Položka <xliff:g id="NAME">{name}</xliff:g> bude navždy smazána. Akci nelze vrátit zpět.}few{# položky budou navždy smazány. Akci nelze vrátit zpět.}many{# položky bude navždy smazáno. Akci nelze vrátit zpět.}other{# položek bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Položka <xliff:g id="NAME">{name}</xliff:g> bude navždy smazána. Akci nelze vrátit zpět.}few{# položky v koši budou navždy smazány. Akci nelze vrátit zpět.}many{# položky v koši bude navždy smazáno. Akci nelze vrátit zpět.}other{# položek v koši bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Obrázky"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Archiv nelze otevřít k prohlížení. Soubor je buď poškozený, nebo nemá podporovaný formát."</string>
     <string name="name_conflict" msgid="28407269328862986">"Soubor s tímto názvem již existuje."</string>

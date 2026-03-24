@@ -16,15 +16,21 @@
 package com.android.documentsui.loaders
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -34,7 +40,9 @@ import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
 import java.util.concurrent.CountDownLatch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -162,6 +170,7 @@ class FolderLoaderTest() {
 
     @SmallTest
     class PlainTests : BaseLoaderTest() {
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
         @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
@@ -319,6 +328,56 @@ class FolderLoaderTest() {
             assertEquals(2, getFileCount(result))
             val resultSet = getDocuments(result).map { it.displayName }.toSet()
             assertEquals(setOf(doc2.displayName, doc3.displayName), resultSet)
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenRootIsCloud() {
+            val rootFolderInfo = DocumentInfo()
+            // The Cloud root has limited functionality when offline.
+            rootFolderInfo.authority = TestProvidersAccess.getCloudRoot().authority
+            rootFolderInfo.userId = TestProvidersAccess.getCloudRoot().userId
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.getCloudRoot(),
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val directoryResult = loader.loadInBackground()
+            assertNotNull(directoryResult)
+            assertTrue(directoryResult!!.hasLimitedFunctionalityWhenOffline)
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isNotSet_whenRootIsDownloads() {
+            val rootFolderInfo = DocumentInfo()
+            // The Downloads root does not have limited functionality when offline.
+            rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
+            rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val directoryResult = loader.loadInBackground()
+            assertNotNull(directoryResult)
+            assertFalse(directoryResult!!.hasLimitedFunctionalityWhenOffline)
         }
     }
 }

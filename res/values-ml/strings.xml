@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"വിവരങ്ങൾ നേടുക"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"മറച്ചിരിക്കുന്ന ഫയൽ കാണിക്കൂ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"മറച്ച ഫയലുകൾ കാണിക്കരുത്"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"റീഫ്രഷ് ചെയ്യുക"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"വിവരണ കോളം കാണിക്കുക"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"വിവരണ കോളം കാണിക്കരുത്"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> എന്നതിൽ കാണുക"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>-ൽ കൂടുതൽ ഫയലുകൾ പങ്കിടാനാകില്ല"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"നടപടി അനുവദനീയമല്ല"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"പ്രവർത്തനം അനുവദനീയമല്ല"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ഇത് ഉപയോഗിച്ച് തുറക്കുക…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"ആപ്പുകളൊന്നും കണ്ടെത്തിയില്ല"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"പിന്തുണയ്‌ക്കുന്ന ആപ്പുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. Play Store-ൽ നിന്ന് ഒരെണ്ണം ഇൻസ്റ്റാൾ ചെയ്യാൻ ശ്രമിക്കുക."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store തിരയുക"</string>
     <string name="share_via" msgid="8725082736005677161">"ഇതുവഴി പങ്കിടുക"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ഈ ഫയൽ മറ്റൊരു ‌ഫോർമാ‌റ്റിലേക്ക് ‌പരിവർത്തിക്കപ്പെട്ടു: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ഈ ഫയൽ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു:}other{ഈ ഫയലുകൾ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{ക്ലിപ്പ്ബോർഡിലേക്ക് # ഇനം ചേർത്തു}other{ക്ലിപ്പ്ബോർഡിലേക്ക് # ഇനങ്ങൾ ചേർത്തു}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"വായന-മാത്രം"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"നിങ്ങൾക്ക് ഈ ഫയലുകൾ കാണാം, എന്നാൽ ചില പ്രവർത്തനങ്ങൾ പിന്തുണയ്ക്കുന്നില്ല"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ഈ ആർക്കൈവ് വായന മാത്രമുള്ള ലൊക്കേഷനിലാണ്, ഇവിടെ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനാകില്ല."</string>

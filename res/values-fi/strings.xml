@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Näytä tiedot"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Näytä piilotetut tiedostot"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Älä näytä piilotettuja"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Päivitä"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Näytä kuvaussarake"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Älä näytä kuvaussaraketta"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Avaa sovelluksella <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Voit jakaa enintään <xliff:g id="COUNT">%1$d</xliff:g> tiedostoa"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Tämä ei ole sallitua"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Toiminto ei ole sallittu"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Avaa sovelluksessa"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Sovellusta ei löydy"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Tuettuja sovelluksia ei ole asennettu. Kokeile asentaa sellainen Play Kaupasta."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Hae Play Kaupasta"</string>
     <string name="share_via" msgid="8725082736005677161">"Jaa sovelluksessa"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Tiedosto <xliff:g id="LIST_0">%1$s</xliff:g> muunnettiin toiseen muotoon</item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tämä tiedosto on muunnettu toiseen muotoon:}other{Nämä tiedostot on muunnettu toiseen muotoon:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# kohde lisätty leikepöydälle}other{# kohdetta lisätty leikepöydälle}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Vain luku"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Voit nähdä nämä tiedostot, mutta joitakin toimintoja ei tueta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arkisto on vain luku ‑tilassa, eikä sitä voi purkaa täällä."</string>
@@ -302,8 +302,8 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohde</item>
     </plurals>
     <string name="delete_forever_dialog_title" msgid="799779565921010957">"Poistetaanko pysyvästi?"</string>
-    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi perua.}other{# kohdetta poistetaan pysyvästi. Tätä ei voi perua.}}"</string>
-    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi perua.}other{# roskakorissa olevaa kohdetta poistetaan pysyvästi. Tätä ei voi perua.}}"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi kumota.}other{# kohdetta poistetaan pysyvästi. Tätä ei voi kumota.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi kumota.}other{# roskakorissa olevaa kohdetta poistetaan pysyvästi. Tätä ei voi kumota.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Kuvahaku"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Arkistoa ei voi selata. Tiedosto on vioittunut tai sen muotoa ei tueta."</string>
     <string name="name_conflict" msgid="28407269328862986">"Samanniminen tiedosto on jo olemassa."</string>
@@ -391,7 +391,7 @@
     <string name="empty_trash_banner_message" msgid="2993707579621525486">"Roskakorissa yli 30 päivää olleet kohteet poistetaan automaattisesti"</string>
     <string name="empty_trash_banner_button" msgid="1519946484798771236">"Tyhjennä roskakori"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tyhjennetäänkö roskakori?"</string>
-    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Kaikki roskakorissa olevat kohteet poistuvat pysyvästi. Toimintoa ei voi kumota."</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Kaikki roskakorissa olevat kohteet poistuvat pysyvästi. Kumoaminen ei ole mahdollista."</string>
     <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Poista pysyvästi"</string>
     <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Kohde on roskakorissa}other{Kohteet ovat roskakorissa}}"</string>
     <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Jos haluat pääsyn tähän kohteeseen, palauta se tai vedä se pois roskakorista}other{Jos haluat pääsyn näihin kohteisiin, palauta ne tai vedä ne pois roskakorista}}"</string>

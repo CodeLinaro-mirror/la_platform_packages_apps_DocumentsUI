@@ -51,7 +51,6 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -65,6 +64,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.WaitUntilExistsInRecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -138,6 +138,28 @@ public class UiBot extends Bots.BaseBot {
             return;
         }
         onView(TOOLBAR).check(matches(withToolbarTitle(is(expected))));
+    }
+
+    /**
+     * Waits for and asserts the presence of a window with the {@code expected} title.
+     *
+     * <p>After the wait, {@link #assertWindowTitle(String)} is called.
+     *
+     * @param expected The title string expected to be visible.
+     * @throws AssertionError if the expected window title is not found within {@code mTimeout}.
+     */
+    public void waitForWindowTitle(String expected) {
+        BySelector selector;
+        if (!isUseMaterial3FlagEnabled() && expected.equals("Recent")) {
+            final String resID = mContext.getResources().getResourceEntryName(R.id.header_title);
+            selector = By.res(targetPackageName, resID).text("Recent files");
+
+        } else {
+            final String resID = mContext.getResources().getResourceEntryName(R.id.toolbar);
+            selector = By.res(targetPackageName, resID).hasDescendant(By.text(expected));
+        }
+        mDevice.wait(Until.hasObject(selector), mTimeout);
+        assertWindowTitle(expected);
     }
 
     /**
@@ -217,8 +239,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void setDialogText(String text) throws UiObjectNotFoundException {
-        onView(TEXT_ENTRY)
-                .perform(ViewActions.replaceText(text));
+        onView(TEXT_ENTRY).check(matches(isDisplayed())).perform(ViewActions.replaceText(text));
     }
 
     public void assertDialogText(String expected) throws UiObjectNotFoundException {
@@ -516,23 +537,28 @@ public class UiBot extends Bots.BaseBot {
         mDevice.waitForIdle();
     }
 
-    private ViewInteraction getOfflineBanner() {
-        return onView(
+    private Matcher getOfflineBannerMatcher() {
+        // The banner has id item_root with a TextView descendant with the offline message.
+        var textMessage =
                 allOf(
                         withId(R.id.message_textview),
                         withText(
                                 mContext.getString(
-                                        getRes(R.string.you_are_offline_banner_message)))));
+                                        getRes(R.string.you_are_offline_banner_message))));
+        return allOf(ViewMatchers.withId(R.id.item_root), ViewMatchers.hasDescendant(textMessage));
     }
 
     /** Asserts that the "You're offline" banner does not exist. */
     public void assertOfflineBannerDoesNotExist() {
-        getOfflineBanner().check(doesNotExist());
+        onView(getOfflineBannerMatcher()).check(doesNotExist());
     }
 
     /** Asserts that the "You're offline" banner is currently visible. */
     public void assertOfflineBannerIsVisible() {
-        getOfflineBanner().check(matches(isDisplayed()));
+        // Wait for the banner to exist first.
+        onView(withId(R.id.dir_list))
+                .perform(new WaitUntilExistsInRecyclerView(getOfflineBannerMatcher(), mTimeout));
+        onView(getOfflineBannerMatcher()).check(matches(isDisplayed()));
     }
 
     /**

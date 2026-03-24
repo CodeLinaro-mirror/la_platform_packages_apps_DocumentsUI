@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Informazioni"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostra file nascosti"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Non mostrare file nascosti"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Aggiorna"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Mostra la colonna Descrizione"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Non mostrare la colonna Descrizione"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Visualizza in <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Impossibile condividere più di <xliff:g id="COUNT">%1$d</xliff:g> file."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Azione non consentita"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Azione non consentita"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Apri con…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Nessuna app trovata"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Non sono installate app supportate. Prova a installarne una dal Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Cerca nel Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Condividi tramite"</string>
@@ -246,8 +247,7 @@
       <item quantity="one">Il seguente file è stato convertito in un altro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Il seguente file è stato convertito in un altro formato:}many{I seguenti file sono stati convertiti in un altro formato:}other{I seguenti file sono stati convertiti in un altro formato:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# elemento aggiunto agli appunti}many{# di elementi aggiunti agli appunti}other{# di elementi aggiunti agli appunti}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Sola lettura"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Puoi visualizzare questi file, ma alcune azioni non sono supportate"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Questo archivio si trova in una posizione di sola lettura e non può essere estratto qui."</string>

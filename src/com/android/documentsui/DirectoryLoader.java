@@ -16,7 +16,9 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -176,6 +178,7 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
                 client = DocumentsApplication.acquireUnstableProviderOrThrow(resolver, authority);
                 ArchivesProvider.acquireArchive(client, mUri);
                 result.client = client;
+                if (DEBUG) Log.d(TAG, "Acquired archive " + redact(mUri));
             }
 
             if (mFeatures.isContentPagingEnabled()) {
@@ -250,7 +253,7 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
                                     /* maxCount= */ -1));
                 }
             } catch (RemoteException e) {
-                Log.d(TAG, "Failed to query for user " + userId, e);
+                if (DEBUG) Log.d(TAG, "Failed to query for user " + userId, e);
                 // Searching on other profile may not succeed because profile may be in quiet mode.
                 if (UserId.CURRENT_USER.equals(userId)) {
                     throw e;

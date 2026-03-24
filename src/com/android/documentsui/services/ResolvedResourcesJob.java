@@ -18,6 +18,7 @@ package com.android.documentsui.services;
 
 import static android.os.SystemClock.uptimeMillis;
 
+import static com.android.documentsui.base.Providers.isArchiveUri;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 
@@ -64,11 +65,22 @@ public abstract class ResolvedResourcesJob extends Job {
         // Delay the initialization of it to setUp() because it may be IO extensive.
         mResolvedDocs = Collections.synchronizedList(new ArrayList<>(srcs.getItemCount()));
 
-        if (isVisualSignalsFlagEnabled() && srcs.getItemCount() == 1) {
-            // Prebuild the document list so we can get the filename for a single file progress
-            // message. With a single file only, this should not be IO intensive.
-            buildDocumentList();
+        if (!isVisualSignalsFlagEnabled()) return;
+        if (srcs.getItemCount() != 1) return;
+
+        try {
+            for (Uri uri : mResourceUris.getUris(appContext)) {
+                if (isArchiveUri(uri)) return;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Cannot get URIs", e);
+            return;
         }
+
+        // Prebuild the document list so we can get the filename for a single file progress
+        // message. With a single file only, and when this file is not located in an archive,
+        // this should not be IO intensive.
+        buildDocumentList();
     }
 
     boolean setUp() {
@@ -81,7 +93,7 @@ public abstract class ResolvedResourcesJob extends Job {
             Iterable<Uri> uris = mResourceUris.getUris(appContext);
             for (Uri uri : uris) {
                 try {
-                    if (ArchivesProvider.AUTHORITY.equals(uri.getAuthority())) {
+                    if (isArchiveUri(uri)) {
                         ArchivesProvider.acquireArchive(getClient(uri), uri);
                         mAcquiredArchivedUris.add(uri);
                     }

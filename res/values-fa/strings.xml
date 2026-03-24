@@ -28,7 +28,7 @@
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <string name="summary_consent_ok_button" msgid="7813177426978382632">"روشن کردن"</string>
     <string name="summary_consent_cancel_button" msgid="2971058893677958570">"دوباره از من پرسیده نشود"</string>
-    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"اکنون نه"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"حالا نه"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"باز کردن از"</string>
@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"دریافت اطلاعات"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"فایل‌های پنهان نشان داده شود"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"فایل‌های پنهان نشان داده نشود"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"بازآوری کردن"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"نمایش ستون شرح"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"ستون شرح نشان داده نشود"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"مشاهده در <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"نمی‌توان بیش از <xliff:g id="COUNT">%1$d</xliff:g> فایل هم‌رسانی کرد"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"کنش مجاز نیست"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"کنش مجاز نیست"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"باز کردن با…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"برنامه‌ای پیدا نشد"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏هیچ برنامه پشتیبانی‌شده‌ای نصب نشده است. برنامه‌ای را از «فروشگاه Play» نصب کنید."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏جستجو در «فروشگاه Play»"</string>
     <string name="share_via" msgid="8725082736005677161">"اشتراک‌گذاری از طریق"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">قالب این فایل‌ها تغییر داده شد: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{قالب این فایل تغییر داده شد:}one{قالب این فایل تغییر داده شد:}other{قالب این فایل‌ها تغییر داده شد:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{‫# مورد به «بریده‌دان» اضافه شد}one{‫# مورد به «بریده‌دان» اضافه شد}other{‫# مورد به «بریده‌دان» اضافه شد}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"فقط-خواندنی"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"شما میتوانید این فایل‌ها را مشاهده کنید اما برخی‌از اقدامات پشتیبانی نمی‌شوند"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"این بایگانی در مکانی فقط خواندنی است و نمی‌توان آن را در اینجا استخراج کرد."</string>
@@ -303,7 +303,7 @@
     </plurals>
     <string name="delete_forever_dialog_title" msgid="799779565921010957">"برای همیشه حذف شود؟"</string>
     <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{«<xliff:g id="NAME">{name}</xliff:g>» برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}one{# مورد برای همیشه حذف می‌شوند.  این کار واگردشدنی نیست.}other{# مورد برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}}"</string>
-    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{«<xliff:g id="NAME">{name}</xliff:g>» برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}one{‫# مورد در حذف‌شده‌ها برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}other{‫  #مورد در حذف‌شده‌ها برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{«<xliff:g id="NAME">{name}</xliff:g>» برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}one{‫# مورد در حذف‌شده‌ها برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}other{‫  # مورد در حذف‌شده‌ها برای همیشه حذف خواهد شد. این کار واگردشدنی نیست.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"تصاویر"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"بایگانی برای مرور باز نشد. فایل یا خراب است یا قالب آن پشتیبانی نمی‌شود."</string>
     <string name="name_conflict" msgid="28407269328862986">"فایلی با این نام درحال‌حاضر موجود است."</string>

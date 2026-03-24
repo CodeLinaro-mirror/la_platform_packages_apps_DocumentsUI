@@ -38,6 +38,7 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -143,6 +144,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
         switchRoot(ROOT_1_ID);
+        device.waitForIdle();
+
+        // Confirm expected directory has loaded
+        assertDefaultContentOfTestDir1();
         bots.search.assertIsVisible(false);
     }
 
@@ -242,8 +247,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.waitForIdle(3000);
 
-        bots.directory.waitAndAssertPlaceholderMessageText(
-                String.format(context.getString(R.string.no_results), "TEST_ROOT_0"));
+        bots.directory.waitAndAssertNoResultsMessage("TEST_ROOT_0");
     }
 
     @Suppress
@@ -744,9 +748,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Assert there's no search result because the Android folder and its content are
             // hidden.
-            String noSearchResults = String.format(context.getString(R.string.no_results),
-                    deviceRootLabel);
-            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+            bots.directory.waitAndAssertNoResultsMessage(deviceRootLabel);
 
             // Now show hidden files, the test file should show. (Close the search first before
             // showing hidden files because the 3-dot menu is not visible on drawer/nav_rail layout
@@ -768,7 +770,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             device.waitForIdle();
             bots.main.hideHiddenFiles();
             bots.search.doSearch(testFileName);
-            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+            bots.directory.waitAndAssertNoResultsMessage(deviceRootLabel);
         } finally {
             // Delete the created test file if it exists.
             if (testFileUri != null) {
@@ -840,6 +842,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testRecreatePreservesSearchState() throws Exception {
         String[] expectedMatches =
                 new String[] {
@@ -852,14 +855,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("file");
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(expectedMatches);
+        // Verify that only dropdown options are shown, and not chips.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+        onView(withId(R.id.search_chip_group)).check(matches(not(isDisplayed())));
 
-        // Relaunch the app, and expect the same result. Also this must never crash.
+        // Relaunch the app, and expect the same result. Also, this must never crash.
         mActivityScenario.recreate();
-        // Close the keyboard because it mgiht appear after activity recreation.
+        // Close the keyboard because it might appear after activity recreation.
         closeSoftKeyboard();
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(expectedMatches);
         bots.search.assertInputEquals("file");
+        // Verify that only dropdown and chips states are preserved.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+        onView(withId(R.id.search_chip_group)).check(matches(not(isDisplayed())));
     }
 
     @Test
@@ -1065,5 +1074,34 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         switchRoot("Recent");
         // Here we just check one dropdown for being hidden as they all work in sync.
         bots.main.assertLocationTriggerHidden();
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testDropdownOptionsPreserved() throws Exception {
+        bots.search.doSearch("file");
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_365_days);
+        bots.search.clickDropdownTrigger(R.id.search_file_type_trigger);
+        bots.search.clickMenuItem(R.string.chip_title_images);
+        device.waitForIdle();
+
+        // Relaunch the app, and expect query and dropdown option to keep their state.
+        mActivityScenario.recreate();
+        // Close the keyboard because it mgiht appear after activity recreation.
+        closeSoftKeyboard();
+        device.waitForIdle();
+        bots.search.assertInputEquals("file");
+        bots.search
+                .findDropdownTrigger(R.id.search_location_trigger)
+                .check(matches(withText(R.string.search_location_everywhere)));
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_365_days)));
+        bots.search
+                .findDropdownTrigger(R.id.search_file_type_trigger)
+                .check(matches(withText(R.string.chip_title_images)));
     }
 }

@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Pata maelezo zaidi"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Onyesha faili zilizofichwa"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Usionyeshe faili zilizofichwa"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Onyesha upya"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Onyesha safu wima ya maelezo"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Usionyeshe safu wima ya maelezo"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Angalia katika <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Huwezi kushiriki zaidi ya faili <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Kitendo hiki hakiruhusiwi"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Kitendo hiki hakiruhusiwi"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Fungua ukitumia…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Hakuna programu iliyopatikana"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Hujaweka programu zozote zinazotumika. Jaribu kuweka programu moja kutoka kwenye Duka la Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Tafuta kwenye Duka la Google"</string>
     <string name="share_via" msgid="8725082736005677161">"Shiriki kupitia"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Imebadilisha faili hii kuwa muundo mwingine: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Muundo wa faili hii ulibadilishwa:}other{Muundo wa faili hizi ulibadilishwa:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Kipengee # kimewekwa kwenye Ubao wa kunakili}other{Vipengee # vimewekwa kwenye Ubao wa kunakili}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Kusoma tu"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Unaweza kuangalia faili hizi lakini huwezi kutekeleza vitendo fulani"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Kumbukumbu hii ipo katika sehemu ya kusoma tu na haiwezi kudondolewa hapa."</string>

@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"詳細情報"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"隠しファイルを表示"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"隠しファイルを表示しない"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"更新"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"説明列を表示"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"説明列を表示しない"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>に表示"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"共有できるファイルは <xliff:g id="COUNT">%1$d</xliff:g> 件までです"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"操作が許可されていません"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"操作が許可されていません"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"アプリで開く…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"アプリが見つかりませんでした"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"対応するアプリがインストールされていません。Google Play ストアからインストールしてみてください。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play ストアを検索"</string>
     <string name="share_via" msgid="8725082736005677161">"共有ツール"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ファイル <xliff:g id="LIST_0">%1$s</xliff:g> が別の形式に変換されました。</item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{次のファイルが別の形式に変換されました: }other{次のファイルが別の形式に変換されました: }}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# 個のアイテムをクリップボードに追加しました}other{# 個のアイテムをクリップボードに追加しました}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"読み取り専用"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"これらのファイルの表示はできますが、一部の操作はサポートされていません"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"このアーカイブは読み取り専用の場所にあり、ここでは解凍できません。"</string>
