@@ -107,6 +107,9 @@ public final class Shared {
      */
     public static final String EXTRA_DOC = "document";
 
+    /** Extra flag used to store the summary of a document. */
+    public static final String EXTRA_SUMMARY = "com.android.documentsui.SUMMARY";
+
     /**
      * Extra flag used to store DirectoryFragment's selection of Selection type in the bundle.
      */

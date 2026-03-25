@@ -94,6 +94,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
@@ -272,6 +273,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private @Nullable String mSelectedItemKey = null;
 
     private AtomicInteger mVersion = new AtomicInteger(0);
+
+    private final Observer<Boolean> mSummaryObserver =
+            new Observer<>() {
+                @Override
+                public void onChanged(Boolean isEnabled) {
+                    mActions.loadDocumentsForCurrentStack();
+                }
+            };
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -595,6 +604,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         setPreDrawListenerEnabled(true);
 
+        // Register an observer on the state of SummaryProviderManager.
+        // When the summary provider is enabled/disabled we refresh the file list to make sure the
+        // description column is shown/hidden. OnLoadFinished in AbstractActionHandler kicks off an
+        // update in SummariesViewModel and a full redraw of RecyclerView which has the description
+        // column. notifyDirectoryLoaded here updates the column headers accordingly as well.
+        if (isUseFileSummaryEnabled() && mInjector.getSummaryProviderManager() != null) {
+            mInjector
+                    .getSummaryProviderManager()
+                    .isEnabledLiveData()
+                    .observe(this, mSummaryObserver);
+        }
+
         return mRootView;
     }
 
@@ -646,6 +667,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         if (isSyncStateEnabled()) {
             mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
+        }
+
+        if (isUseFileSummaryEnabled() && mInjector.getSummaryProviderManager() != null) {
+            mInjector
+                    .getSummaryProviderManager()
+                    .isEnabledLiveData()
+                    .removeObserver(mSummaryObserver);
         }
 
         super.onDestroyView();

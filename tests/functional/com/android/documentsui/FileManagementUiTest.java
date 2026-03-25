@@ -38,8 +38,6 @@ import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
-import com.android.documentsui.sorting.SortDimension;
-import com.android.documentsui.sorting.SortModel;
 import com.android.modules.utils.build.SdkLevel;
 
 import org.junit.Rule;
@@ -96,6 +94,38 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         // view.post() fixes the issue on S, but still fail on T, hence we only check U+ here.
         if (SdkLevel.isAtLeastU()) {
             bots.directory.assertDocumentHasFocus(newFolderName);
+        }
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testCreateDirectoryTrimTrailingSpaces() throws Exception {
+        // Disable the root notification because it triggers root list update which then triggers
+        // the fragment recreation, which impacts the focus behavior.
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+        mDocsHelper.configure(null, bundle);
+
+        final String newFolderName = "Kung fu Panda  ";
+        bots.main.clickToolbarOverflowItem(context.getString(R.string.menu_create_dir));
+        device.waitForIdle();
+
+        bots.main.setDialogText(newFolderName);
+        device.waitForIdle();
+
+        // Pressing enter to commit the new folder creation and close the dialog. Note:
+        // pressEnter() doesn't work here, we need an actual keyboard press to trigger focus
+        // change.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_ENTER);
+
+        String trimmedName = newFolderName.trim();
+        bots.directory.waitForDocument(trimmedName);
+
+        // Focus the newly created directory on S/T doesn't work reliably somehow, the
+        // requestFocus() returns false on both versions. Wrapping the requestFocus() call inside
+        // view.post() fixes the issue on S, but still fail on T, hence we only check U+ here.
+        if (SdkLevel.isAtLeastU()) {
+            bots.directory.assertDocumentHasFocus(trimmedName);
         }
     }
 

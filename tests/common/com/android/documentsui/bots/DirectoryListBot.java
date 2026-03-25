@@ -53,6 +53,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
@@ -488,14 +490,21 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Clicks the "X" cancel selection button. */
     public void clearSelection() {
-        int parentId =
-                isUseMaterial3FlagEnabled()
-                        ? R.id.selection_bar
-                        : androidx.appcompat.R.id.action_mode_bar;
-        int contentDescription =
-                isUseMaterial3FlagEnabled() ? R.string.clear_selection : android.R.string.cancel;
-        onView(allOf(withContentDescription(contentDescription), isDescendantOfA(withId(parentId))))
-                .perform(clickAndRetryOnLongPress());
+        boolean useMaterial3 = isUseMaterial3FlagEnabled();
+        int parentId = useMaterial3 ? R.id.selection_bar : androidx.appcompat.R.id.action_mode_bar;
+        int contentDescription = useMaterial3 ? R.string.clear_selection : android.R.string.cancel;
+        ViewInteraction interaction =
+                onView(
+                        allOf(
+                                withContentDescription(contentDescription),
+                                isDescendantOfA(withId(parentId))));
+
+        if (useMaterial3) {
+            interaction.perform(clickAndRetryOnLongPress());
+        } else {
+            // For non-material 3 a long press will still trigger a click.
+            interaction.perform(ViewActions.click());
+        }
     }
 
     public void pasteFilesFromClipboard() {
