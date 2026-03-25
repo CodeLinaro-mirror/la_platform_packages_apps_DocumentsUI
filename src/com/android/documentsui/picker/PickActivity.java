@@ -16,6 +16,8 @@
 
 package com.android.documentsui.picker;
 
+import static android.view.KeyEvent.META_CTRL_ON;
+
 import static com.android.documentsui.base.State.ACTION_CREATE;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
@@ -48,6 +50,7 @@ import android.view.ViewGroup.MarginLayoutParams;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -98,7 +101,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
     private static final String TAG = "PickActivity";
 
-    private Injector<ActionHandler<PickActivity>> mInjector;
+    @VisibleForTesting protected Injector<ActionHandler<PickActivity>> mInjector;
     private SharedInputHandler mSharedInputHandler;
 
     public PickActivity() {
@@ -632,6 +635,18 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return mSharedInputHandler.onKeyDown(keyCode, event)
                 || super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+        if (isUseMaterial3FlagEnabled()
+                && event.hasModifiers(META_CTRL_ON)
+                && keyCode == KeyEvent.KEYCODE_SPACE) {
+            mInjector.actions.toggleFocusedItemSelection();
+            return true;
+        }
+
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override

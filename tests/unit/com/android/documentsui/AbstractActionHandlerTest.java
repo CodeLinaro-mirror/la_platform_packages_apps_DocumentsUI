@@ -950,6 +950,27 @@ public class AbstractActionHandlerTest {
         }
     }
 
+    @Test
+    public void testToggleFocusedItemSelection() {
+        DocumentInfo doc = mEnv.model.createFile("file1");
+        mEnv.model.update();
+        String id = ModelId.build(doc.userId, doc.authority, doc.documentId);
+
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        SelectionTracker<String> selectionMgr = SelectionHelpers.createTestInstance(List.of(id));
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        when(focusHandler.getFocusModelId()).thenReturn(id);
+
+        // Toggle on
+        mHandler.toggleFocusedItemSelection();
+        assertThat(selectionMgr.getSelection()).containsExactly(id);
+
+        // Toggle off
+        mHandler.toggleFocusedItemSelection();
+        assertThat(selectionMgr.getSelection()).isEmpty();
+    }
+
     @SuppressLint("VisibleForTests")
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
