@@ -17,14 +17,18 @@ package com.android.documentsui.util
 
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestPackageManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -33,6 +37,7 @@ import org.mockito.Mockito.`when`
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 class FileUtilsTest {
+    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
     @Before
@@ -53,25 +58,39 @@ class FileUtilsTest {
     }
 
     @Test
-    fun testSanitizeNameCreateDirectory() {
+    fun testSanitizeNameValidName() {
         val name = "File.txt"
         // Expect the name to remain the same.
-        assertEquals(FileUtils.sanitizeName(name), name)
+        assertEquals(FileUtils.sanitizeName(name, 0), name)
     }
 
     @Test
-    fun testSanitizeNameCreateDirectoryStripTrailingSpaces() {
+    fun testSanitizeNameStripTrailingSpaces() {
         val name = "   File.txt   "
         // Expect only the trailing spaces to be trimmed.
-        assertEquals(FileUtils.sanitizeName(name), "   File.txt")
+        assertEquals(FileUtils.sanitizeName(name, 0), "   File.txt")
     }
 
     @Test
-    fun testSanitizeNameCreateDirectoryEmptyName() {
+    fun testSanitizeNameEmptyName() {
+        val expectedError: FileUtils.InvalidNameError =
+            FileUtils.InvalidNameError("Invalid name error: ''", 0)
+        val exception =
+            assertThrows(FileUtils.InvalidNameError::class.java) { FileUtils.sanitizeName("", 0) }
+
+        // Assert exception properties
+        assertEquals(expectedError.message, exception.message)
+        assertEquals(expectedError.mResource, exception.mResource)
+    }
+
+    @Test
+    fun testSanitizeDirectoryNameCreateDirectoryEmptyName() {
         val expectedError: FileUtils.InvalidNameError =
             FileUtils.InvalidNameError("Invalid name error: ''", R.string.add_folder_name_error)
         val exception =
-            assertThrows(FileUtils.InvalidNameError::class.java) { FileUtils.sanitizeName("") }
+            assertThrows(FileUtils.InvalidNameError::class.java) {
+                FileUtils.sanitizeDirectoryName("")
+            }
 
         // Assert exception properties
         assertEquals(expectedError.message, exception.message)
@@ -84,7 +103,28 @@ class FileUtilsTest {
         val expectedError: FileUtils.InvalidNameError =
             FileUtils.InvalidNameError("Invalid name error: ''", R.string.add_folder_name_error)
         val exception =
-            assertThrows(FileUtils.InvalidNameError::class.java) { FileUtils.sanitizeName(name) }
+            assertThrows(FileUtils.InvalidNameError::class.java) {
+                FileUtils.sanitizeDirectoryName(name)
+            }
+
+        // Assert exception properties
+        assertEquals(expectedError.message, exception.message)
+        assertEquals(expectedError.mResource, exception.mResource)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testSanitizeFileNameInvalidCharacter() {
+        val name = "?"
+        val expectedError: FileUtils.InvalidNameError =
+            FileUtils.InvalidNameError(
+                "Invalid character in filename: '?'",
+                R.string.rename_invalid_character,
+            )
+        val exception =
+            assertThrows(FileUtils.InvalidNameError::class.java) {
+                FileUtils.sanitizeFileName(name)
+            }
 
         // Assert exception properties
         assertEquals(expectedError.message, exception.message)
