@@ -16,6 +16,8 @@
 
 package com.android.documentsui.services;
 
+import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
+import static com.android.documentsui.base.Providers.ROOT_ID_DOWNLOADS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COPY;
@@ -32,7 +34,14 @@ import android.provider.DocumentsContract.Document;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.MediumTest;
 
+import com.android.compatibility.common.util.PollingCheck;
+import com.android.documentsui.DocumentsProviderHelper;
+import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.DocumentStack;
+import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.DocsProviders;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -228,5 +237,61 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     @Test
     public void testCopyProgressWithByteCount() throws Exception {
         runCopyProgressForByteCountTest();
+    }
+
+    @Test
+    public void testRecursiveCopy_RealStorage() throws Exception {
+        DocumentsProviderHelper storageHelper =
+                DocumentsProviderHelper.setupStorageAuthorityDocsHelper(mContext);
+        DocumentsProviderHelper downloadsHelper =
+                DocumentsProviderHelper.setupDownloadsAuthorityDocsHelper(mContext);
+
+        RootInfo storageRoot = storageHelper.getRoot(ROOT_ID_DEVICE);
+        DocumentInfo downloadDir = storageHelper.findDocument(storageRoot.documentId, "Download");
+
+        String subfolderName = "RecursiveCopyTest_" + System.currentTimeMillis();
+        Uri subfolderUri = storageHelper.createFolder(downloadDir.documentId, subfolderName);
+        try {
+            final String finalSubfolderName = subfolderName;
+            PollingCheck.check(
+                    "Subfolder not found in DownloadsProvider.",
+                    5000,
+                    () -> {
+                        try {
+                            return downloadsHelper.findDocument(
+                                            ROOT_ID_DOWNLOADS, finalSubfolderName)
+                                    != null;
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    });
+
+            DocumentInfo subfolderInDownloads =
+                    downloadsHelper.findDocument(ROOT_ID_DOWNLOADS, subfolderName);
+
+            RootInfo downloadsRoot = downloadsHelper.getRoot(ROOT_ID_DOWNLOADS);
+            DocumentStack stack = new DocumentStack(downloadsRoot, subfolderInDownloads);
+            UrisSupplier srcs =
+                    DocsProviders.createDocsProvider(newArrayList(downloadDir.derivedUri));
+
+            FileOperation operation =
+                    new FileOperation.Builder()
+                            .withOpType(OPERATION_COPY)
+                            .withSrcs(srcs)
+                            .withDestination(stack)
+                            .build();
+
+            CopyJob job = createJob(operation);
+            job.run();
+            waitForJobFinished();
+
+            mJobListener.assertFailed();
+            mJobListener.assertFilesFailed(newArrayList("Download"));
+        } finally {
+            storageHelper.deleteDocument(subfolderUri);
+        }
+
+        storageHelper.cleanUp();
+        downloadsHelper.cleanUp();
     }
 }
