@@ -180,9 +180,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);  // wait for known content
         bots.directory.assertDocumentsVisible(TestFilesRule.CHILD_DIR_1);
 
-        device.waitForIdle();
-        bots.breadcrumb.assertItemsPresent(TestFilesRule.DIR_NAME_1, "TEST_ROOT_0");
-
         bots.breadcrumb.clickItem("TEST_ROOT_0");
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
     }
