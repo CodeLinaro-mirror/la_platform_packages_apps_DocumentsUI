@@ -43,6 +43,7 @@ import android.view.View;
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.selection.Selection;
@@ -70,13 +71,13 @@ import com.android.documentsui.ShortcutsUpdater;
 import com.android.documentsui.StubProfileTabsAddons;
 import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.DocumentClipper;
-import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
@@ -85,8 +86,6 @@ import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
-
-import kotlin.Unit;
 
 import kotlinx.coroutines.Dispatchers;
 
@@ -147,20 +146,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
         if (mInjector.getSummaryProviderManager() != null
                 && mInjector.getSummaryProviderManager().shouldShowStartupConsent()) {
-            mInjector
-                    .getSummaryProviderManager()
-                    .showStartupConsent(
-                            getSupportFragmentManager(),
-                            () -> {
-                                onSummaryConsentRefresh();
-                                return Unit.INSTANCE;
-                            });
+            mInjector.getSummaryProviderManager().showStartupConsent(getSupportFragmentManager());
         }
 
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
         ApprovedDocHandlers approvedDocHandlers = null;
+        ApprovedDocMenuController approvedDocMenuController = null;
         if (isUseApprovedDocumentHandlerEnabled()) {
             approvedDocHandlers =
                     new ViewModelProvider(
@@ -177,16 +170,11 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             })
                     .get(ApprovedDocHandlers.class);
 
-            approvedDocHandlers.getUpdateEvents().observe(
-                    this,
-                    unit -> {
-                        if (mInjector.selectionBarController != null) {
-                            mInjector.selectionBarController.invalidate();
-                        }
-                        if (mInjector.menuManager != null) {
-                            mInjector.menuManager.updateContextMenu();
-                        }
-                    });
+            approvedDocMenuController = new ApprovedDocMenuController(
+                    LifecycleOwnerKt.getLifecycleScope(this),
+                    approvedDocHandlers,
+                    mInjector,
+                    Dispatchers.getMain().getImmediate());
         }
 
         mInjector.focusManager =
@@ -214,7 +202,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mInjector.getModel()::getItemUri,
                         mInjector.getModel()::getItemCount,
                         mInjector,
-                        approvedDocHandlers);
+                        approvedDocMenuController);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
@@ -278,6 +266,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 new ActivityInputHandler(mInjector.actions::runDeleteOrTrashHandler);
         mSharedInputHandler =
                 new SharedInputHandler(
+                        this,
                         mInjector.focusManager,
                         mInjector.selectionMgr,
                         mInjector.searchManager::cancelSearch,
@@ -317,11 +306,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         }
 
         presentFileErrors(icicle, intent);
-    }
-
-    private void onSummaryConsentRefresh() {
-        updateColumnHeaders(mState.stack.getRoot());
-        refreshDirectory(AnimationView.ANIM_NONE);
     }
 
     private AppsRowManager getAppsRowManager() {
@@ -589,7 +573,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 case KeyEvent.KEYCODE_ENTER:
                     {
                         if (!isUseMaterial3FlagEnabled()) break;
-                        final Selection<String> selected = mInjector.actions.getSelectedOrFocused();
+                        final Selection<String> selected = mInjector.actions.getFocusedOrSelected();
                         if (selected.size() != 1) return true;
                         final DirectoryFragment dir = getDirectoryFragment();
                         if (dir == null) return true;
