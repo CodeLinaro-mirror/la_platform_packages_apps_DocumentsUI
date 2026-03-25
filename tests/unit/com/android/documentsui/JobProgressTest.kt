@@ -17,20 +17,15 @@
 package com.android.documentsui.services
 
 import android.icu.text.MessageFormat
-import android.platform.test.annotations.EnableFlags
-import androidx.core.net.toUri
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.flags.Flags
-import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.MutableJobProgress
 import com.google.common.truth.Truth.assertThat
 import java.util.Locale
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -48,20 +43,10 @@ data class JobProgressTestParams(
 @SmallTest
 @RunWith(Parameterized::class)
 class JobProgressTest(private val testParams: JobProgressTestParams) {
-    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
     private var context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val testRoot =
-        RootInfo().apply {
-            title = "root"
-            authority = "root-authority"
-            documentId = "root-doc-id"
-            rootId = "root-root-id"
-        }
-
-    private val testDoc = DocumentInfo().apply { derivedUri = testRoot.documentUri }
-
-    private val rootStack = DocumentStack(testRoot, testDoc)
+    private val testRoot = RootInfo().apply { title = "root" }
+    private val rootStack = DocumentStack(testRoot, DocumentInfo())
 
     private fun getIcuString(stringId: Int, formatArgs: Map<String, Any>): String {
         return MessageFormat(context.getString(stringId), Locale.getDefault()).format(formatArgs)
@@ -105,35 +90,6 @@ class JobProgressTest(private val testParams: JobProgressTestParams) {
         assertThat(progress.toJobProgress().getProgressMessage(context))
             .isEqualTo(
                 getIcuString(testParams.pluralMessageId, mapOf("count" to 3, "directory" to "root"))
-            )
-    }
-
-    @Test
-    @EnableFlags(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3)
-    fun testSingleProgressMessageToShortcut() {
-        val docInfo =
-            DocumentInfo().apply {
-                derivedUri = "shortcut-uri".toUri()
-                displayName = "shortcut"
-            }
-        val docStack = DocumentStack(testRoot, docInfo)
-        val progress =
-            MutableJobProgress(
-                id = "id",
-                operationType = testParams.operationType,
-                state = Job.STATE_SET_UP,
-                filename = "file.txt",
-                numFiles = 1,
-                hasFailures = false,
-                destination = docStack,
-            )
-
-        assertThat(progress.toJobProgress().getProgressMessage(context))
-            .isEqualTo(
-                getIcuString(
-                    testParams.messageId,
-                    mapOf("filename" to "file.txt", "directory" to "shortcut"),
-                )
             )
     }
 

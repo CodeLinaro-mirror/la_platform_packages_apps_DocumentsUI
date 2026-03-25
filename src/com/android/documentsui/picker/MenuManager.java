@@ -41,7 +41,7 @@ import androidx.fragment.app.Fragment;
 import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
-import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.MimeTypes;
@@ -64,7 +64,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Context context,
             Features features,
             Injector<?> injector,
-            @Nullable ApprovedDocMenuController approvedDocMenuController) {
+            @Nullable ApprovedDocHandlers approvedDocHandlers) {
         super(
                 searchManager,
                 displayState,
@@ -73,7 +73,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                 context,
                 features,
                 injector,
-                approvedDocMenuController);
+                approvedDocHandlers);
     }
 
     @Override

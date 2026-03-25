@@ -33,13 +33,10 @@ import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewConfiguration
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -316,20 +313,6 @@ class DirectoryFragmentTest {
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
-    fun testUpdateLayout_listMode_setsPaddingBottom() {
-        // Trigger updateLayout for LIST mode
-        env.state.derivedMode = MODE_LIST
-        prepareLooperForUpdateLayout()
-        fragment.onViewModeChanged()
-
-        val expectedPadding =
-            fragment.resources.getDimensionPixelSize(getRes(R.dimen.list_container_padding_bottom))
-        assertNotEquals(0, expectedPadding)
-        assertEquals(expectedPadding, fragment.getRecyclerView().paddingBottom)
-    }
-
-    @Test
-    @EnableFlags(FLAG_USE_MATERIAL3)
     fun testItemDecorationInvalidator_teardown_whenFragmentDestroyed() {
         val itemDecorationInvalidator = mock(ItemDecorationInvalidator::class.java)
         fragment.mItemDecorationInvalidator = itemDecorationInvalidator
@@ -477,8 +460,6 @@ class DirectoryFragmentWithActivity(
     private val fakeActivity: BaseActivity,
     private val summariesViewModel: SummariesViewModel,
 ) : DirectoryFragment() {
-    private var view: View? = null
-
     override fun getBaseActivity(): BaseActivity = fakeActivity
 
     override fun getContext(): Context = context
@@ -492,17 +473,6 @@ class DirectoryFragmentWithActivity(
     override fun createSummariesViewModel(): SummariesViewModel {
         return summariesViewModel
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        view = super.onCreateView(inflater, container, savedInstanceState)
-        return view
-    }
-
-    fun getRecyclerView(): RecyclerView = view!!.findViewById(R.id.dir_list)
 
     val jobProgressObserver: BroadcastReceiver
         get() {

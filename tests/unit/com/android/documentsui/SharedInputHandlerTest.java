@@ -65,16 +65,14 @@ public class SharedInputHandlerTest {
     @Before
     public void setUp() {
         mDirPopHappened = false;
-        mSharedInputHandler =
-                new SharedInputHandler(
-                        null,
-                        mFocusHandler,
-                        mSelectionMgr,
-                        () -> false,
-                        mDirPopper,
-                        mFeatures,
-                        mDrawer,
-                        mSearchExecutor);
+        mSharedInputHandler = new SharedInputHandler(
+                mFocusHandler,
+                mSelectionMgr,
+                () -> false,
+                mDirPopper,
+                mFeatures,
+                mDrawer,
+                mSearchExecutor);
     }
 
     @Test
@@ -87,19 +85,17 @@ public class SharedInputHandlerTest {
     @Test
     public void testBackButton_CancelsSearch() {
         mSelectionMgr.select("1");
-        mSharedInputHandler =
-                new SharedInputHandler(
-                        null,
-                        new TestFocusHandler(),
-                        SelectionHelpers.createTestInstance(),
-                        () -> {
-                            mCanceledSearch = true;
-                            return true;
-                        },
-                        mDirPopper,
-                        new TestFeatures(),
-                        mDrawer,
-                        mSearchExecutor);
+        mSharedInputHandler = new SharedInputHandler(
+                new TestFocusHandler(),
+                SelectionHelpers.createTestInstance(),
+                () -> {
+                        mCanceledSearch = true;
+                        return true;
+                },
+                mDirPopper,
+                new TestFeatures(),
+                mDrawer,
+                mSearchExecutor);
         KeyEvent backEvent =
                 new KeyEvent(0, 0, MotionEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK, 0, 0);
         assertTrue(mSharedInputHandler.onKeyDown(backEvent.getKeyCode(), backEvent));
@@ -148,19 +144,17 @@ public class SharedInputHandlerTest {
     @Test
     public void testEscButton_CancelsSearch() {
         mSelectionMgr.select("1");
-        mSharedInputHandler =
-                new SharedInputHandler(
-                        null,
-                        new TestFocusHandler(),
-                        SelectionHelpers.createTestInstance(),
-                        () -> {
-                            mCanceledSearch = true;
-                            return true;
-                        },
-                        mDirPopper,
-                        new TestFeatures(),
-                        mDrawer,
-                        mSearchExecutor);
+        mSharedInputHandler = new SharedInputHandler(
+                new TestFocusHandler(),
+                SelectionHelpers.createTestInstance(),
+                () -> {
+                        mCanceledSearch = true;
+                        return true;
+                },
+                mDirPopper,
+                new TestFeatures(),
+                mDrawer,
+                mSearchExecutor);
         KeyEvent escapeEvent =
                 new KeyEvent(0, 0, MotionEvent.ACTION_DOWN, KeyEvent.KEYCODE_ESCAPE, 0, 0);
         assertTrue(mSharedInputHandler.onKeyDown(escapeEvent.getKeyCode(), escapeEvent));

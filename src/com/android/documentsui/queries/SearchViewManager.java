@@ -174,15 +174,6 @@ public class SearchViewManager implements
     }
 
     /**
-     * @return If the search options are provided by dropdown options.
-     */
-    private boolean hasDropdownOptions() {
-        return isSearchV2Enabled()
-                && mSearchOptionsController != null
-                && mSearchOptionsController.isVisible();
-    }
-
-    /**
      * Parse the query content from Intent. If the action is not {@link State#ACTION_GET_CONTENT} or
      * {@link State#ACTION_OPEN}, don't perform search.
      *
@@ -208,10 +199,9 @@ public class SearchViewManager implements
      * @return the bundle of query arguments
      */
     public Bundle buildQueryArgs() {
-        final Bundle queryArgs =
-                hasDropdownOptions()
-                        ? mSearchOptionsController.getOptionsQueryArgs()
-                        : mChipViewManager.getCheckedChipQueryArgs();
+        final Bundle queryArgs = isSearchV2Enabled() && mSearchOptionsController.isVisible()
+                ? mSearchOptionsController.getOptionsQueryArgs()
+                : mChipViewManager.getCheckedChipQueryArgs();
         if (!TextUtils.isEmpty(mCurrentSearch)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, mCurrentSearch);
         } else if (isExpanded() && isSearching()) {

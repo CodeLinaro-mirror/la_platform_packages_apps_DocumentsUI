@@ -19,12 +19,9 @@ package com.android.documentsui.util;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.UserProperties;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Log;
@@ -44,32 +41,6 @@ public class CrossProfileUtils {
             "com.android.internal.app.IntentForwarderActivity";
 
     private CrossProfileUtils() {
-    }
-
-    /**
-     * Registers a callback for package changes across profiles.
-     */
-    public static void registerPackageUpdateCallback(
-            Context context, LauncherApps.Callback callback) {
-        LauncherApps launcherApps = context.getSystemService(LauncherApps.class);
-        if (launcherApps != null) {
-            launcherApps.registerCallback(callback, new Handler(Looper.getMainLooper()));
-        } else {
-            Log.w(TAG, "LauncherApps is null, cannot register package update callback");
-        }
-    }
-
-    /**
-     * Unregisters a callback for package changes.
-     */
-    public static void unregisterPackageUpdateCallback(
-            Context context, LauncherApps.Callback callback) {
-        LauncherApps launcherApps = context.getSystemService(LauncherApps.class);
-        if (launcherApps != null) {
-            launcherApps.unregisterCallback(callback);
-        } else {
-            Log.w(TAG, "LauncherApps is null, cannot unregister package update callback");
-        }
     }
 
     /**

@@ -49,7 +49,6 @@ import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
@@ -94,7 +93,8 @@ public class SearchBot extends Bots.BaseBot {
 
     public void expand() throws UiObjectNotFoundException {
         if (!showsDockedSearch()) {
-            onView(SEARCH_WIDGET).perform(clickAndRetryOnLongPress());
+            UiObject searchView = findObject(mTargetPackage + ":id/option_menu_search");
+            searchView.click();
         } else {
             findDockedSearchInput().click();
         }
@@ -253,9 +253,6 @@ public class SearchBot extends Bots.BaseBot {
      * @return The view interaction corresponding to the chip with the given ID.
      */
     public ViewInteraction findChip(@StringRes int chipTextId) {
-        // In the drawer layout chips are not part of the fixed toolbar and can scroll away. Thus
-        // we need to scroll to the top of the view before we start looking for them.
-        onView(withId(R.id.dir_list)).perform(RecyclerViewActions.scrollToPosition(0));
         return onView(allOf(withText(chipTextId),
                 isDescendantOfA(withId(R.id.search_chip_group)))).perform(
                         new WaitUntilVisible(mTimeout)).perform(scrollTo());

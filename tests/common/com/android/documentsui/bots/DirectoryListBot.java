@@ -552,13 +552,26 @@ public class DirectoryListBot extends Bots.BaseBot {
 
         if (withScroll) {
             scrollIntoView(docList, label);
-            if (mBots.main.isInGridMode()) {
-                // For grid items, the label still might be out of view, even if the element is in
-                // view. Scroll again to ensure the label is visible.
-                getScrollable(docList).scrollTextIntoView(label);
+        }
+        UiObject document = mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
+        UiObject2 breadcrumb =
+                mDevice.findObject(By.res(mTargetPackage + ":id/horizontal_breadcrumb"));
+        if (breadcrumb == null) {
+            breadcrumb = mDevice.findObject(By.res(mTargetPackage + ":id/breadcrumb_view_v2"));
+            if (breadcrumb == null) {
+                return document;
             }
         }
-        return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
+        if (withScroll) {
+            int scrolls = 5;
+            // If the document is hidden behind the breadcrumb. Scroll until it appears above the
+            // breadcrumb.
+            while (breadcrumb.getVisibleBounds().intersect(document.getBounds()) && scrolls > 0) {
+                scrollForward(docList);
+                scrolls--;
+            }
+        }
+        return document;
     }
 
     public boolean hasDocuments(String... labels) throws UiObjectNotFoundException {

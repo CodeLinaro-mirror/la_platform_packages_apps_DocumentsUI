@@ -18,11 +18,6 @@ package com.android.documentsui.dirlist
 
 import android.net.Uri
 import android.platform.test.annotations.EnableFlags
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.BaseActivity
@@ -35,13 +30,7 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.rules.OverrideFlagsRule
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.Matchers.allOf
-import org.junit.After
 import org.junit.Assert.assertNotNull
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -58,10 +47,9 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
     private var file: Uri? = null
     private var primaryRootTitle: String = ""
     private lateinit var localStorageHelper: DocumentsProviderHelper
-    private var summaryProviderManager: SummaryProviderManager? = null
 
-    @Before
-    fun prepareSummaryProvider() {
+    @Throws(Exception::class)
+    fun prepareProviderAndFile() {
         val summaryProviderUri = "content://${TestSummaryProvider.AUTHORITY}/root/summary-root"
 
         // Initialize helper for the summary provider.
@@ -102,53 +90,40 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
                 consentMessage,
                 showConsent = true,
             )
-            summaryProviderManager = baseActivity.injector.summaryProviderManager
         }
-    }
-
-    @After
-    fun cleanupProviderAndFile() {
-        file?.let { localStorageHelper.deleteDocument(it) }
-        summaryHelper.clearDocumentSummaries()
-        localStorageHelper.cleanUp()
-        summaryHelper.cleanUp()
     }
 
     @Test
     fun testSummaryInGridAndListModes() {
-        // Navigate to the Download folder in the primary root.
-        switchRoot(primaryRootTitle)
-        bots.directory.openDocument("Download")
+        try {
+            prepareProviderAndFile()
 
-        // Enable the summary column.
-        bots.main.clickToolbarOverflowItem(context!!.getString(R.string.option_show_summary_column))
-        device!!.waitForIdle()
-        bots.main.assertDialogTitle(consentTitle)
-        bots.main.assertDialogMessage(consentMessage)
-        bots.main.clickDialogOkButton(false)
+            // Navigate to the Download folder in the primary root.
+            switchRoot(primaryRootTitle)
+            bots.directory.openDocument("Download")
 
-        // Grid view doesn't display the summary, so we don't check it.
+            // Enable the summary column.
+            bots.main.clickToolbarOverflowItem(
+                context!!.getString(R.string.option_show_summary_column)
+            )
+            device!!.waitForIdle()
+            bots.main.assertDialogTitle(consentTitle)
+            bots.main.assertDialogMessage(consentMessage)
+            bots.main.clickDialogOkButton(false)
 
-        // List view.
-        bots.main.switchToListMode()
-        device!!.waitForIdle()
-        bots.directory.assertDocumentSummary(fileName, summary)
+            // Grid view doesn't display the summary, so we don't check it.
 
-        // Also verify that files list reacts to SummaryProviderManager.isEnabled changing without
-        // any user action (e.g. external provider disables itself or SummaryProviderManager
-        // fetching
-        // external provider's state takes longer than the first render of files list).
-        summaryProviderManager!!.userSwitchSummaryDisabled()
-        runBlocking { summaryProviderManager!!.isEnabledFlow.first { it == false } }
-        onView(withText(fileName)).check(matches(isDisplayed()))
-        // Make sure summary isn't displayed. Sometimes it's entirely missing from the hierarchy but
-        // sometimes it's just invisible because the recycled view holder already had the summary
-        // text filled in.
-        onView(allOf(withText(containsString(summary)), isDisplayed())).check(doesNotExist())
-
-        // File List automatically refreshes to display summary.
-        summaryProviderManager!!.userSwitchSummaryEnabled()
-        runBlocking { summaryProviderManager!!.isEnabledFlow.first { it == true } }
-        bots.directory.assertDocumentSummary(fileName, summary)
+            // List view.
+            bots.main.switchToListMode()
+            device!!.waitForIdle()
+            bots.directory.assertDocumentSummary(fileName, summary)
+        } finally {
+            if (file != null) {
+                localStorageHelper.deleteDocument(file)
+            }
+            summaryHelper.clearDocumentSummaries()
+            localStorageHelper.cleanUp()
+            summaryHelper.cleanUp()
+        }
     }
 }

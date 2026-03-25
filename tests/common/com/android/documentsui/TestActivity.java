@@ -35,11 +35,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.test.mock.MockContentResolver;
@@ -82,7 +80,6 @@ public abstract class TestActivity extends AbstractBase {
     public FragmentManager fm;
     public ActivityManager activityManager;
     public UserManager userManager;
-    public LauncherApps launcherApps;
     public boolean throwOnStartActivity;
     public Executor mainExecutor;
     public Injector<?> injector;
@@ -129,7 +126,6 @@ public abstract class TestActivity extends AbstractBase {
         setRootsDrawerLocked = new TestEventListener<>();
         notifyDirectoryNavigated = new TestEventListener<>();
         contentResolver = env.contentResolver;
-        launcherApps = Mockito.mock(LauncherApps.class);
         loaderManager = new TestLoaderManager();
         supportLoaderManager = new TestSupportLoaderManager();
         finishedHandler = new TestEventHandler<>();
@@ -300,8 +296,6 @@ public abstract class TestActivity extends AbstractBase {
                 return activityManager;
             case Context.USER_SERVICE:
                 return userManager;
-            case Context.LAUNCHER_APPS_SERVICE:
-                return launcherApps;
         }
 
         throw new IllegalArgumentException("Unknown service " + service);
@@ -311,8 +305,6 @@ public abstract class TestActivity extends AbstractBase {
     public final String getSystemServiceName(Class<?> serviceName) {
         if (serviceName == UserManager.class) {
             return Context.USER_SERVICE;
-        } else if (serviceName == LauncherApps.class) {
-            return Context.LAUNCHER_APPS_SERVICE;
         }
         throw new IllegalArgumentException("Unknown service name " + serviceName);
     }
@@ -340,15 +332,6 @@ public abstract class TestActivity extends AbstractBase {
 
     @Override
     public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        return null;
-    }
-
-    @Override
-    public Intent registerReceiverForAllUsers(
-            BroadcastReceiver receiver,
-            IntentFilter filter,
-            String broadcastPermission,
-            Handler scheduler) {
         return null;
     }
 

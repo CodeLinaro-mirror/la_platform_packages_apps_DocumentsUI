@@ -16,19 +16,13 @@
 
 package com.android.documentsui.base;
 
-import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 
-import static org.junit.Assert.assertNotEquals;
-
 import android.net.Uri;
-import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.SmallTest;
@@ -248,37 +242,5 @@ public class DocumentStackTest {
         assertEquals(1, mStack.size());
         assertTrue(mStack.isRecents());
         assertNotNull(mStack.peek().derivedUri);
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testGetTitleDifferentRootAndPeekUri() {
-        RootInfo root = new RootInfo();
-        root.title = "root-title";
-        root.documentId = "new-doc-id";
-        DocumentInfo doc = new DocumentInfo();
-        doc.derivedUri = Uri.parse("diff-uri");
-        doc.displayName = "document-display-name";
-        mStack.changeRoot(root);
-        mStack.push(doc);
-
-        assertNotEquals(root.getUri(), doc.derivedUri);
-        assertEquals(mStack.getTitle(), doc.displayName);
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testGetTitleFromRoot() {
-        RootInfo root = new RootInfo();
-        root.title = "root-title";
-        root.documentId = "new-doc-id";
-        DocumentInfo doc = new DocumentInfo();
-        doc.derivedUri = root.getUri();
-        doc.displayName = "document-display-name";
-        mStack.changeRoot(root);
-        mStack.push(doc);
-
-        assertEquals(root.getUri(), doc.derivedUri);
-        assertEquals(mStack.getTitle(), doc.displayName);
     }
 }

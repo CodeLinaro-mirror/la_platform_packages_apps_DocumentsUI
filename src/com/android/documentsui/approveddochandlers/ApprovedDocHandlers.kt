@@ -16,25 +16,28 @@
 
 package com.android.documentsui.approveddochandlers
 
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.LauncherApps
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
-import android.os.UserHandle
 import android.provider.DocumentsContract
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
 import com.android.documentsui.base.MimeTypes
 import com.android.documentsui.base.SharedMinimal.DEBUG
-import com.android.documentsui.base.UserId
-import com.android.documentsui.util.CrossProfileUtils
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CoroutineDispatcher
@@ -43,11 +46,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -91,6 +91,15 @@ data class HandlerStatus(
  *
  * This class and all methods in this class will only be called when the flag
  * `isUseApprovedDocumentHandlerEnabled` is true.
+ *
+ * Note: This ViewModel is currently retrieved at the Activity scope level. This works fine as long
+ * as user do not switch profiles within the activity.
+ *
+ * The launching user will initialize the PackageManager, and if the user subsequently chooses a
+ * different profile (e.g. Work Profile), this instance will still use the PackageManager of the
+ * original user. This behavior prevents seamless Work Profile support and needs to be addressed
+ * if/when Work Profile support is enabled. This class and its dependencies assume a single user
+ * context for the lifecycle of the ViewModel.
  */
 class ApprovedDocHandlers(
     private val applicationContext: Context,
@@ -99,15 +108,27 @@ class ApprovedDocHandlers(
 ) : ViewModel() {
 
     /**
-     * A cache to store the results of handler queries. The first key is the user, the second key is
-     * a combination of intent action and MIME type, and the value is a map of [ComponentName] to
-     * [HandlerStatus].
+     * [PackageManager] instance for the application context.
+     *
+     * Note: This package manager is tied to the application context. It will not update if the user
+     * profile changes within the activity. This is a known limitation that prevents full Work
+     * Profile support at this time.
      */
-    private val cache =
-        MutableStateFlow<Map<UserId, Map<String, Map<ComponentName, HandlerStatus>>>>(emptyMap())
+    private val packageManager: PackageManager = applicationContext.packageManager
+
+    /**
+     * A cache to store the results of handler queries. The key is a combination of intent action
+     * and MIME type, and the value is a map of [ComponentName] to [HandlerStatus].
+     */
+    private val cache = MutableStateFlow<Map<String, Map<ComponentName, HandlerStatus>>>(emptyMap())
 
     private val _updateEvents = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-    val updateEvents: SharedFlow<Unit> = _updateEvents
+
+    /**
+     * A LiveData to emit update events. This is used to notify the UI to invalidate menus when the
+     * cache is updated.
+     */
+    val updateEvents: LiveData<Unit> = _updateEvents.asLiveData()
 
     /** A set of package names that are approved document handlers, loaded from resources. */
     private val approvedPackages: Set<String> = getPackageNames().toSet()
@@ -121,20 +142,23 @@ class ApprovedDocHandlers(
     private val isMonitoring = AtomicBoolean(false)
 
     private sealed interface CacheUpdateOp {
-        data class Remove(val packageName: String, val userId: UserId) : CacheUpdateOp
+        data class Remove(val packageName: String) : CacheUpdateOp
 
-        data class MarkOutdated(val packageName: String, val userId: UserId) : CacheUpdateOp
+        data class MarkOutdated(val packageName: String) : CacheUpdateOp
 
-        data class Add(
-            val userId: UserId,
-            val key: String,
-            val handlers: List<ApprovedDocHandler>,
-        ) : CacheUpdateOp
+        data class Add(val key: String, val handlers: List<ApprovedDocHandler>) : CacheUpdateOp
     }
 
     companion object {
         private const val TAG = "ApprovedDocHandlers"
         public const val AS_BUTTON_METADATA_KEY = "android.approvedtarget.as_button"
+        // A unique ID used to group menu items created for approved document handlers.
+        private val HANDLER_GROUP_ID = View.generateViewId()
+
+        // The maximum number of buttons to show in the action bar as agreed in the design.
+        public const val NUMBER_OF_BUTTONS = 1
+        // The maximum number of menu items to show in the menu as agreed in the design.
+        public const val NUMBER_OF_MENU_ITEMS = 2
     }
 
     /**
@@ -160,12 +184,12 @@ class ApprovedDocHandlers(
     private fun applyCacheUpdate(op: CacheUpdateOp) {
         when (op) {
             is CacheUpdateOp.Remove -> {
-                updateCacheForPackage(op.packageName, op.userId) { status ->
+                updateCacheForPackage(op.packageName) { status ->
                     status.copy(isSupported = false, isOutdated = false)
                 }
             }
             is CacheUpdateOp.MarkOutdated -> {
-                updateCacheForPackage(op.packageName, op.userId) { status ->
+                updateCacheForPackage(op.packageName) { status ->
                     status.copy(
                         isOutdated = true,
                         handler = status.handler?.copy(isEnabled = false),
@@ -183,9 +207,7 @@ class ApprovedDocHandlers(
                         newHandlersMap[handler.componentName] =
                             HandlerStatus(isSupported = true, isOutdated = false, handler = handler)
                     }
-                    val userCache = currentCache[op.userId] ?: emptyMap()
-                    val updatedUserCache = userCache + (op.key to newHandlersMap)
-                    currentCache + (op.userId to updatedUserCache)
+                    currentCache + (op.key to newHandlersMap)
                 }
             }
         }
@@ -194,12 +216,10 @@ class ApprovedDocHandlers(
 
     private fun updateCacheForPackage(
         packageName: String,
-        userId: UserId,
         updateStatus: (HandlerStatus) -> HandlerStatus,
     ) {
         cache.update { currentCache ->
-            val userCache = currentCache[userId] ?: return@update currentCache
-            val updatedUserCache = userCache.mapValues { (_, handlers) ->
+            currentCache.mapValues { (_, handlers) ->
                 handlers.mapValues { (component, status) ->
                     if (component.packageName == packageName) {
                         updateStatus(status)
@@ -208,7 +228,6 @@ class ApprovedDocHandlers(
                     }
                 }
             }
-            currentCache + (userId to updatedUserCache)
         }
     }
 
@@ -219,46 +238,32 @@ class ApprovedDocHandlers(
      * @return A [Flow] that emits a [CacheUpdateOp].
      */
     private fun createPackageChangeFlow(): Flow<CacheUpdateOp> = callbackFlow {
-        val callback =
-            object : LauncherApps.Callback() {
-                override fun onPackageAdded(packageName: String, userHandle: UserHandle) {
-                    if (packageName in approvedPackages) {
-                        trySend(CacheUpdateOp.MarkOutdated(packageName, UserId.of(userHandle)))
+        val receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    val packageName = intent.data?.schemeSpecificPart
+                    val action = intent.action
+                    if (packageName != null && action != null && packageName in approvedPackages) {
+                        val op =
+                            if (action == Intent.ACTION_PACKAGE_REMOVED) {
+                                CacheUpdateOp.Remove(packageName)
+                            } else {
+                                CacheUpdateOp.MarkOutdated(packageName)
+                            }
+                        trySend(op)
                     }
-                }
-
-                override fun onPackageChanged(packageName: String, userHandle: UserHandle) {
-                    if (packageName in approvedPackages) {
-                        trySend(CacheUpdateOp.MarkOutdated(packageName, UserId.of(userHandle)))
-                    }
-                }
-
-                override fun onPackageRemoved(packageName: String, userHandle: UserHandle) {
-                    if (packageName in approvedPackages) {
-                        trySend(CacheUpdateOp.Remove(packageName, UserId.of(userHandle)))
-                    }
-                }
-
-                override fun onPackagesAvailable(
-                    packageNames: Array<out String>,
-                    userHandle: UserHandle,
-                    replacing: Boolean,
-                ) {
-                    // Handled by individual package events.
-                }
-
-                override fun onPackagesUnavailable(
-                    packageNames: Array<out String>,
-                    userHandle: UserHandle,
-                    replacing: Boolean,
-                ) {
-                    // Handled by individual package events.
                 }
             }
-        CrossProfileUtils.registerPackageUpdateCallback(applicationContext, callback)
-        awaitClose {
-            CrossProfileUtils.unregisterPackageUpdateCallback(applicationContext, callback)
-        }
+        val filter =
+            IntentFilter().apply {
+                addAction(Intent.ACTION_PACKAGE_ADDED)
+                addAction(Intent.ACTION_PACKAGE_CHANGED)
+                addAction(Intent.ACTION_PACKAGE_REMOVED)
+                addAction(Intent.ACTION_PACKAGE_REPLACED)
+                addDataScheme("package")
+            }
+        applicationContext.registerReceiver(receiver, filter)
+        awaitClose { applicationContext.unregisterReceiver(receiver) }
     }
 
     /**
@@ -318,67 +323,54 @@ class ApprovedDocHandlers(
      * @param intent The [Intent] to query for.
      * @return A list of [ApprovedDocHandler] objects.
      */
-    private fun queryApprovedHandlers(
-        intent: Intent,
-        pm: PackageManager,
-    ): List<ApprovedDocHandler> {
+    private fun queryApprovedHandlers(intent: Intent): List<ApprovedDocHandler> {
         val resolveInfos =
-            pm.queryIntentActivities(
+            packageManager.queryIntentActivities(
                 intent,
                 PackageManager.MATCH_ALL or PackageManager.GET_META_DATA,
             )
-        return convertToHandlers(resolveInfos, pm)
+        return convertToHandlers(resolveInfos)
     }
 
     /**
-     * Retrieves a Flow of approved document handlers that can handle the given selection, and
+     * Retrieves a list of approved document handlers that can handle the given selection, and
      * updates the cache with the results.
      *
      * @param selectionDetails The details about the current selection of documents.
-     * @return A Flow emitting a list of [ApprovedDocHandler]s that can handle the selection.
+     * @return A list of [ApprovedDocHandler]s that can handle the selection.
      */
-    fun getApprovedDocHandlersFlow(
+    fun getApprovedDocHandlers(
         selectionDetails: MenuManager.SelectionDetails
-    ): Flow<List<ApprovedDocHandler>> {
+    ): List<ApprovedDocHandler> {
         if (approvedPackages.isEmpty()) {
-            return flowOf(emptyList())
+            return emptyList()
         }
 
-        val user = injector.actions?.selectedUser ?: UserId.CURRENT_USER
         startMonitoring()
 
         val intent = createIntentForSelection(selectionDetails)
-        val pm = user.getPackageManager(applicationContext)
         val key = "${intent.action}:${intent.type}"
-        val loadingKey = "$user:$key"
 
-        return flow {
-            cache.collect { currentCache ->
-                val handlersMap = currentCache[user]?.get(key)
-                if (handlersMap != null && handlersMap.values.none { it.isOutdated }) {
-                    emit(handlersMap.values.mapNotNull { if (it.isSupported) it.handler else null })
-                    return@collect
+        val handlersMap = cache.value[key]
+        if (handlersMap != null && handlersMap.values.none { it.isOutdated }) {
+            return handlersMap.values.mapNotNull { if (it.isSupported) it.handler else null }
+                ?: emptyList()
+        }
+
+        // If it's outdated or not in the cache, query the package manager.
+        // If it's already loading, don't query again, just wait for the cache to update.
+        if (loadingKeys.add(key)) {
+            viewModelScope.launch(ioDispatcher) {
+                try {
+                    val approvedHandlers = queryApprovedHandlers(intent)
+                    applyCacheUpdate(CacheUpdateOp.Add(key, approvedHandlers))
+                } finally {
+                    loadingKeys.remove(key)
                 }
-
-                // If it's outdated or not in the cache, query the package manager.
-                // If it's already loading, don't query again, just wait for the cache to update.
-                if (loadingKeys.add(loadingKey)) {
-                    viewModelScope.launch(ioDispatcher) {
-                        try {
-                            val approvedHandlers = queryApprovedHandlers(intent, pm)
-                            applyCacheUpdate(CacheUpdateOp.Add(user, key, approvedHandlers))
-                        } finally {
-                            loadingKeys.remove(loadingKey)
-                        }
-                    }
-                }
-
-                emit(
-                    handlersMap?.values?.mapNotNull { if (it.isSupported) it.handler else null }
-                        ?: emptyList()
-                )
             }
         }
+        return handlersMap?.values?.mapNotNull { if (it.isSupported) it.handler else null }
+            ?: emptyList()
     }
 
     /**
@@ -387,16 +379,13 @@ class ApprovedDocHandlers(
      * @param resolveInfos The list of [ResolveInfo] objects to convert.
      * @return A list of [ApprovedDocHandler] objects.
      */
-    private fun convertToHandlers(
-        resolveInfos: List<ResolveInfo>,
-        pm: PackageManager,
-    ): List<ApprovedDocHandler> {
+    private fun convertToHandlers(resolveInfos: List<ResolveInfo>): List<ApprovedDocHandler> {
         return buildList {
             for (resolveInfo in resolveInfos) {
                 val activityInfo = resolveInfo.activityInfo
                 if (activityInfo.packageName in approvedPackages) {
                     val componentName = ComponentName(activityInfo.packageName, activityInfo.name)
-                    val label = activityInfo.loadLabel(pm)?.toString()
+                    val label = activityInfo.loadLabel(packageManager)?.toString()
                     if (label == null) {
                         Log.w(
                             TAG,
@@ -408,10 +397,110 @@ class ApprovedDocHandlers(
                     val isButton: Boolean =
                         resolveInfo.activityInfo.metaData?.getBoolean(AS_BUTTON_METADATA_KEY) ==
                             true
-                    val icon: Drawable? = if (isButton) activityInfo.loadIcon(pm) else null
+                    val icon: Drawable? =
+                        if (isButton) activityInfo.loadIcon(packageManager) else null
                     add(ApprovedDocHandler(componentName, label, isButton, icon, true))
                 }
             }
+        }
+    }
+
+    /**
+     * Updates the provided menu with actions from approved document handlers. This method
+     * dynamically adds or removes menu items based on the available approved document handlers and
+     * the current selection.
+     *
+     * @param menu The menu to be updated.
+     * @param selectionDetails Details about the current selection of documents.
+     */
+    fun updateApprovedDocHandlerMenus(menu: Menu, selectionDetails: MenuManager.SelectionDetails) {
+        val approvedDocHandlersMap = getApprovedDocHandlers(selectionDetails)
+
+        // The handlers set to be buttons with an icon will attempt to be populated as action
+        // buttons first, if more button handlers exist than available button slots or if the button
+        // handlers do not have an icon, then the remaining button handlers will fall back to be
+        // populated as menu items, however still be prioritized over the rest of the handlers.
+        val (potentialButtons, others) =
+            approvedDocHandlersMap.partition { it.isButton && it.icon != null }
+        val (prioritizedHandlers, regularHandlers) = others.partition { it.isButton }
+        val actionButtonHandlers = potentialButtons.take(NUMBER_OF_BUTTONS)
+        // Priority of menu items:
+        // 1. Action buttons that don't fit in the button slots.
+        // 2. Handlers registered as buttons but don't have an icon.
+        // 3. Handlers registered as menu items.
+        val menuHandlers =
+            (potentialButtons.drop(NUMBER_OF_BUTTONS) + prioritizedHandlers + regularHandlers).take(
+                NUMBER_OF_MENU_ITEMS
+            )
+
+        // The handlers to be shown in the menu.
+        val targetHandlersMap =
+            (actionButtonHandlers + menuHandlers).associateBy { it.componentName }
+        // The handlers to be removed from the menu.
+        val toRemove = mutableListOf<Int>()
+        // The handlers that are already in the menu.
+        val foundComponents = mutableSetOf<ComponentName>()
+
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item.groupId != HANDLER_GROUP_ID) {
+                continue
+            }
+            val component = item.intent?.component
+            val handler = targetHandlersMap[component]
+
+            if (component == null || handler == null) {
+                toRemove.add(item.itemId)
+                continue
+            }
+
+            val newIntent = injector.actions.createApprovedHandlerIntent(component)
+            if (newIntent != null) {
+                item.intent = newIntent
+                item.isEnabled = handler.isEnabled
+                // Update the label in case it has changed due to package changes.
+                item.title = handler.label
+
+                // If the handler is an action button handler, set the icon and show as action
+                // if room. Otherwise make sure it's shown as a menu item.
+                val isActionButton = handler in actionButtonHandlers
+                item.icon = if (isActionButton) handler.icon else null
+                item.setShowAsAction(
+                    if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    else MenuItem.SHOW_AS_ACTION_NEVER
+                )
+                foundComponents.add(component)
+            } else {
+                // If the intent is null, the handler is not valid.
+                // This can happen when selection is cleared before the menu is updated.
+                toRemove.add(item.itemId)
+            }
+        }
+
+        toRemove.forEach { menu.removeItem(it) }
+
+        // Add new handlers.
+        for (handlerComponent in targetHandlersMap.keys) {
+            if (handlerComponent in foundComponents) {
+                continue
+            }
+            val intent = injector.actions.createApprovedHandlerIntent(handlerComponent)
+            if (intent == null) {
+                // If the intent is null, the handler is not valid.
+                // This can happen when selection is cleared before the menu is updated.
+                continue
+            }
+            val handler = targetHandlersMap[handlerComponent]!!
+            val item = menu.add(HANDLER_GROUP_ID, View.generateViewId(), Menu.NONE, handler.label)
+            item.intent = intent
+            item.isEnabled = handler.isEnabled
+
+            val isActionButton = handler in actionButtonHandlers
+            item.icon = if (isActionButton) handler.icon else null
+            item.setShowAsAction(
+                if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
+                else MenuItem.SHOW_AS_ACTION_NEVER
+            )
         }
     }
 }

@@ -259,7 +259,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private float mLiveScale = 1.0f;
     private @ViewMode int mMode;
     private int mAppBarHeight;
-    private int mBottomOverlayHeight;
+    private int mSaveLayoutHeight;
 
     private View mProgressBar;
 
@@ -300,7 +300,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private final ViewTreeObserver.OnPreDrawListener mToolbarPreDrawListener = () -> {
         final boolean appBarHeightChanged = mAppBarHeight != getAppBarLayoutHeight();
-        if (appBarHeightChanged || mBottomOverlayHeight != getBottomOverlayHeight()) {
+        if (appBarHeightChanged || mSaveLayoutHeight != getSaveLayoutHeight()) {
             updateLayout(mState.derivedMode);
 
             if (appBarHeightChanged) {
@@ -1211,7 +1211,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private void updateLayout(@ViewMode int mode) {
         mMode = mode;
         mAppBarHeight = getAppBarLayoutHeight();
-        mBottomOverlayHeight = getBottomOverlayHeight();
+        mSaveLayoutHeight = getSaveLayoutHeight();
 
         if (isUseMaterial3FlagEnabled()) {
             if (mode == MODE_GRID) {
@@ -1239,16 +1239,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                         .getDimensionPixelSize(
                                                 getRes(R.dimen.grid_container_padding_bottom))
                                 - itemMarg;
-                mRecView.setPadding(leftPad, topPad + mAppBarHeight, rightPad, botPad);
+                mRecView.setPadding(leftPad, topPad + mAppBarHeight, rightPad,
+                        botPad + mSaveLayoutHeight);
             } else {
                 int pad = getDirectoryPadding(mode);
-                // Add bottom padding to provide a blank space at the end of the list where the user
-                // can right-click, drag, etc.
                 int botPad =
                         getResources()
                                 .getDimensionPixelSize(
                                         getRes(R.dimen.list_container_padding_bottom));
-                mRecView.setPadding(pad, mAppBarHeight, pad, botPad);
+                mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight + botPad);
             }
             mColumnCount = calculateColumnCount(mode);
             if (mLayout != null) {
@@ -1260,7 +1259,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 mLayout.setSpanCount(mColumnCount);
             }
             int pad = getDirectoryPadding(mode);
-            mRecView.setPadding(pad, mAppBarHeight, pad, mBottomOverlayHeight);
+            mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
         }
 
         if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
@@ -1285,12 +1284,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         return collapsingBar == null ? 0 : appBarLayout.getHeight();
     }
 
-    /** Returns the height of any UI components that overlap the bottom of the directory list. */
-    private int getBottomOverlayHeight() {
+    private int getSaveLayoutHeight() {
+        // When use_material3 flag is on, the bottom section not only includes the container_save,
+        // but also includes the breadcrumb and the divider, so we need to use the total height
+        // for their parent container.
         if (isUseMaterial3FlagEnabled()) {
-            // The bottom bar is laid out as a sibling rather than an overlay so there is no
-            // overlap.
-            return 0;
+            View bottomSection = getBaseActivity().findViewById(getRes(R.id.bottom_container));
+            return bottomSection == null ? 0 : bottomSection.getHeight();
         }
         View containerSave = getBaseActivity().findViewById(getRes(R.id.container_save));
         return containerSave == null ? 0 : containerSave.getHeight();

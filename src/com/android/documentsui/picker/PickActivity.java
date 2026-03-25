@@ -53,6 +53,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.ActionModeController;
 import com.android.documentsui.BaseActivity;
@@ -68,6 +70,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.UserManagerProvider;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.MimeTypes;
@@ -84,6 +87,8 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
+
+import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -284,7 +289,6 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
         mSharedInputHandler =
                 new SharedInputHandler(
-                        this,
                         mInjector.focusManager,
                         mInjector.selectionMgr,
                         mInjector.searchManager::cancelSearch,

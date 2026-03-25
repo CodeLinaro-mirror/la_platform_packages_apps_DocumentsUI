@@ -71,7 +71,6 @@ import com.android.documentsui.actions.WaitUntilExistsInRecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import junit.framework.AssertionFailedError;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
@@ -267,13 +266,6 @@ public class UiBot extends Bots.BaseBot {
         // In grid mode, there should be the list mode button that is visible.
         final UiObject2 listModeBtn = menuListMode();
         assertNotNull(listModeBtn);
-    }
-
-    /** Checks that the current view state is in grid mode. */
-    public boolean isInGridMode() {
-        // In grid mode, there should be the list mode button that is visible.
-        final UiObject2 listModeBtn = menuListMode();
-        return listModeBtn != null;
     }
 
     public void switchToListMode() {
