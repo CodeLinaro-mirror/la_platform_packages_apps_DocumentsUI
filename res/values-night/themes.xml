@@ -17,6 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="LauncherTheme" parent="DocumentsTheme">
         <item name="android:windowBackground">@drawable/launcher_screen_night</item>
+        <item name="colorSearchBarBackground">@color/search_bar_background_dark</item>
     </style>
     <style name="DocumentsTheme" parent="@android:style/Theme.DeviceDefault.DocumentsUI">
 
