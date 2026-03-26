@@ -167,6 +167,10 @@ public class SharedInputHandler {
             return true;
         }
 
+        if (isUseMaterial3FlagEnabled()) {
+            mFocusManager.clearFocus();
+        }
+
         if (mSelectionMgr.hasSelection()) {
             if (DEBUG) {
                 Log.d(TAG, "ESC pressed. Clearing existing selection.");

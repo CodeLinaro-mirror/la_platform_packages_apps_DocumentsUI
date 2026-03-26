@@ -237,6 +237,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                     new SelectionBarController(
                             findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
+                            mInjector.focusManager,
                             mInjector.menuManager,
                             mInjector.selectionMgr);
         } else {
