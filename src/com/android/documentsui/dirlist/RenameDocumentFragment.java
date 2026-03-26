@@ -17,6 +17,8 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.TAG;
+import static com.android.documentsui.util.FileUtils.getFirstInvalidCharIndex;
+import static com.android.documentsui.util.FileUtils.sanitizeFileName;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -48,6 +50,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.ui.Snackbars;
+import com.android.documentsui.util.FileUtils;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
@@ -216,64 +219,30 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
     }
 
     private void renameDocuments(String newDisplayName) {
+        if (newDisplayName == null) {
+            return;
+        }
         BaseActivity activity = (BaseActivity) getActivity();
 
-        final int invalidCharIdx = getFirstInvalidCharIndex(newDisplayName);
-        if (isUseMaterial3FlagEnabled() && invalidCharIdx != -1) {
-            mRenameInputWrapper.setError(
-                    getContext().getString(getRes(R.string.rename_invalid_character))
-                            + newDisplayName.charAt(invalidCharIdx));
-        } else if (newDisplayName.equals(mDocument.displayName)) {
+        try {
+            newDisplayName = sanitizeFileName(newDisplayName);
+        } catch (FileUtils.InvalidNameError error) {
+            mRenameInputWrapper.setError(error.getTranslatedError(getContext()));
+            return;
+        }
+
+        if (newDisplayName.equals(mDocument.displayName)) {
             mDialog.dismiss();
-        } else if (newDisplayName.isEmpty()) {
-            mRenameInputWrapper.setError(
-                    getContext().getString(getRes(R.string.missing_rename_error)));
         } else if (activity.getInjector().getModel().hasFileWithName(newDisplayName)) {
             mRenameInputWrapper.setError(getContext().getString(getRes(R.string.name_conflict)));
             selectFileName(mEditText);
         } else {
-            // Trim trailing spaces if there are any.
-            newDisplayName = newDisplayName.replaceAll("\\s+$", "");
             new RenameDocumentsTask(activity, newDisplayName).execute(mDocument);
             if (mDialog != null) {
                 mDialog.dismiss();
             }
             activity.getInjector().selectionMgr.clearSelection();
         }
-
-    }
-
-    /**
-     * Returns the index of the first occurrence of an invalid character in a filename.
-     *
-     * @param filename The filename string to be validated.
-     * @return The index of the first invalid character found. Returns -1 if no invalid characters
-     *     exist, or if the input is null.
-     */
-    private int getFirstInvalidCharIndex(String filename) {
-        if (filename == null) {
-            return -1;
-        }
-
-        for (int i = 0; i < filename.length(); i++) {
-            final char c = filename.charAt(i);
-            switch (c) {
-                case '"':
-                case '*':
-                case '/':
-                case ':':
-                case '<':
-                case '>':
-                case '?':
-                case '\\':
-                case '|':
-                case 0x7F:
-                    return i;
-                default:
-                    continue;
-            }
-        }
-        return -1;
     }
 
     private class RenameDocumentsTask extends AsyncTask<DocumentInfo, Void, DocumentInfo> {
