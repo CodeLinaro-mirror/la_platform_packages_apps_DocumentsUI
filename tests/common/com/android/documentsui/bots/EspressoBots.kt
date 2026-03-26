@@ -53,10 +53,7 @@ fun openRoot(context: Context, label: String, @LayoutRes layoutId: Int?) {
  * given label.
  */
 fun documentMatcher(label: String?): Matcher<View> {
-    return Matchers.allOf(
-        ViewMatchers.withId(R.id.item_root),
-        ViewMatchers.hasDescendant(withText(label)),
-    )
+    return Matchers.allOf(withId(R.id.item_root), ViewMatchers.hasDescendant(withText(label)))
 }
 
 /** Wait for the document with the given label to exist. */
@@ -77,7 +74,8 @@ fun findDocument(label: String?, timeout: Long): ViewInteraction {
 }
 
 /** Perform the specified action on the item with the specified label in the directory list. */
-fun actionOnDocumentItem(label: String?, action: ViewAction) {
+fun actionOnDocumentItem(label: String?, action: ViewAction, timeout: Long) {
+    waitForDocument(label, timeout)
     val dirListMatcher = Matchers.allOf(withId(R.id.dir_list), isDisplayed())
 
     onView(dirListMatcher)
@@ -87,12 +85,6 @@ fun actionOnDocumentItem(label: String?, action: ViewAction) {
                 action,
             )
         )
-}
-
-/** Find the document with the given label and right click on it. */
-fun rightClickDocument(label: String?, timeout: Long) {
-    waitForDocument(label, timeout)
-    actionOnDocumentItem(label, rightClick())
 }
 
 /** Open the root with the given label, right click on it, and click the given menu option. */

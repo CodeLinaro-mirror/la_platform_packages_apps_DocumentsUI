@@ -84,7 +84,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Extract");
         assertExtractedArchive();
@@ -94,7 +93,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
@@ -133,7 +131,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
@@ -155,7 +152,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -166,7 +162,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));

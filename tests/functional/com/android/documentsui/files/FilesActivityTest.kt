@@ -16,6 +16,7 @@
 
 package com.android.documentsui.files
 
+import android.os.Build
 import android.platform.test.annotations.EnableFlags
 import android.view.KeyEvent
 import androidx.test.espresso.Espresso.onView
@@ -24,6 +25,7 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
+import androidx.test.filters.SdkSuppress
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.R
 import com.android.documentsui.StubProvider
@@ -36,6 +38,7 @@ import org.junit.Test
 
 @LargeTest
 @EnableFlags(FLAG_USE_MATERIAL3)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
 class FilesActivityTest : ActivityTestJunit4<FilesActivity>() {
 
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
