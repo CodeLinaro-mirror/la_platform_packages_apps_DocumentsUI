@@ -51,7 +51,6 @@
         <item name="contentInsetStart">@dimen/toolbar_content_inset_start</item>
         <item name="contentInsetStartWithNavigation">@dimen/toolbar_content_inset_start</item>
         <item name="titleMarginStart">@dimen/search_bar_text_margin_start_m3</item>
-        <item name="titleTextAppearance">@style/ToolbarTitleM3</item>
     </style>
 
     <style name="ThumbnailCardViewStyle" parent="@style/Widget.Material3.CardView.Outlined">
