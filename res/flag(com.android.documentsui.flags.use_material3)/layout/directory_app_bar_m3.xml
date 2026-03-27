@@ -77,7 +77,7 @@
                 android:layout_height="?android:attr/actionBarSize"
                 android:gravity="center_vertical"
                 android:text="@string/search_bar_hint"
-                android:textAppearance="@style/SearchBarTitleM3" />
+                android:textAppearance="@style/AppBarTitle" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
