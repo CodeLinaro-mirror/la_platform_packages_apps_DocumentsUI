@@ -233,7 +233,7 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
             selectFileName(mEditText);
         } else {
             // Trim trailing spaces if there are any.
-            newDisplayName = newDisplayName.trim();
+            newDisplayName = newDisplayName.replaceAll("\\s+$", "");
             new RenameDocumentsTask(activity, newDisplayName).execute(mDocument);
             if (mDialog != null) {
                 mDialog.dismiss();

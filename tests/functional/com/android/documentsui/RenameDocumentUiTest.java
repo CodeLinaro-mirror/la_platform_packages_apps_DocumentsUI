@@ -163,18 +163,19 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testRenameFile_TrimTrailingSpaces() throws Exception {
-        String nameWithSpace = newName + " ";
+        String inputNameText = " " + newName + " ";
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         clickRename();
 
         device.waitForIdle();
-        bots.main.setDialogText(nameWithSpace);
+        bots.main.setDialogText(inputNameText);
 
         device.waitForIdle();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
-        bots.directory.waitForDocument(newName);
+        // Ensure that only the end of the filename gets trimmed
+        bots.directory.waitForDocument(" " + newName);
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }

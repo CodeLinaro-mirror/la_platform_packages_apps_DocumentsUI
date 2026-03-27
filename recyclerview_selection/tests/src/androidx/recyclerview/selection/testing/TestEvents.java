@@ -220,6 +220,8 @@ public final class TestEvents {
         private Set<Integer> mKeys = new HashSet<>();
         private Point mLocation = new Point(0, 0);
         private Point mRawLocation = new Point(0, 0);
+        private long mTime = 1;
+        private long mDownTime = 1;
     }
 
     public static Builder builder() {
@@ -257,6 +259,24 @@ public final class TestEvents {
 
         public Builder location(int x, int y) {
             mState.mLocation = new Point(x, y);
+            return this;
+        }
+
+        /**
+         * Sets the time of the event that occurred. Time is used currently identify double taps on
+         * mouse events that fall within the double tap confirmation timeframe to enable fast
+         * selection latency.
+         */
+        public Builder time(long time) {
+            mState.mTime = time;
+            return this;
+        }
+
+        /**
+         * A MotionEvent captures both the current time and the time with the associated DOWN event.
+         */
+        public Builder downTime(long time) {
+            mState.mDownTime = time;
             return this;
         }
 
@@ -387,6 +407,26 @@ public final class TestEvents {
             return this;
         }
 
+        /**
+         * Copy all states from the event and reset internal `mState`, this is useful when we want
+         * to construct one event based on another with some additional changes.
+         */
+        public Builder copyFrom(MotionEvent e) {
+            mState.mToolType = e.getToolType(0);
+            PointerCoords coords = new PointerCoords();
+            e.getPointerCoords(0, coords);
+            mState.mLocation.x = (int) coords.x;
+            mState.mLocation.y = (int) coords.y;
+            mState.mButtons.add(e.getButtonState());
+            mState.mKeys.add(e.getMetaState());
+            mState.mTime = e.getEventTime();
+            mState.mDownTime = e.getDownTime();
+            mState.mAction = e.getAction();
+            mState.mSource = e.getSource();
+
+            return this;
+        }
+
         public MotionEvent build() {
 
             PointerProperties[] pointers = new PointerProperties[1];
@@ -409,22 +449,28 @@ public final class TestEvents {
                 keys |= key;
             }
 
+            // When the event being constructed is a DOWN event, both the mTime and mDownTime MUST
+            // be in sync.
+            if (mState.mAction == MotionEvent.ACTION_DOWN && mState.mDownTime != mState.mTime) {
+                mState.mDownTime = mState.mTime;
+            }
+
             return MotionEvent.obtain(
-                    0,     // down time
-                    1,     // event time
+                    mState.mDownTime, // down time
+                    mState.mTime, // event time
                     mState.mAction,
-                    1,  // pointerCount,
+                    1, // pointerCount,
                     pointers,
                     coords,
                     keys,
                     buttons,
-                    1.0f,            // x precision
-                    1.0f,            // y precision
-                    0,               // device id
-                    0,               // edge flags
-                    mState.mSource,  // int source,
-                    0                // int flags
-            );
+                    1.0f, // x precision
+                    1.0f, // y precision
+                    0, // device id
+                    0, // edge flags
+                    mState.mSource, // int source,
+                    0 // int flags
+                    );
         }
     }
 }

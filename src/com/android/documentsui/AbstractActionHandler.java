@@ -402,11 +402,21 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     /** Shows a dialog with the metadata of the selected document. */
     private void showGetInfoDialog(DocumentInfo doc) {
+        String summary = null;
+        if (mSummariesViewModel != null) {
+            SummaryProviderManager summaryProviderManager = mInjector.getSummaryProviderManager();
+            if (summaryProviderManager != null && summaryProviderManager.isEnabled()) {
+                String modelId = ModelId.build(doc.userId, doc.authority, doc.documentId);
+                summary = mSummariesViewModel.getSummaries().getValue().get(modelId);
+            }
+        }
+
         GetInfoDialogFragment.show(
                 mActivity.getSupportFragmentManager(),
                 doc,
                 mInjector.features.isDebugSupportEnabled()
-                        && (DEBUG || DebugFlags.getDocumentDetailsEnabled()));
+                        && (DEBUG || DebugFlags.getDocumentDetailsEnabled()),
+                summary);
     }
 
     private void showInspector(DocumentInfo doc) {

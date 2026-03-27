@@ -95,6 +95,37 @@ class GetInfoViewModelTest {
     // their values synchronously when evaluated.
     private val ioTestDispatcher = UnconfinedTestDispatcher(testDispatcher.scheduler)
 
+    /** Creates the GetInfoViewModel passing the default arguments that are members of test. */
+    private fun createGetInfoViewModel(
+        doc: DocumentInfo,
+        showDebug: Boolean = false,
+        summary: String? = null,
+    ) = GetInfoViewModel(application, doc, lookup, showDebug, summary, ioTestDispatcher)
+
+    private fun createDocumentInfo(
+        documentId: String = "testId",
+        displayName: String = "test.pdf",
+        mimeType: String = "application/pdf",
+        size: Long = 1024 * 1024 * 10,
+        lastModified: Long = 1234567890L,
+        authority: String = AUTHORITY,
+        flags: Int = 0,
+        summary: String? = null,
+    ): DocumentInfo {
+        return DocumentInfo().apply {
+            this.documentId = documentId
+            this.displayName = displayName
+            this.mimeType = mimeType
+            this.size = size
+            this.lastModified = lastModified
+            this.userId = UserId.DEFAULT_USER
+            this.authority = authority
+            this.flags = flags
+            this.summary = summary
+            this.derivedUri = DocumentsContract.buildDocumentUri(authority, documentId)
+        }
+    }
+
     @get:Rule private val mainDispatcherRule = MainDispatcherRule(testDispatcher)
 
     /**
@@ -114,10 +145,11 @@ class GetInfoViewModelTest {
             override fun contentToString() = expectedItem.toString()
         }
 
-        /** Partial match of just the label for a ListItem.Info. */
+        /** Partial match of just the label for a ListItem.Info or InfoSelectable. */
         data class InfoLabel(override val order: Int, val label: String) : ExpectedItem() {
             override fun matches(actual: ListItem): Boolean {
-                return actual is ListItem.Info && actual.label == label
+                return (actual is ListItem.Info && actual.label == label) ||
+                    (actual is ListItem.InfoSelectable && actual.label == label)
             }
 
             override fun contentToString() = "ListItem(label=$label, value=any())"
@@ -226,7 +258,11 @@ class GetInfoViewModelTest {
                 // return "<value ignored>" to ensure the assertion fails this row and the error
                 // message is descriptive.
                 is ExpectedItem.InfoLabel -> {
-                    if (actualItem is ListItem.Info && actualItem.label == expectation.label) {
+                    if (
+                        (actualItem is ListItem.Info && actualItem.label == expectation.label) ||
+                            (actualItem is ListItem.InfoSelectable &&
+                                actualItem.label == expectation.label)
+                    ) {
                         actualItem
                     } else {
                         // Create a "Target" item that will definitely cause a mismatch in the diff.
@@ -307,19 +343,7 @@ class GetInfoViewModelTest {
     @Test
     fun testStandardFile_WithDebug() =
         runTest(testDispatcher) {
-            val documentId = "testId"
-            val derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-            val doc =
-                DocumentInfo().apply {
-                    this.derivedUri = derivedUri
-                    this.authority = AUTHORITY
-                    this.documentId = documentId
-                    displayName = "test.pdf"
-                    mimeType = "application/pdf"
-                    size = 1024 * 1024 * 10
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                }
+            val doc = createDocumentInfo()
 
             val streamTypesProvider =
                 object : MockContentProvider() {
@@ -332,7 +356,7 @@ class GetInfoViewModelTest {
                 }
             contentResolver.addProvider(AUTHORITY, streamTypesProvider)
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, true, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc, showDebug = true)
             waitAndAssertOrderedItems(
                 viewModel,
                 5 + DEBUG_ITEM_COUNT,
@@ -356,17 +380,9 @@ class GetInfoViewModelTest {
     @Test
     fun testStandardFile_NoDebug() =
         runTest(testDispatcher) {
-            val doc =
-                DocumentInfo().apply {
-                    documentId = "testId"
-                    displayName = "test.pdf"
-                    mimeType = "application/pdf"
-                    size = 1024 * 1024 * 10
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                }
+            val doc = createDocumentInfo()
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 5,
@@ -382,16 +398,12 @@ class GetInfoViewModelTest {
     fun testDirectory() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    documentId = "testDirectoryId"
-                    displayName = "My Folder"
-                    mimeType = DocumentsContract.Document.MIME_TYPE_DIR
-                    size = 0
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    this.authority = AUTHORITY
-                    documentId = "myFolder"
-                }
+                createDocumentInfo(
+                    documentId = "testDirectoryId",
+                    displayName = "My Folder",
+                    mimeType = DocumentsContract.Document.MIME_TYPE_DIR,
+                    size = 0,
+                )
 
             val childrenProvider =
                 object : MockContentProvider() {
@@ -412,7 +424,7 @@ class GetInfoViewModelTest {
                 }
             contentResolver.addProvider(AUTHORITY, childrenProvider)
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 5,
@@ -428,22 +440,20 @@ class GetInfoViewModelTest {
     fun testPartialFile() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    documentId = ""
-                    displayName = "downloading.tmp"
-                    mimeType = "application/octet-stream"
-                    size = 500
-                    lastModified = 1234567890L
-                    flags = DocumentsContract.Document.FLAG_PARTIAL
-                    summary = "OriginalFilename.pdf"
-                    userId = UserId.DEFAULT_USER
-                }
+                createDocumentInfo(
+                    documentId = "",
+                    displayName = "downloading.tmp",
+                    mimeType = "application/octet-stream",
+                    size = 500,
+                    flags = DocumentsContract.Document.FLAG_PARTIAL,
+                    summary = "OriginalFilename.pdf",
+                )
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 6,
-                ExpectedItem.Exact(5, ListItem.Info("Summary", "OriginalFilename.pdf")),
+                ExpectedItem.Exact(5, ListItem.InfoSelectable("Summary", "OriginalFilename.pdf")),
             )
         }
 
@@ -451,33 +461,59 @@ class GetInfoViewModelTest {
     fun testNoLastModified() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    displayName = "test.pdf"
-                    mimeType = "application/pdf"
-                    size = 100
-                    lastModified = -1
-                    userId = UserId.DEFAULT_USER
-                }
+                createDocumentInfo(
+                    displayName = "test.pdf",
+                    mimeType = "application/pdf",
+                    size = 100,
+                    lastModified = -1,
+                )
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(viewModel, 4, ExpectedItem.InfoLabel(3, "Size"))
+        }
+
+    @Test
+    fun testGeneratedDescription_Provided() =
+        runTest(testDispatcher) {
+            val doc = createDocumentInfo(size = 100)
+
+            val viewModel = createGetInfoViewModel(doc, summary = "Generated Description")
+            waitAndAssertOrderedItems(
+                viewModel,
+                6,
+                ExpectedItem.Exact(5, ListItem.InfoSelectable("Summary", "Generated Description")),
+            )
+        }
+
+    @Test
+    fun testGeneratedDescription_FallbackToPartial() =
+        runTest(testDispatcher) {
+            val doc =
+                createDocumentInfo(
+                    size = 100,
+                    flags = DocumentsContract.Document.FLAG_PARTIAL,
+                    summary = "Legacy Summary",
+                )
+
+            val viewModel = createGetInfoViewModel(doc, summary = null)
+            waitAndAssertOrderedItems(
+                viewModel,
+                6,
+                ExpectedItem.Exact(5, ListItem.InfoSelectable("Summary", "Legacy Summary")),
+            )
         }
 
     @Test
     fun testAudioMetadata() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "audio"
-                    displayName = "song.mp3"
-                    mimeType = "audio/mpeg"
-                    size = 5000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "audio",
+                    displayName = "song.mp3",
+                    mimeType = "audio/mpeg",
+                    size = 5000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val audio =
@@ -489,7 +525,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_AUDIO, audio)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 9,
@@ -504,17 +540,13 @@ class GetInfoViewModelTest {
     fun testAudioMetadata_NullBundle() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "audio"
-                    displayName = "song.mp3"
-                    mimeType = "audio/mpeg"
-                    size = 5000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "audio",
+                    displayName = "song.mp3",
+                    mimeType = "audio/mpeg",
+                    size = 5000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             val provider =
                 object : MockContentProvider() {
@@ -528,7 +560,7 @@ class GetInfoViewModelTest {
                     }
                 }
             contentResolver.addProvider(AUTHORITY, provider)
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(viewModel, 5)
         }
 
@@ -536,24 +568,20 @@ class GetInfoViewModelTest {
     fun testAudioMetadata_DurationInt() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "audio"
-                    displayName = "song.mp3"
-                    mimeType = "audio/mpeg"
-                    size = 5000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "audio",
+                    displayName = "song.mp3",
+                    mimeType = "audio/mpeg",
+                    size = 5000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val audio = Bundle().apply { putInt(MediaMetadata.METADATA_KEY_DURATION, 60000) }
                 putBundle(Shared.METADATA_KEY_AUDIO, audio)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 7,
@@ -566,17 +594,13 @@ class GetInfoViewModelTest {
     fun testAudioMetadata_EmptyStrings_Hidden() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "audio_empty.mp3"
-                    displayName = "song.mp3"
-                    mimeType = "audio/mpeg"
-                    size = 5000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "audio_empty.mp3",
+                    displayName = "song.mp3",
+                    mimeType = "audio/mpeg",
+                    size = 5000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val audio =
@@ -589,7 +613,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_AUDIO, audio)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 5,
@@ -605,17 +629,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video.mp4"
-                    displayName = "video.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video.mp4",
+                    displayName = "video.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val video =
@@ -627,7 +647,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 8,
@@ -641,17 +661,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata_LongDuration() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video_long.mp4"
-                    displayName = "video_long.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video_long.mp4",
+                    displayName = "video_long.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val video =
@@ -663,7 +679,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
             waitAndAssertOrderedItems(
                 viewModel,
                 8,
@@ -678,17 +694,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata_Coordinates_Double() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video_coords.mp4"
-                    displayName = "video.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video_coords.mp4",
+                    displayName = "video.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             // Mock the format specifically for this test if needed, or rely on the setUp() mock
             // which currently returns "10.0, 20.0" for any coordinate input.
@@ -703,7 +715,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
 
             // Expected items:
             // 5 Standard (Header, Name, Type, Size, Modified)
@@ -722,17 +734,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata_Coordinates_Float() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video_coords_float.mp4"
-                    displayName = "video.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video_coords_float.mp4",
+                    displayName = "video.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val video =
@@ -745,7 +753,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
 
             waitAndAssertOrderedItems(
                 viewModel,
@@ -759,17 +767,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata_DimensionsAsString() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video_strings.mp4"
-                    displayName = "video.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video_strings.mp4",
+                    displayName = "video.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val video =
@@ -782,7 +786,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
 
             waitAndAssertOrderedItems(
                 viewModel,
@@ -797,17 +801,13 @@ class GetInfoViewModelTest {
     fun testVideoMetadata_InvalidCoordinates() =
         runTest(testDispatcher) {
             val doc =
-                DocumentInfo().apply {
-                    this.authority = AUTHORITY
-                    documentId = "video_invalid_coords.mp4"
-                    displayName = "video.mp4"
-                    mimeType = "video/mp4"
-                    size = 10000000
-                    lastModified = 1234567890L
-                    userId = UserId.DEFAULT_USER
-                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
-                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
-                }
+                createDocumentInfo(
+                    documentId = "video_invalid_coords.mp4",
+                    displayName = "video.mp4",
+                    mimeType = "video/mp4",
+                    size = 10000000,
+                    flags = DocumentsContract.Document.FLAG_SUPPORTS_METADATA,
+                )
 
             setupMetadataProvider {
                 val video =
@@ -818,7 +818,7 @@ class GetInfoViewModelTest {
                 putBundle(Shared.METADATA_KEY_VIDEO, video)
             }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            val viewModel = createGetInfoViewModel(doc)
 
             // Should NOT have coordinates item (Size should just contain the standard items)
             waitAndAssertOrderedItems(viewModel, 5)

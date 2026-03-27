@@ -26,6 +26,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.bots.EspressoBotsKt.actionOnDocumentItem;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -53,6 +54,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
@@ -66,6 +69,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.RightClickActionKt;
 import com.android.documentsui.actions.WaitUntilGone;
 import com.android.documentsui.actions.WaitUntilVisible;
 
@@ -488,14 +492,21 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Clicks the "X" cancel selection button. */
     public void clearSelection() {
-        int parentId =
-                isUseMaterial3FlagEnabled()
-                        ? R.id.selection_bar
-                        : androidx.appcompat.R.id.action_mode_bar;
-        int contentDescription =
-                isUseMaterial3FlagEnabled() ? R.string.clear_selection : android.R.string.cancel;
-        onView(allOf(withContentDescription(contentDescription), isDescendantOfA(withId(parentId))))
-                .perform(clickAndRetryOnLongPress());
+        boolean useMaterial3 = isUseMaterial3FlagEnabled();
+        int parentId = useMaterial3 ? R.id.selection_bar : androidx.appcompat.R.id.action_mode_bar;
+        int contentDescription = useMaterial3 ? R.string.clear_selection : android.R.string.cancel;
+        ViewInteraction interaction =
+                onView(
+                        allOf(
+                                withContentDescription(contentDescription),
+                                isDescendantOfA(withId(parentId))));
+
+        if (useMaterial3) {
+            interaction.perform(clickAndRetryOnLongPress());
+        } else {
+            // For non-material 3 a long press will still trigger a click.
+            interaction.perform(ViewActions.click());
+        }
     }
 
     public void pasteFilesFromClipboard() {
@@ -697,13 +708,13 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
     }
 
-    public void rightClickDocument(String label) throws UiObjectNotFoundException {
-        Rect startCoord = findDocument(label, true).getBounds();
-        rightClickDocument(new Point(startCoord.centerX(), startCoord.centerY()));
+    /** Right-clicks on the document with the given label. */
+    public void rightClickDocument(String label) {
+        actionOnDocumentItem(label, RightClickActionKt.rightClick(), mTimeout);
     }
 
-    public void rightClickDocument(Point point) throws UiObjectNotFoundException {
-        // TODO: Use Espresso instead of doing the events mock ourselves
+    /** Sends a right click at the given point. */
+    public void rightClick(Point point) {
         MotionEvent motionDown =
                 getTestRightClickMotionEvent(MotionEvent.ACTION_DOWN, point.x, point.y);
         mAutomation.injectInputEvent(motionDown, true);
