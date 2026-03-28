@@ -20,7 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.TAG;
 import static com.android.documentsui.util.FileUtils.InvalidNameError;
-import static com.android.documentsui.util.FileUtils.sanitizeName;
+import static com.android.documentsui.util.FileUtils.sanitizeDirectoryName;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
@@ -125,7 +125,7 @@ public class CreateDirectoryFragment extends DocumentsUIDialogFragment {
 
     private void createDirectory(String name) {
         try {
-            name = sanitizeName(name);
+            name = sanitizeDirectoryName(name);
             final BaseActivity activity = (BaseActivity) getActivity();
             final DocumentInfo cwd = activity.getCurrentDirectory();
 
