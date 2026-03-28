@@ -331,7 +331,6 @@ private fun initializeIdMapping() {
             R.style.MenuItemTextAppearance to R.style.MenuItemTextAppearanceM3,
             R.style.OverflowButtonStyle to R.style.OverflowButtonStyleM3,
             R.style.OverflowMenuStyle to R.style.OverflowMenuStyleM3,
-            R.style.SearchBarTitle to R.style.SearchBarTitleM3,
             R.style.SearchChipText to R.style.SearchChipTextM3,
             R.style.SnackbarButtonStyle to R.style.SnackbarButtonStyleM3,
             R.style.SortList to R.style.SortListM3,

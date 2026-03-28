@@ -33,6 +33,7 @@ import com.google.android.material.appbar.MaterialToolbar
 class SelectionBarController(
     private val appBar: MaterialToolbar,
     private val selectionBar: MaterialToolbar,
+    private val focusManager: FocusManager?,
     private val menuManager: MenuManager,
     private val selectionManager: DocsSelectionHelper,
 ) : SelectionTracker.SelectionObserver<String>() {
@@ -90,7 +91,10 @@ class SelectionBarController(
         selectionBar.setNavigationIcon(getRes(R.drawable.ic_cancel))
         selectionBar.setNavigationContentDescription(R.string.clear_selection)
         selectionBar.setOnMenuItemClickListener { menuItemClicker?.accept(it) == true }
-        selectionBar.setNavigationOnClickListener { closeSelectionBar() }
+        selectionBar.setNavigationOnClickListener {
+            closeSelectionBar()
+            focusManager?.clearFocus()
+        }
         updateSelectionMenu()
     }
 

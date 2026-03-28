@@ -77,7 +77,8 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
-    <style name="SearchBarTitleM3" parent="@style/TextAppearance.DocumentsUI.TitleLarge">
+    <!-- This is used for both the app bar title and the search bar title. -->
+    <style name="AppBarTitle" parent="@style/TextAppearance.DocumentsUI.TitleLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
@@ -105,6 +106,10 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched.
+         This is still used in the old inspector related XML layout files, which should be removed
+         during cleanup.
+    -->
     <style name="ToolbarTitleM3" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
