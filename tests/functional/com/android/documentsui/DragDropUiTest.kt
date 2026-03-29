@@ -52,14 +52,14 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         // Root_0 is selected by default.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
 
-        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val srcBounds = bots.directory.findDocumentBounds(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot(ROOT_1_ID)
 
-        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+        bots.gesture.dragAndDrop(srcBounds, dst.bounds)
 
         // Go to the new root and assert the file was copied.
         switchRoot(ROOT_1_ID)
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
     }
 
     @Test
@@ -70,10 +70,10 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         // Root_0 is selected by default.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
 
-        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val srcBounds = bots.directory.findDocumentBounds(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot(ROOT_1_ID)
 
-        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+        bots.gesture.dragAndDrop(srcBounds, dst.bounds)
 
         // The drop will trigger a copy because it's to a different root so the original file still
         // exists and selected.
@@ -81,7 +81,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Go to the new root and assert the file was copied.
         switchRoot(ROOT_1_ID)
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
     }
 
     @Test
@@ -92,14 +92,14 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         // Root_0 is selected by default.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
 
-        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val srcBounds = bots.directory.findDocumentBounds(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot("Broken Root Doc")
 
-        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+        bots.gesture.dragAndDrop(srcBounds, dst.bounds)
 
         // Go to the new root and assert the file was not copied.
         switchRoot("Broken Root Doc")
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1)
     }
 
     @Test
@@ -110,10 +110,10 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         // Root_0 is selected by default.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
 
-        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val srcBounds = bots.directory.findDocumentBounds(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot("Broken Root Doc")
 
-        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+        bots.gesture.dragAndDrop(srcBounds, dst.bounds)
 
         // The drop will fail because the destination root is broken but the selection remains when
         // use_material3 flag is on.
@@ -121,7 +121,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Go to the new root and assert the file was not copied.
         switchRoot("Broken Root Doc")
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1)
     }
 
     @Test
@@ -133,13 +133,13 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         // Trigger dragging directly without selecting the file. Note: for unselected file, using
         // the selection hotspot (e.g. the thumbnail) to trigger the drag is more stable.
         val src = bots.directory.findSelectionHotspot(TestFilesRule.FILE_NAME_1)
-        val dst = bots.directory.findDocument(TestFilesRule.DIR_NAME_1)
+        val dstBounds = bots.directory.findDocumentBounds(TestFilesRule.DIR_NAME_1)
 
-        bots.gesture.dragAndDrop(src.visibleBounds, dst.bounds)
+        bots.gesture.dragAndDrop(src.visibleBounds, dstBounds)
 
         // The file should be moved to the destination directory, so it doesn't exist in the
         // original directory.
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1)
 
         // Go to the destination directory and assert the file is there.
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)

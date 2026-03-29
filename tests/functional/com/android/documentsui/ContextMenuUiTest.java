@@ -240,7 +240,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(SELECT_ALL, true);
         menuItems.put(NEW_FOLDER, true);
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect dirBounds = bots.directory.findDocument(TestFilesRule.DIR_NAME_1).getBounds();
+        Rect dirBounds = bots.directory.findDocumentBounds(TestFilesRule.DIR_NAME_1);
 
         bots.main.switchToGridMode();
         // right side of dir1 area

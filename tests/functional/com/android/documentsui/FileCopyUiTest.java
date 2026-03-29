@@ -21,7 +21,6 @@ import static android.content.Context.RECEIVER_EXPORTED;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -240,24 +239,27 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         setNotificationAccess(false);
     }
 
-    private boolean createDocuments(String label, RootInfo root,
-            DocumentsProviderHelper helper) throws Exception {
-        if (TextUtils.isEmpty(label) || root == null) {
-            return false;
+    private void createDocuments(String label, RootInfo root, DocumentsProviderHelper helper)
+            throws Exception {
+        if (TextUtils.isEmpty(label)) {
+            Log.w(TAG, "Label is empty");
+            return;
+        }
+
+        if (root == null) {
+            Log.w(TAG, "Root is null");
+            return;
         }
 
         // If Test folder is already created, delete it
-        if (bots.directory.hasDocuments(TARGET_FOLDER)) {
+        if (bots.directory.hasDocument(TARGET_FOLDER)) {
             deleteDocuments(label);
         }
 
         // Create folder and create file in its folder
         switchRoot(label);
         Uri uri = helper.createFolder(root, TARGET_FOLDER);
-        device.waitForIdle();
-        if (!bots.directory.hasDocuments(TARGET_FOLDER)) {
-            return false;
-        }
+        bots.directory.waitForDocument(TARGET_FOLDER);
 
         loadImages(uri, helper);
 
@@ -269,18 +271,17 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         }
         assertTrue("Lack of loading file. File count = " + mTargetFileList.size(),
                 mTargetFileList.size() == TARGET_COUNT);
-
-        return true;
     }
 
-    private boolean deleteDocuments(String label, String targetFolder) throws Exception {
+    private void deleteDocuments(String label, String targetFolder) throws Exception {
         if (TextUtils.isEmpty(label)) {
-            return false;
+            Log.w(TAG, "Label is empty");
+            return;
         }
 
         switchRoot(label);
-        if (!bots.directory.hasDocuments(targetFolder)) {
-            return true;
+        if (!bots.directory.hasDocument(targetFolder)) {
+            return;
         }
 
         bots.directory.selectDocument(targetFolder, 1);
@@ -290,12 +291,11 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
-        bots.directory.findDocument(targetFolder).waitUntilGone(WAIT_TIME_SECONDS);
-        return !bots.directory.hasDocuments(targetFolder);
+        bots.directory.waitUntilDocumentDoesNotExist(targetFolder);
     }
 
-    private boolean deleteDocuments(String label) throws Exception {
-        return deleteDocuments(label, TARGET_FOLDER);
+    private void deleteDocuments(String label) throws Exception {
+        deleteDocuments(label, TARGET_FOLDER);
     }
 
     private void loadImages(Uri root, DocumentsProviderHelper helper) throws Exception {
@@ -421,7 +421,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         // Check that copied folder exists
         switchRoot(rootLabel);
         device.waitForIdle();
-        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
+        bots.directory.waitForDocument(TARGET_FOLDER);
 
         // Check that copied files exist
         DocumentInfo parent = helper.findDocument(rootInfo.documentId, TARGET_FOLDER);
@@ -441,7 +441,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check that original folder exists
         switchRoot(StubProvider.ROOT_0_ID);
-        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
+        bots.directory.waitForDocument(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(StubProvider.ROOT_1_ID, rootDir1, mDocsHelper);
@@ -455,7 +455,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check that original folder exists
         switchRoot(mSdCardLabel);
-        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
+        bots.directory.waitForDocument(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(mDeviceLabel, mPrimaryRoot, mStorageDocsHelper);
@@ -469,7 +469,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check that original folder exists
         switchRoot(mDeviceLabel);
-        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
+        bots.directory.waitForDocument(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(mSdCardLabel, mSdCardRoot, mStorageDocsHelper);
@@ -486,7 +486,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
                     switchRoot(StubProvider.ROOT_0_ID);
                 });
 
-        assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
+        bots.directory.assertDocumentDisabled(TestFilesRule.FILE_NAME_1);
 
         // Back to FilesActivity to do tear down action if necessary
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);

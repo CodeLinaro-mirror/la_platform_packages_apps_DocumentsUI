@@ -50,7 +50,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         dm.enqueue(new Request(Uri.parse("http://hammychamp.toodles")));
 
         switchRoot("Downloads");
-        bots.directory.assertDocumentsVisible("Queued");
+        bots.directory.waitForDocument("Queued");
     }
 
     @Ignore
@@ -62,7 +62,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         dm.enqueue(new Request(Uri.parse("http://www.google.com/hamfancy")));
 
         switchRoot("Downloads");
-        UiObject doc = bots.directory.findDocument("Unsuccessful");
+        UiObject doc = bots.directory.findDocumentUiObject("Unsuccessful");
         if (!doc.waitForExists(TIMEOUT)) {
             throw new UiObjectNotFoundException("Unsuccessful document not found after timeout");
         }
