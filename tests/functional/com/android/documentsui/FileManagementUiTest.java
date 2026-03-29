@@ -201,7 +201,6 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.clearSelection();
         }
 
-        device.waitForIdle();
         bots.directory.openDocument("Dir1");
         bots.directory.selectDocument("ChildDir1", 1);
 

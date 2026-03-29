@@ -28,6 +28,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.actions.TouchscreenTapActionKt.touchscreenTap;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -339,12 +340,9 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
     }
 
-    public void openDocument(String label) throws UiObjectNotFoundException {
-        int toolType = Configurator.getInstance().getToolType();
-        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-        UiObject doc = findDocumentUiObject(label);
-        doc.click();
-        Configurator.getInstance().setToolType(toolType);
+    /** Open the document with the given label. */
+    public void openDocument(String label) {
+        actionOnDocumentItem(label, touchscreenTap());
     }
 
     /**
@@ -515,7 +513,7 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     /** Returns the UiObject representing the document with the given label. */
-    public UiObject findDocumentUiObject(String label) throws UiObjectNotFoundException {
+    private UiObject findDocumentUiObject(String label) throws UiObjectNotFoundException {
         // Wait for the document to exist first.
         waitForDocument(label);
         final UiSelector docList = findDocumentsListSelector();
