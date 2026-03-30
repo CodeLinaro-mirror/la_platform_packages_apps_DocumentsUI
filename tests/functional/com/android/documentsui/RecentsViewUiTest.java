@@ -108,7 +108,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS, FLAG_USE_MATERIAL3,
             FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentsContainsAllFileTypes() throws Exception {
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
 
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_4);
@@ -121,7 +121,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
     public void testRecentsDoesNotContainAllFileTypes() throws Exception {
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
 
         // When the flag is disabled, DocumentsUI Recents should continue using the old combination
         // of multiple MediaDocumentsProvider and DownloadStorageProvider roots, which means that
@@ -137,7 +137,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1() throws Exception {
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
 
         // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
@@ -157,7 +157,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS, FLAG_USE_MATERIAL3,
             FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentFilesShowRenameOptions() throws Exception {
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
@@ -174,7 +174,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
     public void testRecentFilesDoNotShowRenameOptions() throws Exception {
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
@@ -193,7 +193,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // found by the new Recents implementation.
         final String testFileName = mTestFilesRule.createRandomFile("application/octet-stream");
 
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.search.doSearch(testFileName);
 
         bots.directory.waitForDocument(testFileName);
@@ -208,7 +208,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
 
         // Even pre-M3, DocsUI can run in large screen or small layout, and the way to activate
         // Search in Recent view differs between the two.
@@ -237,7 +237,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.waitForDocument(testFileName);
 
         // Check: the file can be successfully deleted.
@@ -256,24 +256,24 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.waitForDocument(testFileName);
 
         // Check: the random test file is not yet in Downloads.
-        bots.roots.openRoot("Downloads");
+        switchRoot("Downloads");
         bots.directory.waitUntilDocumentDoesNotExist(testFileName);
 
         // Move the file to Downloads.
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
         bots.main.doMove(
                 () -> {
-                    bots.roots.openRoot("Downloads");
+                    switchRoot("Downloads");
                 });
 
         // Check: the random test file is now in Downloads.
-        bots.roots.openRoot("Downloads");
+        switchRoot("Downloads");
         bots.directory.waitForDocument(testFileName);
     }
 
@@ -289,10 +289,11 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         bots.directory.waitForDocument(testFileName);
 
         // Check: the "Move to" item is not visible in the context menu.
+        switchRoot("Recent");
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
         bots.main.openOverflowMenu();
@@ -326,7 +327,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             fileUri = createFileInDownloads(newFileName, "text/plain");
 
             // Move to the Recent view and wait for things to quiet down.
-            bots.roots.openRoot("Recent");
+            switchRoot("Recent");
             device.waitForIdle();
 
             // Select the newly created file and check the expected path.
@@ -359,7 +360,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             fileUri = createFileInDownloads(fileName, "video/mp4");
 
             // Move to the Recent view and wait for things to quiet down.
-            bots.roots.openRoot("Recent");
+            switchRoot("Recent");
             bots.search
                     .clickChip(R.string.chip_title_videos)
                     .perform(new WaitForCheckState(true, 1000L));
@@ -501,11 +502,11 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         mCloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
 
         // Is the file present in the root of the provider?
-        bots.roots.openRoot("Test Cloud Provider");
+        switchRoot("Test Cloud Provider");
         bots.directory.waitForDocument(fileName);
 
         // Is the file also present in recents?
-        bots.roots.openRoot("Recent");
+        switchRoot("Recent");
         if (shouldBePresent) {
             bots.directory.waitForDocument(fileName);
         } else {
