@@ -245,10 +245,6 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isUseApprovedDocumentHandlerEnabled(): Boolean {
-            // TODO(b/490258918): After API 37 finalisation replace with isAtLeastC.
-            if (!SdkLevel.isAtLeastB()) {
-                return false
-            }
             val flag =
                 getInstance()
                     .overrides

@@ -16,6 +16,7 @@
 package com.android.documentsui.dirlist
 
 import android.app.ActivityManager
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
@@ -147,7 +148,10 @@ class DirectoryFragmentTest {
         activity = mock(BaseActivity::class.java)
         val testDispatcher = StandardTestDispatcher()
         val ioTestDispatcher = UnconfinedTestDispatcher(testDispatcher.scheduler)
-        val summariesViewModel = SummariesViewModel(context.contentResolver, ioTestDispatcher)
+        val mockApp = mock(Application::class.java)
+        `when`(mockApp.contentResolver).thenReturn(context.contentResolver)
+        `when`(mockApp.applicationContext).thenReturn(mockApp)
+        val summariesViewModel = SummariesViewModel(mockApp, ioTestDispatcher)
         `when`(activity.displayState).thenReturn(env.state)
         `when`(activity.getInjector()).thenReturn(injector)
         `when`(activity.getSystemService(Context.ACTIVITY_SERVICE))

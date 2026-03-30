@@ -16,14 +16,13 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -34,6 +33,7 @@ import static org.hamcrest.CoreMatchers.not;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
@@ -49,6 +49,9 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitUntilVisible;
+
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Map;
 
@@ -130,12 +133,10 @@ public class MenuBot extends Bots.BaseBot {
     }
 
     /** Finds the list menu item with the given label, scrolling to it if necessary. */
-    private ViewInteraction findListMenuItem(String menuLabel) {
-        // A menu item has class name ListMenuItemView and a TextView with the given label.
-        return onView(
-                        allOf(
-                                withClassName(endsWith("ListMenuItemView")),
-                                hasDescendant(withText(menuLabel))))
+    public ViewInteraction findListMenuItem(String menuLabel) {
+        // onData scrolls to the item.
+        return onData(new MenuItemMatcher(menuLabel))
+                .inAdapterView(withClassName(endsWith("MenuDropDownListView")))
                 .inRoot(isPlatformPopup())
                 .perform(new WaitUntilVisible(mTimeout));
     }
@@ -172,6 +173,29 @@ public class MenuBot extends Bots.BaseBot {
     public void assertToolbarMenuItemsVisibleAndEnabled(@IdRes int... menuItemResIds) {
         for (int id : menuItemResIds) {
             findToolbarActionMenuItem(id).check(matches(isEnabled()));
+        }
+    }
+
+    /** Matcher used for finding a MenuItem. */
+    private static class MenuItemMatcher extends TypeSafeMatcher<Object> {
+        private final String mLabel;
+
+        MenuItemMatcher(String label) {
+            mLabel = label;
+        }
+
+        @Override
+        public boolean matchesSafely(Object item) {
+            if (!(item instanceof MenuItem menuItem)) {
+                return false;
+            }
+            final CharSequence title = menuItem.getTitle();
+            return title != null && mLabel.equalsIgnoreCase(title.toString());
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("with menu item title: " + mLabel);
         }
     }
 }

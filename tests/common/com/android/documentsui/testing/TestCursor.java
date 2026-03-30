@@ -18,7 +18,11 @@ package com.android.documentsui.testing;
 
 import android.database.MatrixCursor;
 
+import java.util.concurrent.CountDownLatch;
+
 public class TestCursor extends MatrixCursor {
+
+    private CountDownLatch mCloseLatch;
 
     public TestCursor(String[] columnNames) {
         super(columnNames);
@@ -26,5 +30,21 @@ public class TestCursor extends MatrixCursor {
 
     public void mockOnChange() {
         onChange(false);
+    }
+
+    public void setCloseLatch(CountDownLatch latch) {
+        mCloseLatch = latch;
+    }
+
+    @Override
+    public void close() {
+        if (mCloseLatch != null) {
+            try {
+                mCloseLatch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        super.close();
     }
 }
