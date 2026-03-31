@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Få oplysninger"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Vis skjulte filer"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Vis ikke skjulte filer"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Opdater"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Vis kolonnen med beskrivelse"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Vis ikke kolonnen med beskrivelse"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Se i <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Der kan højst deles <xliff:g id="COUNT">%1$d</xliff:g> filer"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Handlingen er ikke tilladt"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Handlingen er ikke tilladt"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Åbn med…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Der blev ikke fundet nogen app"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Der er ikke installeret nogen understøttede apps. Prøv at installere en fra Play Butik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Søg i Play Butik"</string>
     <string name="share_via" msgid="8725082736005677161">"Del via"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">Følgende filer blev konverteret til et andet format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Denne fil blev konverteret til et andet format:}one{Denne fil blev konverteret til et andet format:}other{Disse filer blev konverteret til et andet format:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# element er føjet til udklipsholderen}one{# element er føjet til udklipsholderen}other{# elementer er føjet til udklipsholderen}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Skrivebeskyttet"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Du kan se disse filer, men nogle handlinger understøttes ikke"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dette arkiv er placeret på en skrivebeskyttet lokation og kan ikke udpakkes her."</string>

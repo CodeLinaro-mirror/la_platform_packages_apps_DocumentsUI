@@ -51,6 +51,7 @@ import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFileTypeLookup;
+import com.android.documentsui.testing.TestModel;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.util.VersionUtils;
 
@@ -267,9 +268,10 @@ public class DirectoryAddonsAdapterTest {
         // Create a file to avoid the no items inflated message showing.
         mEnv.model.createFile("a.txt");
 
-        // Start offline, on a Cloud root which has limited functionality when offline.
+        // Start offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        // Set root that has limited functionality when offline.
+        ((TestModel) mTestEnvironment.getModel()).setHasLimitedFunctionalityWhenOffline(true);
         mEnv.model.update();
 
         // Check header is shown.
@@ -300,9 +302,9 @@ public class DirectoryAddonsAdapterTest {
         // Create a file to avoid the no items inflated message showing.
         mEnv.model.createFile("a.txt");
 
-        // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        // Set root that has limited functionality when offline.
+        ((TestModel) mTestEnvironment.getModel()).setHasLimitedFunctionalityWhenOffline(true);
 
         // Clear any default messages set by the model update
         mEnv.model.update();
@@ -319,17 +321,17 @@ public class DirectoryAddonsAdapterTest {
         // Create a file to avoid the no items inflated message showing.
         mEnv.model.createFile("a.txt");
 
-        // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        // Start with root that has limited functionality when offline.
+        ((TestModel) mTestEnvironment.getModel()).setHasLimitedFunctionalityWhenOffline(true);
         mEnv.model.update();
 
         // Check header is shown.
         assertEquals(mEnv.model.getItemCount() + 1, mAdapter.getItemCount());
         assertHolderType(0, DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE);
 
-        // Move to Downloads root which doesn't have limited functionality when offline.
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.DOWNLOADS);
+        // Move to root that doesn't have limited functionality when offline.
+        ((TestModel) mTestEnvironment.getModel()).setHasLimitedFunctionalityWhenOffline(false);
 
         // Send a model notification.
         mEnv.model.update();

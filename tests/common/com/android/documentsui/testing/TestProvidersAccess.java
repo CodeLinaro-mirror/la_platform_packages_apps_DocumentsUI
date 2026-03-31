@@ -411,6 +411,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         add(TEST_SHORTCUT);
         add(LIVE_IMAGES_SHORTCUT);
         add(OtherUser.LIVE_IMAGES_SHORTCUT);
+        add(getCloudRoot());
     }
 
     private void add(RootInfo root) {
@@ -435,6 +436,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         pm.addStubContentProviderForRoot(TestProvidersAccess.EXTERNALSTORAGE);
         pm.addStubContentProviderForRoot(TestProvidersAccess.NO_TREE_ROOT);
         pm.addStubContentProviderForRoot(TestProvidersAccess.LOCAL_SEARCH);
+        pm.addStubContentProviderForRoot(TestProvidersAccess.getCloudRoot());
     }
 
     @Override

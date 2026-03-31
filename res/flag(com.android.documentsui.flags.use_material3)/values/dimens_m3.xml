@@ -23,6 +23,7 @@
     <dimen name="profile_tab_padding_m3">0dp</dimen>
     <dimen name="grid_container_padding_m3">20dp</dimen>
     <dimen name="list_container_padding_m3">@dimen/space_extra_small_4</dimen>
+    <dimen name="list_container_padding_bottom">48dp</dimen>
     <dimen name="icon_size_m3">40dp</dimen>
     <dimen name="button_touch_size_m3">48dp</dimen>
     <dimen name="root_icon_size_m3">24dp</dimen>

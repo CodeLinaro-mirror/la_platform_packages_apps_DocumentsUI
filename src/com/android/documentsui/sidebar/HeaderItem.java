@@ -33,15 +33,17 @@ class HeaderItem extends Item {
     private static final String TAG = "HeaderItem";
 
     private static final String STRING_ID = "HeaderItem";
+    public String mTitle;
 
     HeaderItem(String title) {
-        super(getRes(R.layout.item_root_header), title, STRING_ID, UserId.UNSPECIFIED_USER);
+        super(getRes(R.layout.item_root_header), STRING_ID, UserId.UNSPECIFIED_USER);
+        mTitle = title;
     }
 
     @Override
     void bindView(View convertView) {
         final TextView titleView = convertView.findViewById(android.R.id.title);
-        titleView.setText(title);
+        titleView.setText(mTitle);
     }
 
     @Override

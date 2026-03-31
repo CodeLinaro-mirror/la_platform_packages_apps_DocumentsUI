@@ -55,10 +55,21 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         const val DIR_DISPLAY_NAME = "cloudDirDisplayName"
         const val SET_SYNC_STATE = "setSyncState"
         const val NULLIFY_SYNC_STATE = "nullifySyncState"
+        const val CLEAN_UP = "cleanUp"
         const val METHOD_DOC_ID_EXTRA = "documentId"
         const val METHOD_STATE_EXTRA = "syncState"
         private const val TAG = "TestCloudProvider"
         private val NOTIFY_URI = DocumentsContract.buildRootsUri(AUTHORITY)
+
+        // documentId -> Doc
+        private val DEFAULT_DOCUMENTS =
+            mapOf(
+                DOC_ID_0 to Doc(DISPLAY_NAME_0, 0, 0, "text/plain"),
+                DOC_ID_1 to Doc(DISPLAY_NAME_1, 0, 0, "text/plain"),
+                VIRTUAL_ID to
+                    Doc(VIRTUAL_DISPLAY_NAME, 0, Document.FLAG_VIRTUAL_DOCUMENT, "text/plain"),
+                DIR_ID to Doc(DIR_DISPLAY_NAME, 0, 0, Document.MIME_TYPE_DIR),
+            )
     }
 
     data class Doc(
@@ -68,15 +79,7 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         val mimeType: String,
     )
 
-    // documentId -> Doc
-    private val documents =
-        mutableMapOf<String, Doc>(
-            DOC_ID_0 to Doc(DISPLAY_NAME_0, 0, 0, "text/plain"),
-            DOC_ID_1 to Doc(DISPLAY_NAME_1, 0, 0, "text/plain"),
-            VIRTUAL_ID to
-                Doc(VIRTUAL_DISPLAY_NAME, 0, Document.FLAG_VIRTUAL_DOCUMENT, "text/plain"),
-            DIR_ID to Doc(DIR_DISPLAY_NAME, 0, 0, Document.MIME_TYPE_DIR),
-        )
+    private val documents = mutableMapOf<String, Doc>().apply { putAll(DEFAULT_DOCUMENTS) }
 
     private fun setSyncState(documentId: String?, syncState: Int?) {
         if (documentId == null) {
@@ -109,6 +112,11 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
                 setSyncState(extras!!.getString(METHOD_DOC_ID_EXTRA), null)
                 return null
             }
+            CLEAN_UP -> {
+                documents.clear()
+                documents.putAll(DEFAULT_DOCUMENTS)
+                return null
+            }
         }
         return null
     }
@@ -123,6 +131,8 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
     ): String? {
         val documentId = "docId${documents.count() + 1}"
         documents[documentId] = Doc(displayName, 0, 0, mimeType)
+        // Notify observers that there was a change to the directory list.
+        context?.contentResolver?.notifyChange(NOTIFY_URI, null)
         return documentId
     }
 
@@ -134,8 +144,9 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         val c = createDocCursor(projection)
         if (documentId == ROOT_ID) {
             // Return a folder for the case when the root is queried. The cases for when a file is
-            // queried are not covered.
-            addFolder(c, documentId)
+            // queried are not covered. Set FLAG_DIR_SUPPORTS_CREATE so that the Zip context menu
+            // action is enabled.
+            addFolder(c, documentId, Document.FLAG_DIR_SUPPORTS_CREATE)
         }
         return c
     }
@@ -145,6 +156,10 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         projection: Array<String>?,
         sortOrder: String?,
     ): Cursor {
+        // Only return files for the root.
+        if (parentDocumentId != ROOT_ID) {
+            return createDocCursor(projection)
+        }
         val cursor = buildCursorForDocumentList(projection)
         // Set the notificationUri so that the notifyChange calls trigger observers of this cursor.
         cursor.setNotificationUri(context?.contentResolver, NOTIFY_URI)

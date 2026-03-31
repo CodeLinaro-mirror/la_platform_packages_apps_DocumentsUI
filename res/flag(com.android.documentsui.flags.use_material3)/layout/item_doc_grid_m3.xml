@@ -14,7 +14,8 @@
      limitations under the License.
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.documentsui.dirlist.GridDocumentView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="@dimen/grid_width_m3"
@@ -22,7 +23,8 @@
     android:layout_margin="@dimen/grid_item_margin_m3"
     android:clickable="true"
     android:defaultFocusHighlightEnabled="false"
-    android:focusable="true">
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
 <!-- Main item thumbnail.  Comprised of two overlapping images, the
          visibility of which is controlled by code in
@@ -334,4 +336,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</com.android.documentsui.dirlist.GridDocumentView>

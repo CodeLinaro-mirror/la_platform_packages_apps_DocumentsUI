@@ -40,6 +40,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.net.Uri;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -66,6 +67,8 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import junit.framework.AssertionFailedError;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -84,6 +87,20 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final ExternalStorageProviderTestFilesRule mTestFilesRule =
             new ExternalStorageProviderTestFilesRule();
+
+    private DocumentsProviderHelper mCloudDocsHelper;
+
+    @Before
+    public void setUpTest() {
+        mCloudDocsHelper =
+                new DocumentsProviderHelper(
+                        userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
+    }
+
+    @After
+    public void tearDownTest() throws RemoteException {
+        mCloudDocsHelper.cleanUpProvider();
+    }
 
     /**
      * Ensure that Recents shows all file types if the flag is enabled.
@@ -499,14 +516,10 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private void createTestCloudProviderFileAndAssertPresenceInRecents(boolean shouldBePresent)
             throws Exception {
-        final DocumentsProviderHelper cloudDocsHelper =
-                new DocumentsProviderHelper(
-                        userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
-
         // Create a file with a random name in TestCloudProvider so we can ensure we're seeing it.
-        final RootInfo cloudRoot = cloudDocsHelper.getRoot(TestCloudProvider.ROOT_ID);
+        final RootInfo cloudRoot = mCloudDocsHelper.getRoot(TestCloudProvider.ROOT_ID);
         final String fileName = Long.toHexString(System.currentTimeMillis()) + ".txt";
-        cloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
+        mCloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
 
         // Is the file present in the root of the provider?
         bots.roots.openRoot("Test Cloud Provider");

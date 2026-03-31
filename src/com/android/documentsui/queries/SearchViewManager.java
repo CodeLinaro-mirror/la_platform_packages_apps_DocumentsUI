@@ -150,6 +150,7 @@ public class SearchViewManager implements
             mSearchOptionsController = searchOptionsController;
             mLocationOption = SearchLocationOption.ROOT_FOLDER;
             if (mSearchOptionsController != null) {
+                mSearchOptionsController.restoreState(savedState);
                 mSearchOptionsController.setOptionChangeListener(this::onSearchOptionsChanged);
             }
         }
@@ -450,8 +451,9 @@ public class SearchViewManager implements
         } else if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
         } else {
-            // Always show chips in search v2.
-            mChipViewManager.setChipsRowVisible(/* show */ true);
+            // Always show chips in search v2 as long as there is no current search query (i.e.
+            // don't show search options and chips both at the same time).
+            mChipViewManager.setChipsRowVisible(/* show */ !isSearching());
         }
     }
 
@@ -655,6 +657,9 @@ public class SearchViewManager implements
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
+        if (mSearchOptionsController != null) {
+            mSearchOptionsController.saveState(state);
+        }
     }
 
     /**
@@ -983,6 +988,9 @@ public class SearchViewManager implements
      * @return The subset of roots that can be searched.
      */
     private Collection<RootInfo> getAllSearchableRoots(Stream<RootInfo> roots) {
+        if (mSearchView == null) {
+            return Collections.emptyList();
+        }
         return roots.filter(
                         r ->
                                 !Providers.AUTHORITY_MEDIA.equals(r.authority)

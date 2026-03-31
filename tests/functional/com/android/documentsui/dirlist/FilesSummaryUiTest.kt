@@ -19,7 +19,6 @@ package com.android.documentsui.dirlist
 import android.net.Uri
 import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.BaseActivity
 import com.android.documentsui.DocumentsProviderHelper
@@ -30,10 +29,8 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
-import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.rules.OverrideFlagsRule
 import org.junit.Assert.assertNotNull
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -50,15 +47,6 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
     private var file: Uri? = null
     private var primaryRootTitle: String = ""
     private lateinit var localStorageHelper: DocumentsProviderHelper
-
-    @Before
-    override fun setUp() {
-        // Configure the preferences before launching the activity in the super setup.
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        // Start with the feature disabled.
-        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
-        super.setUp()
-    }
 
     @Throws(Exception::class)
     fun prepareProviderAndFile() {

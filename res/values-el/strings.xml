@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Λήψη πληροφοριών"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Εμφάνιση κρυφών αρχείων"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Μη εμφάνιση κρυφών αρχείων"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Ανανέωση"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Εμφάνιση στήλης περιγραφής"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Να μην εμφανίζεται η στήλη περιγραφής"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Προβολή σε <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Αδύνατη η κοινοποίηση περισσότερων από <xliff:g id="COUNT">%1$d</xliff:g> αρχείων."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Δεν επιτρέπεται η ενέργεια"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Δεν επιτρέπεται η ενέργεια"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Άνοιγμα με…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Δεν βρέθηκε εφαρμογή"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Δεν έχουν εγκατασταθεί υποστηριζόμενες εφαρμογές. Δοκιμάστε να εγκαταστήσετε μία από το Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Αναζήτηση στο Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Κοινοποίηση μέσω"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Αυτό το αρχείο μετατράπηκε σε άλλη μορφή: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Αυτό το αρχείο μετατράπηκε σε άλλη μορφή:}other{Αυτά τα αρχεία μετατράπηκαν σε άλλη μορφή:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Προστέθηκε # στοιχείο στο Πρόχειρο}other{Προστέθηκαν # στοιχεία στο Πρόχειρο}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Μόνο για ανάγνωση"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Μπορείτε να δείτε αυτά τα αρχεία, αλλά ορισμένες ενέργειες δεν υποστηρίζονται"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Το αρχείο βρίσκεται σε μια τοποθεσία μόνο για ανάγνωση και δεν είναι δυνατή η εξαγωγή του εδώ."</string>

@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"තොරතුරු ලබා ගන්න"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"සැඟවුණු ගොනු පෙන්වන්න"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"සැඟවුණු ගොනු නොපෙන්වන්න"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"නැවුම් කරන්න"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"විස්තර තීරුව පෙන්වන්න"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"විස්තර තීරුව නොපෙන්වන්න"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> තුළ බලන්න"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ගොනු <xliff:g id="COUNT">%1$d</xliff:g>කට වඩා බෙදා ගත නොහැකිය"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ක්‍රියාව ඉඩ නොදේ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ක්‍රියාවට අවසර නොදේ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"සමඟ විවෘත කරන්න…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"යෙදුමක් හමු නොවුණි"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"සහාය දක්වන යෙදුම් කිසිවක් ස්ථාපනය කර නැත. Play Store වෙතින් එකක් ස්ථාපනය කිරීමට උත්සාහ කරන්න."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store සෙවීම"</string>
     <string name="share_via" msgid="8725082736005677161">"බෙදාගන්නේ"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{මෙම ගොනුව වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}one{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}other{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{පසුරු පුවරුවට # අයිතමයක් එක් කරන ලදි}one{පසුරු පුවරුවට අයිතම #ක් එක් කරන ලදි}other{පසුරු පුවරුවට අයිතම #ක් එක් කරන ලදි}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"(කියවීම-පමණි)"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ඔබට මෙම ගොනු බැලීමට හැකි නමුත් සමහර ක්‍රියා සඳහා සහය නොදක්වයි"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"මෙම ලේඛනාගාරය කියවීමට පමණක් හැකි ස්ථානයක ඇති අතර මෙතැනින් උපුටා ගත නොහැක."</string>

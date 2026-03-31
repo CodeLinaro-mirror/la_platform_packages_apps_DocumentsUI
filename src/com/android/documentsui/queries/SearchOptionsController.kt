@@ -34,21 +34,44 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 /**
+ * Retrieves an enum of the given type. This wraps the deprecated API, on which we must rely due to
+ * DocsUI relying on API level 30.
+ */
+private inline fun <reified T : Enum<T>> retrieveEnum(key: String, bundle: Bundle, fallback: T): T {
+    return bundle.getSerializable(key) as T ?: fallback
+}
+
+/**
  * The controller for the search option dropdowns. This controller manages the UI interactions and
  * converts them to a state of the dropdowns. It must be created with the view that contains the
  * buttons that trigger showing or hiding of the dropdowns.
  */
 class SearchOptionsController(private val container: View?) {
     // The value of currently selected options. Initialized to sensible defaults.
-    private var lastModifiedOption: LastModifiedOption = LastModifiedOption.ANY_TIME
+    private var lastModifiedOption: LastModifiedOption = DEFAULT_LAST_MODIFIED
 
-    private var fileTypeOption: FileTypeOption = FileTypeOption.ANY_TYPE
-    private var locationOption: SearchLocationOption = SearchLocationOption.ROOT_FOLDER
+    private var fileTypeOption: FileTypeOption = DEFAULT_FILE_TYPE
+    private var locationOption: SearchLocationOption = DEFAULT_LOCATION
 
     // We dynamically set the name of the root folder, based on where in the directory tree
     // the user is located at the time search is opened. This does not change while the search
     // options are visible.
     private var currentRoot: RootInfo? = null
+
+    // Keeps the name of the last seen root. If the application is restarted, and the new set
+    // root is
+
+    companion object {
+        val LOCATION_KEY = "${SearchOptionsController::class.qualifiedName}:location"
+        val LOCATION_TEXT_KEY = "${SearchOptionsController::class.qualifiedName}:locationText"
+        val FILE_TYPE_KEY = "${SearchOptionsController::class.qualifiedName}:fileType"
+        val LAST_MODIFIED_KEY = "${SearchOptionsController::class.qualifiedName}:lastModified"
+        val CURRENT_ROOT_KEY = "${SearchOptionsController::class.qualifiedName}:currentRoot"
+
+        val DEFAULT_LAST_MODIFIED = LastModifiedOption.ANY_TIME
+        val DEFAULT_FILE_TYPE = FileTypeOption.ANY_TYPE
+        val DEFAULT_LOCATION = SearchLocationOption.ROOT_FOLDER
+    }
 
     // A single listener to query option change events.
     private var optionsListener: SearchOptionsListener? = null
@@ -264,6 +287,8 @@ class SearchOptionsController(private val container: View?) {
             return locationOption
         }
         if (currentRoot == root) {
+            // Copy root, as currentRoot may be a partial root, restored from a bundle.
+            currentRoot = root
             // If this root was already set, do nothing. We wish to react to the first setting of
             // a new root by adjusting location and last modified options. However, if the user
             // changes the location option we get another call to setRoot(). Yet in such a case we
@@ -313,5 +338,38 @@ class SearchOptionsController(private val container: View?) {
             }
             show()
         }
+    }
+
+    /** Stores the current state of the controls. */
+    fun saveState(bundle: Bundle?) {
+        if (bundle == null || container == null) {
+            return
+        }
+        bundle.putSerializable(LOCATION_KEY, locationOption)
+        val locationChip = container.findViewById<Chip>(R.id.search_location_trigger)
+        if (locationChip != null) {
+            bundle.putString(LOCATION_TEXT_KEY, locationChip.getText().toString())
+        }
+        bundle.putSerializable(FILE_TYPE_KEY, fileTypeOption)
+        bundle.putSerializable(LAST_MODIFIED_KEY, lastModifiedOption)
+        if (currentRoot != null) {
+            bundle.putParcelable(CURRENT_ROOT_KEY, currentRoot)
+        }
+    }
+
+    /** Restores the values of the options from the given bundle. */
+    fun restoreState(bundle: Bundle?) {
+        if (bundle == null) {
+            return
+        }
+        locationOption = retrieveEnum(LOCATION_KEY, bundle, DEFAULT_LOCATION)
+        val locationText = bundle.getString(LOCATION_TEXT_KEY)
+        if (locationText != null) {
+            val locationChip = container?.findViewById<Chip>(R.id.search_location_trigger)
+            locationChip?.text = locationText
+        }
+        fileTypeOption = retrieveEnum(FILE_TYPE_KEY, bundle, DEFAULT_FILE_TYPE)
+        lastModifiedOption = retrieveEnum(LAST_MODIFIED_KEY, bundle, DEFAULT_LAST_MODIFIED)
+        currentRoot = bundle.getParcelable(CURRENT_ROOT_KEY)
     }
 }

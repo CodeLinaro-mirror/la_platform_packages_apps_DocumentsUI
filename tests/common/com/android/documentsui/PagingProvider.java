@@ -19,6 +19,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Root;
 
 import java.io.FileNotFoundException;
@@ -47,7 +48,8 @@ public class PagingProvider extends TestRootProvider {
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
         MatrixCursor c = createDocCursor(projection);
-        addFolder(c, documentId);
+        // Set FLAG_DIR_SUPPORTS_CREATE so that the Zip context menu  action is enabled.
+        addFolder(c, documentId, DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE);
         return c;
     }
 

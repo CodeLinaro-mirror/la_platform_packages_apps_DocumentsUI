@@ -15,7 +15,8 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.documentsui.dirlist.ListDocumentView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
@@ -23,6 +24,7 @@
     android:background="@drawable/list_item_background_m3"
     android:clickable="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="horizontal"
     android:baselineAligned="false"
     android:gravity="center_vertical"
@@ -290,4 +292,4 @@
 
     </FrameLayout>
 
-</LinearLayout>
+</com.android.documentsui.dirlist.ListDocumentView>

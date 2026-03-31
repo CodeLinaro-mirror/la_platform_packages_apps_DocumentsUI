@@ -22,26 +22,22 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.tests.R;
 import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * This class test default Light Theme (Night Mode Disable)
  * Verify ActionBar background, Window background, and GridItem background to meet Light style
  */
 @SmallTest
-@RunWith(AndroidJUnit4.class)
 public class ThemeUiTest extends ThemeUiTestBase {
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUpTest() throws Exception {
         mTheme = getThemeByUiMode(mTargetContext, Configuration.UI_MODE_NIGHT_NO);
     }
 

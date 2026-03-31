@@ -21,28 +21,18 @@ import static com.google.common.truth.Truth.assertThat;
 import android.graphics.drawable.Drawable;
 
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.R;
 import com.android.documentsui.ui.ThemeUiTestBase;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * This class verify overlayable resource defined in RRO package
  * Verify Drawable, Dimen, Config to guarantee run time get resource without NotFound exception
  */
 @SmallTest
-@RunWith(AndroidJUnit4.class)
 public class OverlayableTest extends ThemeUiTestBase {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Test
     public void testConfig_defaultRootUri_isNotEmpty() {
         assertThat(

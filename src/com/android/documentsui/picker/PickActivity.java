@@ -53,6 +53,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.ActionModeController;
 import com.android.documentsui.BaseActivity;
@@ -85,6 +87,8 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
+
+import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -231,7 +235,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         getApplicationContext(),
                         features,
                         mInjector,
-                        new ApprovedDocHandlers(this, getSelectedUser(), mInjector));
+                        null);
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =

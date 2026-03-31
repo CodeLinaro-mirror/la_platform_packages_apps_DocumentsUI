@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Információ megjelenítése"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Rejtett fájlok megjelenítése"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ne mutasson rejtett fájlokat"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Frissítés"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Leírás oszlopának megjelenítése"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Ne jelenjen meg a leírás oszlopa"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Megtekintés a következőben: <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Legfeljebb <xliff:g id="COUNT">%1$d</xliff:g> fájlt oszthat meg"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Nem engedélyezett művelet"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Nem engedélyezett művelet"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Megnyitás ezzel…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Nem található alkalmazás"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nincsenek telepítve támogatott alkalmazások. Próbáljon meg telepíteni egyet a Play Áruházból."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Keresés a Play Áruházban"</string>
     <string name="share_via" msgid="8725082736005677161">"Megosztás itt:"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">A következő fájl más formátumba lett konvertálva: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{A következő fájlt a rendszer egy másik formátumba konvertálta:}other{A következő fájlokat a rendszer egy másik formátumba konvertálta:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# elem hozzáadva a vágólaphoz}other{# elem hozzáadva a vágólaphoz}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Csak olvasás"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Megtekintheti ezeket a fájlokat, de egyes műveletek nem támogatottak"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ez az archívum csak írásvédett helyen található, ezért nem bontható ki itt."</string>

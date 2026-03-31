@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Сведения о файле"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Показывать скрытые файлы"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Не показывать скрытые файлы"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Обновить"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Показать столбец описания"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Скрыть столбец описания"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Открыть в приложении \"<xliff:g id="SOURCE">%1$s</xliff:g>\""</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Количество файлов, которыми можно поделиться: <xliff:g id="COUNT">%1$d</xliff:g>."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Действие запрещено."</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Это действие не разрешено."</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Открыть с помощью…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Нет поддерживаемых приложений"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Поддерживаемые приложения не установлены. Скачайте какое-нибудь из Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Поиск в Google Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Поделиться"</string>
@@ -257,8 +258,7 @@
       <item quantity="other">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Формат этого файла был изменен:}one{Формат этих файлов был изменен:}few{Формат этих файлов был изменен:}many{Формат этих файлов был изменен:}other{Формат этих файлов был изменен:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# объект добавлен в буфер обмена.}one{# объект добавлен в буфер обмена.}few{# объекта добавлено в буфер обмена.}many{# объектов добавлено в буфер обмена.}other{# объекта добавлено в буфер обмена.}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Только чтение"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Вы можете просматривать эти файлы, но некоторые действия с ними недоступны"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"В этой папке архив доступен только для чтения. Его нельзя извлечь здесь."</string>
