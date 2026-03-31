@@ -138,7 +138,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.directory.selectDocument(fileName, 1);
 
-        bots.main.clickDelete();
+        bots.keyboard.performDeleteAction();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 

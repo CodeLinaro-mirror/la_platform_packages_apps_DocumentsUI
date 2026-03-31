@@ -287,7 +287,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(targetFolder, 1);
         device.waitForIdle();
 
-        bots.main.clickDelete();
+        bots.keyboard.performDeleteAction();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
