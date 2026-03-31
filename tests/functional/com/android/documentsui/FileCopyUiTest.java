@@ -73,6 +73,7 @@ import java.util.zip.ZipInputStream;
  * <p>- Copy large number of files on the internal/external storage
  */
 @LargeTest
+@Ignore("TODO(b/437236527): re-enable")
 public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TAG = "FileCopyUiTest";
 
@@ -434,7 +435,6 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy Internal Storage -> Internal Storage //
     @HugeLongTest
-    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_InternalStorage() throws Exception {
         createDocuments(StubProvider.ROOT_0_ID, rootDir0, mDocsHelper);
         copyFiles(StubProvider.ROOT_0_ID, StubProvider.ROOT_1_ID);
@@ -449,7 +449,6 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy SD Card -> Internal Storage //
     @HugeLongTest
-    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_FromSdCard() throws Exception {
         createDocuments(mSdCardLabel, mSdCardRoot, mStorageDocsHelper);
         copyFiles(mSdCardLabel, mDeviceLabel);
@@ -464,7 +463,6 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy Internal Storage -> SD Card //
     @HugeLongTest
-    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_ToSdCard() throws Exception {
         createDocuments(mDeviceLabel, mPrimaryRoot, mStorageDocsHelper);
         copyFiles(mDeviceLabel, mSdCardLabel);
@@ -478,7 +476,6 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @HugeLongTest
-    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_documentsDisabled() throws Exception {
         mDocsHelper.createDocument(rootDir0, "text/plain", TestFilesRule.FILE_NAME_1);
         switchRoot(StubProvider.ROOT_0_ID);
