@@ -141,6 +141,7 @@ class DirectoryFragmentTest {
             SelectionBarController(
                 MaterialToolbar(context),
                 MaterialToolbar(context),
+                injector.focusManager,
                 injector.menuManager,
                 injector.selectionMgr,
             )

@@ -551,7 +551,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @Override
     public void toggleFocusedItemSelection() {
-        throw new UnsupportedOperationException("Can't toggle selection");
+        final String id = mFocusHandler.getFocusModelId();
+        if (id != null) {
+            if (mSelectionMgr.isSelected(id)) {
+                mSelectionMgr.deselect(id);
+            } else {
+                mSelectionMgr.select(id);
+            }
+        }
     }
 
     @Override
