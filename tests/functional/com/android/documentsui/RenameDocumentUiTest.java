@@ -110,7 +110,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -127,7 +127,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -154,8 +154,8 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
 
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1);
-        bots.directory.assertDocumentsAbsent(newName);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitUntilDocumentDoesNotExist(newName);
         bots.directory.assertDocumentsCount(4);
 
         bots.directory.assertSelection(1);
@@ -163,37 +163,32 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testRenameFile_TrimTrailingSpaces() throws Exception {
-        String nameWithSpace = newName + " ";
+        String inputNameText = " " + newName + " ";
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         clickRename();
 
         device.waitForIdle();
-        bots.main.setDialogText(nameWithSpace);
+        bots.main.setDialogText(inputNameText);
 
         device.waitForIdle();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
-        bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        // Ensure that only the end of the filename gets trimmed
+        bots.directory.waitForDocument(" " + newName);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }
 
     @Test
     public void testRenameFile_ToExistingFileAndTrimTrailingSpaces() throws Exception {
-        String nameWithSpace = TestFilesRule.FILE_NAME_1 + " ";
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+        String nameWithSpace = TestFilesRule.FILE_NAME_2 + " ";
 
-        clickRename();
+        renameWithConflict(nameWithSpace);
+        bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
 
-        device.waitForIdle();
-        bots.main.setDialogText(nameWithSpace);
-
-        device.waitForIdle();
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
-
-        bots.directory.waitForDocument("file1 (1).log");
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -209,8 +204,8 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.directory.assertDocumentsAbsent(oldName);
-        bots.directory.assertDocumentsVisible(newName);
+        bots.directory.waitUntilDocumentDoesNotExist(oldName);
+        bots.directory.waitForDocument(newName);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -225,7 +220,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         assertTrue(bots.main.findRenameErrorMessage(R.string.missing_rename_error).exists());
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -238,7 +233,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.setDialogText(TestFilesRule.HIDDEN_FILE_NAME);
         assertTrue(bots.main.findRenameErrorMessage(R.string.hidden_file_rename_warning).exists());
         bots.keyboard.pressEnter();
-        bots.directory.assertDocumentsAbsent(TestFilesRule.HIDDEN_FILE_NAME);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.HIDDEN_FILE_NAME);
         bots.directory.assertDocumentsCount(3);
     }
 
@@ -264,18 +259,18 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testRename_NameExists() throws Exception {
-        renameWithConflict();
+        renameWithConflict(TestFilesRule.FILE_NAME_2);
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
 
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1);
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
         bots.directory.assertDocumentsCount(4);
     }
 
     @Test
     public void testRename_RecoverAfterConflict() throws Exception {
-        renameWithConflict();
+        renameWithConflict(TestFilesRule.FILE_NAME_2);
         device.waitForIdle();
 
         bots.main.setDialogText(newName);
@@ -284,20 +279,20 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsCount(4);
     }
 
-    private void renameWithConflict() throws Exception {
+    private void renameWithConflict(String newName) throws Exception {
         // Check that document with the new name exists
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         clickRename();
 
         bots.main.assertDialogText(TestFilesRule.FILE_NAME_1);
         assertFalse(bots.main.findRenameErrorMessage(R.string.name_conflict).exists());
-        bots.main.setDialogText(TestFilesRule.FILE_NAME_2);
+        bots.main.setDialogText(newName);
         bots.keyboard.pressEnter();
         assertTrue(bots.main.findRenameErrorMessage(R.string.name_conflict).exists());
     }

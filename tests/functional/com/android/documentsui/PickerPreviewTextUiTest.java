@@ -52,7 +52,7 @@ public class PickerPreviewTextUiTest extends ActivityTestJunit4<PickActivity> {
     @Test
     public void testPreviewInvisible_directory_listMode() throws Exception {
         bots.main.switchToListMode();
-        assertTrue(bots.directory.findDocument(TestFilesRule.DIR_NAME_1).isEnabled());
+        bots.directory.assertDocumentEnabled(TestFilesRule.DIR_NAME_1);
         assertFalse(bots.directory.hasDocumentPreview(TestFilesRule.DIR_NAME_1));
     }
 
@@ -62,7 +62,7 @@ public class PickerPreviewTextUiTest extends ActivityTestJunit4<PickActivity> {
                 "Skipping test: show_preview_icon is disabled by configuration.",
                 context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToGridMode();
-        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
+        bots.directory.assertDocumentEnabled(TestFilesRule.FILE_NAME_1);
         assertTrue(bots.directory.hasDocumentPreview(TestFilesRule.FILE_NAME_1));
     }
 
@@ -72,7 +72,7 @@ public class PickerPreviewTextUiTest extends ActivityTestJunit4<PickActivity> {
                 "Skipping test: show_preview_icon is disabled by configuration.",
                 context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToListMode();
-        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
+        bots.directory.assertDocumentEnabled(TestFilesRule.FILE_NAME_1);
         assertTrue(bots.directory.hasDocumentPreview(TestFilesRule.FILE_NAME_1));
     }
 }

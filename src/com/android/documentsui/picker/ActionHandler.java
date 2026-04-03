@@ -81,10 +81,8 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
-/**
- * Provides {@link PickActivity} action specializations to fragments.
- */
-class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionHandler<T> {
+/** Provides {@link PickActivity} action specializations to fragments. */
+public class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionHandler<T> {
 
     private static final String TAG = "PickerActionHandler";
 

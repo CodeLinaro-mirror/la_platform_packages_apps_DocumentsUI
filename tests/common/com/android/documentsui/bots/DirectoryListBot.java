@@ -19,20 +19,27 @@ package com.android.documentsui.bots;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.actions.TouchscreenLongTapActionKt.touchscreenLongTap;
+import static com.android.documentsui.actions.TouchscreenTapActionKt.touchscreenTap;
+import static com.android.documentsui.bots.Matchers.documentMatcher;
+import static com.android.documentsui.bots.Matchers.firstDocumentMatcher;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -48,15 +55,17 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
-import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
@@ -66,17 +75,18 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.RightClickActionKt;
+import com.android.documentsui.actions.WaitUntilDoesNotExist;
+import com.android.documentsui.actions.WaitUntilExists;
+import com.android.documentsui.actions.WaitUntilExistsInRecyclerView;
 import com.android.documentsui.actions.WaitUntilGone;
+import com.android.documentsui.actions.WaitUntilGoneFromRecyclerView;
 import com.android.documentsui.actions.WaitUntilVisible;
 
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -162,74 +172,15 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     /**
-     * Checks if the given set of file labels is visible, without scrolling.
-     *
-     * @param labels The labels to be found in the current view.
-     * @throws UiObjectNotFoundException If files with given labels do not exist.
-     */
-    public void assertDocumentsVisible(String... labels) throws UiObjectNotFoundException {
-        assertDocumentsExistWithScroll(false, labels);
-    }
-
-    /**
-     * Checks if the given set of file labels is visible, with scrolling.
-     *
-     * @param labels The labels to be found in the current view, scrolling included.
-     * @throws UiObjectNotFoundException If files with given labels do not exist.
-     */
-    public void assertDocumentsPresent(String... labels) throws UiObjectNotFoundException {
-        assertDocumentsExistWithScroll(true, labels);
-    }
-
-    /**
-     * Checks if the given set of file labels is exists. The scroll variable controls if the code is
-     * allowed to scroll the file panel to try to locate the documents.
-     *
-     * @param scroll If file view may be scrolled to find the specified file labels.
-     * @param labels The labels to be found in the current view, scrolling included.
-     * @throws UiObjectNotFoundException If files with given labels do not exist.
-     */
-    public void assertDocumentsExistWithScroll(boolean scroll, String... labels)
-            throws UiObjectNotFoundException {
-        List<String> absent = new ArrayList<>();
-        for (String label : labels) {
-            if (!findDocument(label, scroll).exists()) {
-                absent.add(label);
-            }
-        }
-        if (!absent.isEmpty()) {
-            fail("Expected documents " + Arrays.asList(labels) + ", but missing " + absent);
-        }
-    }
-
-    public void assertDocumentsAbsent(String... labels) throws UiObjectNotFoundException {
-        List<String> found = new ArrayList<>();
-        for (String label : labels) {
-            if (findDocument(label).exists()) {
-                found.add(label);
-            }
-        }
-        if (!found.isEmpty()) {
-            fail(
-                    "Expected documents not present"
-                            + Arrays.asList(labels)
-                            + ", but present "
-                            + found);
-        }
-    }
-
-    /**
      * Asserts that the summary column for a given document has the expected text. This method will
      * scroll the list/grid if necessary to find the document.
      *
      * @param label The display name of the document file.
      * @param expectedSummary The text expected to be in the summary column.
-     * @throws UiObjectNotFoundException If the document with the given label cannot be found.
      */
-    public void assertDocumentSummary(String label, String expectedSummary)
-            throws UiObjectNotFoundException {
+    public void assertDocumentSummary(String label, String expectedSummary) {
         // First, ensure the document is scrolled into view.
-        assertDocumentsExistWithScroll(true, label);
+        waitForDocument(label);
 
         // Find the title element for the document.
         UiObject2 titleElement = mDevice.findObject(By.text(label));
@@ -262,10 +213,10 @@ public class DirectoryListBot extends Bots.BaseBot {
     public void assertObjectsEventuallyAppearOnDocument(
             String label, @IdRes int... objectResourceIds) throws AssertionFailedError {
         // Wait for the document to exist first.
-        EspressoBotsKt.waitForDocument(label, mTimeout);
+        waitForDocument(label);
         for (int id : objectResourceIds) {
             // Check each object appears on the document.
-            onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
+            onView(allOf(withId(id), isDescendantOfA(documentMatcher(label))))
                     .perform(new WaitUntilVisible(mTimeout));
         }
     }
@@ -281,10 +232,10 @@ public class DirectoryListBot extends Bots.BaseBot {
     public void assertObjectsEventuallyHiddenOnDocument(
             String label, @IdRes int... objectResourceIds) {
         // Find document to exist first.
-        EspressoBotsKt.waitForDocument(label, mTimeout);
+        waitForDocument(label);
         for (int id : objectResourceIds) {
             // Check each object disappears from the document.
-            onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
+            onView(allOf(withId(id), isDescendantOfA(documentMatcher(label))))
                     .perform(new WaitUntilGone(mTimeout));
         }
     }
@@ -305,16 +256,12 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Asserts that the document with the given label is disabled. */
     public void assertDocumentDisabled(String label) throws AssertionFailedError {
-        // Wait for the document to exist first.
-        EspressoBotsKt.waitForDocument(label, mTimeout);
-        onView(EspressoBotsKt.documentMatcher(label)).check(matches(isNotEnabled()));
+        findDocument(label).check(matches(isNotEnabled()));
     }
 
     /** Asserts that the document with the given label is enabled. */
     public void assertDocumentEnabled(String label) throws AssertionFailedError {
-        // Wait for the document to exist first.
-        EspressoBotsKt.waitForDocument(label, mTimeout);
-        onView(EspressoBotsKt.documentMatcher(label)).check(matches(isEnabled()));
+        findDocument(label).check(matches(isEnabled()));
     }
 
     public void assertDocumentsCountOnList(boolean exists, int count)
@@ -396,12 +343,9 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
     }
 
-    public void openDocument(String label) throws UiObjectNotFoundException {
-        int toolType = Configurator.getInstance().getToolType();
-        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-        UiObject doc = findDocument(label, true);
-        doc.click();
-        Configurator.getInstance().setToolType(toolType);
+    /** Open the document with the given label. */
+    public void openDocument(String label) {
+        actionOnDocumentItem(label, touchscreenTap());
     }
 
     /**
@@ -409,20 +353,40 @@ public class DirectoryListBot extends Bots.BaseBot {
      * selected. It does not change the selectedness of other documents.
      *
      * @param label The filename of the document
-     * @param number Which nth document it is. The number corresponding to "n selected"
+     * @param numSelected Which nth document it is. The number corresponding to "n selected"
      */
-    public void selectDocument(String label, int number) throws UiObjectNotFoundException {
-        waitForDocument(label, /* withScroll= */ true);
+    public void selectDocument(String label, int numSelected) throws UiObjectNotFoundException {
+        // Wait for document to exist first.
+        waitForDocument(label);
 
-        // Long finger-click (instead of long mouse-click and instead of regular (not-long)
-        // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
-        // not change the selectedness of other documents.
-        longClickWithToolTypeFinger(findSelectionHotspot(label).getVisibleCenter());
+        // Long tap on the selection hotspot.
+        onView(allOf(withId(getSelectionHotspotId()), isDescendantOfA(documentMatcher(label))))
+                .perform(touchscreenLongTap());
 
-        // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
-        // also avoids a future click being registered as double clicking.
-        SystemClock.sleep((ViewConfiguration.getDoubleTapTimeout() * 3) / 2);
-        assertSelection(number);
+        // Check the selection was successful.
+        assertSelection(numSelected);
+    }
+
+    /**
+     * Select the first document that has a selectable region in the list or grid view. This method
+     * assumes that no documents are already selected.
+     */
+    public void selectFirstDocument() {
+        // Wait for the 0th document to exist first.
+        waitForFirstDocument();
+
+        // Long tap on the selection hotspot.
+        onView(allOf(withId(getSelectionHotspotId()), isDescendantOfA(firstDocumentMatcher())))
+                .perform(touchscreenLongTap());
+
+        // Check the selection was successful.
+        assertSelection(1);
+    }
+
+    private int getSelectionHotspotId() {
+        return (mBots.main.isInGridMode() && isUseMaterial3FlagEnabled())
+                ? R.id.thumbnail
+                : R.id.icon;
     }
 
     private BySelector getSelectionRegionSelector() {
@@ -431,32 +395,6 @@ public class DirectoryListBot extends Bots.BaseBot {
             selectionRegionSelector = By.res(mListSelectionRegionId);
         }
         return selectionRegionSelector;
-    }
-
-    /** Select the first document that has a selectable region in the list or grid view. */
-    public void selectFirstDocument() throws UiObjectNotFoundException {
-        // There must be at least one document to proceed to selection.
-        if (!mDevice.wait(Until.hasObject(By.res(mItemRootId)), mTimeout)) {
-            throw new UiObjectNotFoundException("No documents found to select");
-        }
-
-        final BySelector list = By.res(mDirListId);
-        final BySelector selectionRegionSelector = getSelectionRegionSelector();
-        longClickWithToolTypeFinger(
-                mDevice.findObject(list).findObject(selectionRegionSelector).getVisibleCenter());
-        assertSelection(1);
-    }
-
-    private void longClickWithToolTypeFinger(Point center) {
-        int toolType = Configurator.getInstance().getToolType();
-        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-
-        // Use a stationary drag with 0 step to perform a long click.
-        // This bypasses GestureController and uses the stable InteractionController path.
-        // Attempting to use longClick directly will result in scrolling observed on virtual
-        // devices causing test flakiness.
-        mDevice.drag(center.x, center.y, center.x, center.y, 0);
-        Configurator.getInstance().setToolType(toolType);
     }
 
     /** Finds a list item's (whose text has the given label) selection hotspot. */
@@ -488,14 +426,21 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Clicks the "X" cancel selection button. */
     public void clearSelection() {
-        int parentId =
-                isUseMaterial3FlagEnabled()
-                        ? R.id.selection_bar
-                        : androidx.appcompat.R.id.action_mode_bar;
-        int contentDescription =
-                isUseMaterial3FlagEnabled() ? R.string.clear_selection : android.R.string.cancel;
-        onView(allOf(withContentDescription(contentDescription), isDescendantOfA(withId(parentId))))
-                .perform(clickAndRetryOnLongPress());
+        boolean useMaterial3 = isUseMaterial3FlagEnabled();
+        int parentId = useMaterial3 ? R.id.selection_bar : androidx.appcompat.R.id.action_mode_bar;
+        int contentDescription = useMaterial3 ? R.string.clear_selection : android.R.string.cancel;
+        ViewInteraction interaction =
+                onView(
+                        allOf(
+                                withContentDescription(contentDescription),
+                                isDescendantOfA(withId(parentId))));
+
+        if (useMaterial3) {
+            interaction.perform(clickAndRetryOnLongPress());
+        } else {
+            // For non-material 3 a long press will still trigger a click.
+            interaction.perform(ViewActions.click());
+        }
     }
 
     public void pasteFilesFromClipboard() {
@@ -506,81 +451,88 @@ public class DirectoryListBot extends Bots.BaseBot {
         return mDevice.wait(Until.findObject(By.text(message)), mTimeout);
     }
 
-    public void waitForDocument(String label) throws UiObjectNotFoundException {
-        if (!findDocument(label).waitForExists(mTimeout)) {
-            throw new UiObjectNotFoundException(
-                    "Document with label \"" + label + "\" not found after timeout");
-        }
+    /**
+     * Wait for the document with the given label to exist in the directory list and scrolls it into
+     * view. Uses the default timeout.
+     */
+    public void waitForDocument(String label) {
+        waitForDocument(label, mTimeout);
     }
 
     /**
-     * Waits for a document with the specified {@code label} to become visible.
-     *
-     * <p>Attempts to find a document element using {@link #findDocument(String, boolean)} with the
-     * given {@code label} and {@code withScroll} parameters. Execution is paused until either the
-     * element is found, or the duration defined by {@code mTimeout} passes.
-     *
-     * @param label the name of the document to wait for
-     * @param withScroll {@code true} to enable scrolling the view area to find the document; {@code
-     *     false} to only search the currently visible screen area
-     * @throws UiObjectNotFoundException if a document matching the given {@code label} is not found
-     *     and does not appear on the screen within the configured {@code mTimeout} period
-     * @see #findDocument(String, boolean)
-     * @see #mTimeout
+     * Wait for the document with the given label to exist in the directory list and scrolls it into
+     * view. If timeoutMs is 0, the document will not be waited on.
      */
-    public void waitForDocument(String label, boolean withScroll) throws UiObjectNotFoundException {
-        if (!findDocument(label, withScroll).waitForExists(mTimeout)) {
-            throw new UiObjectNotFoundException(
-                    "Document with label \"" + label + "\" not found after timeout");
-        }
+    public void waitForDocument(String label, Long timeout) {
+        // Wait for the document to exist in the directory list.
+        onView(withId(R.id.dir_list))
+                .perform(new WaitUntilExistsInRecyclerView(documentMatcher(label), timeout));
     }
 
-    public UiObject findDocument(String label) throws UiObjectNotFoundException {
-        return findDocument(label, false);
+    /**
+     * Wait for the 0th document to exist in the directory list and scrolls it into view. Uses the
+     * default timeout.
+     */
+    public void waitForFirstDocument() {
+        // Wait for at least one document to exist in the directory list.
+        onView(withId(R.id.dir_list))
+                .perform(new WaitUntilExistsInRecyclerView(withId(R.id.item_root), mTimeout));
     }
 
-    public UiObject findDocument(String label, boolean withScroll)
-            throws UiObjectNotFoundException {
+    /**
+     * Returns a ViewInteraction representing the document with the given label, waiting for it and
+     * scrolling if necessary to ensure that it exists and is completely visible.
+     */
+    public ViewInteraction findDocument(String label) {
+        waitForDocument(label);
+        return onView(documentMatcher(label));
+    }
+
+    /**
+     * Wait until a document with the given label is gone from the directory list, scrolling if
+     * necessary. This is different to performing the action {@code WaitUntilGone} because that
+     * assumes the document continues to exist but becomes hidden.
+     */
+    public void waitUntilDocumentDoesNotExist(String label) {
+        onView(withId(R.id.dir_list))
+                .perform(new WaitUntilGoneFromRecyclerView(documentMatcher(label), mTimeout));
+    }
+
+    /** Perform the specified action on the item with the specified label in the directory list. */
+    public void actionOnDocumentItem(String label, ViewAction action) {
+        waitForDocument(label);
+        var dirListMatcher = allOf(withId(R.id.dir_list), isDisplayed());
+        onView(dirListMatcher)
+                .perform(RecyclerViewActions.actionOnItem(documentMatcher(label), action));
+    }
+
+    /** Returns the bounds of the UiObject representing the document with the given label. */
+    public Rect findDocumentBounds(String label) throws UiObjectNotFoundException {
+        return findDocumentUiObject(label).getVisibleBounds();
+    }
+
+    /** Returns the UiObject representing the document with the given label. */
+    private UiObject findDocumentUiObject(String label) throws UiObjectNotFoundException {
+        // Wait for the document to exist first.
+        waitForDocument(label);
         final UiSelector docList = findDocumentsListSelector();
-
-        // Wait for the first list item to appear
-        boolean exists =
-                new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
-        if (!exists) {
-            throw new UiObjectNotFoundException("First list item not found after timeout");
+        scrollIntoView(docList, label);
+        if (mBots.main.isInGridMode()) {
+            // For grid items, the label still might be out of view, even if the element is in
+            // view. Scroll again to ensure the label is visible.
+            getScrollable(docList).scrollTextIntoView(label);
         }
-
-        if (withScroll) {
-            scrollIntoView(docList, label);
-        }
-        UiObject document = mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
-        UiObject2 breadcrumb =
-                mDevice.findObject(By.res(mTargetPackage + ":id/horizontal_breadcrumb"));
-        if (breadcrumb == null) {
-            breadcrumb = mDevice.findObject(By.res(mTargetPackage + ":id/breadcrumb_view_v2"));
-            if (breadcrumb == null) {
-                return document;
-            }
-        }
-        if (withScroll) {
-            int scrolls = 5;
-            // If the document is hidden behind the breadcrumb. Scroll until it appears above the
-            // breadcrumb.
-            while (breadcrumb.getVisibleBounds().intersect(document.getBounds()) && scrolls > 0) {
-                scrollForward(docList);
-                scrolls--;
-            }
-        }
-        return document;
+        return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
     }
 
-    public boolean hasDocuments(String... labels) throws UiObjectNotFoundException {
-        for (String label : labels) {
-            if (!findDocument(label).exists()) {
-                return false;
-            }
+    /** Return true if the document with the given label exists in the directory list. */
+    public Boolean hasDocument(String label) {
+        try {
+            waitForDocument(label, /* timeout= */ 0L);
+            return true;
+        } catch (Throwable t) {
+            return false;
         }
-        return true;
     }
 
     public boolean hasDocumentPreview(String label) {
@@ -605,11 +557,8 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     /** Assert the document with the specified {@code label} is the focused item. */
-    public void assertDocumentHasFocus(String label) throws UiObjectNotFoundException {
-        final BySelector list = By.res(mDirListId);
-
-        UiObject2 doc = findItemRoot(mDevice.findObject(list).findObject(By.text(label)));
-        assertTrue(doc != null && doc.isFocused());
+    public void assertDocumentHasFocus(String label) {
+        findDocument(label).check(matches(hasFocus()));
     }
 
     public void assertFirstDocumentHasFocus() throws UiObjectNotFoundException {
@@ -646,17 +595,23 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Assert that 0 things are selected. */
     public void assertNoSelection() {
-        UiObject2 selectionText =
-                mDevice.wait(Until.findObject(By.textContains("selected")), mTimeout / 10);
-        assertNull(selectionText);
+        onView(isRoot())
+                .perform(
+                        new WaitUntilDoesNotExist(
+                                allOf(withSubstring(" selected"), isDisplayed()), mTimeout));
     }
 
     /** Assert that N things are selected, for positive N. */
     public void assertSelection(int numSelected) {
-        String assertSelectionText = numSelected + " selected";
-        UiObject2 selectionText =
-                mDevice.wait(Until.findObject(By.text(assertSelectionText)), mTimeout);
-        assertNotNull(selectionText);
+        if (numSelected == 0) {
+            assertNoSelection();
+            return;
+        }
+        var selectionText = numSelected + " selected";
+        onView(isRoot())
+                .perform(
+                        new WaitUntilExists(
+                                allOf(withText(selectionText), isDisplayed()), mTimeout));
     }
 
     public void assertOrder(String[] dirs, String[] files) throws UiObjectNotFoundException {
@@ -710,13 +665,13 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
     }
 
-    public void rightClickDocument(String label) throws UiObjectNotFoundException {
-        Rect startCoord = findDocument(label, true).getBounds();
-        rightClickDocument(new Point(startCoord.centerX(), startCoord.centerY()));
+    /** Right-clicks on the document with the given label. */
+    public void rightClickDocument(String label) {
+        actionOnDocumentItem(label, RightClickActionKt.rightClick());
     }
 
-    public void rightClickDocument(Point point) throws UiObjectNotFoundException {
-        // TODO: Use Espresso instead of doing the events mock ourselves
+    /** Sends a right click at the given point. */
+    public void rightClick(Point point) {
         MotionEvent motionDown =
                 getTestRightClickMotionEvent(MotionEvent.ACTION_DOWN, point.x, point.y);
         mAutomation.injectInputEvent(motionDown, true);
@@ -764,14 +719,10 @@ public class DirectoryListBot extends Bots.BaseBot {
         getScrollable(selector).scrollIntoView(new UiSelector().text(label));
     }
 
-    private void scrollForward(UiSelector selector) throws UiObjectNotFoundException {
-        getScrollable(selector).scrollForward();
-    }
-
     private void checkOrder(String first, String second)
             throws NotInOrderException, UiObjectNotFoundException {
-        final UiObject firstObj = findDocument(first);
-        final UiObject secondObj = findDocument(second);
+        final UiObject firstObj = findDocumentUiObject(first);
+        final UiObject secondObj = findDocumentUiObject(second);
 
         final int layoutDirection = mContext.getResources().getConfiguration().getLayoutDirection();
         final Rect firstBound = firstObj.getVisibleBounds();

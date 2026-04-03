@@ -38,8 +38,6 @@ import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
-import com.android.documentsui.sorting.SortDimension;
-import com.android.documentsui.sorting.SortModel;
 import com.android.modules.utils.build.SdkLevel;
 
 import org.junit.Rule;
@@ -100,15 +98,47 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testCreateDirectoryTrimTrailingSpaces() throws Exception {
+        // Disable the root notification because it triggers root list update which then triggers
+        // the fragment recreation, which impacts the focus behavior.
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+        mDocsHelper.configure(null, bundle);
+
+        final String newFolderName = "Kung fu Panda  ";
+        bots.main.clickToolbarOverflowItem(context.getString(R.string.menu_create_dir));
+        device.waitForIdle();
+
+        bots.main.setDialogText(newFolderName);
+        device.waitForIdle();
+
+        // Pressing enter to commit the new folder creation and close the dialog. Note:
+        // pressEnter() doesn't work here, we need an actual keyboard press to trigger focus
+        // change.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_ENTER);
+
+        String trimmedName = newFolderName.trim();
+        bots.directory.waitForDocument(trimmedName);
+
+        // Focus the newly created directory on S/T doesn't work reliably somehow, the
+        // requestFocus() returns false on both versions. Wrapping the requestFocus() call inside
+        // view.post() fixes the issue on S, but still fail on T, hence we only check U+ here.
+        if (SdkLevel.isAtLeastU()) {
+            bots.directory.assertDocumentHasFocus(trimmedName);
+        }
+    }
+
+    @Test
     public void testDeleteDocument() throws Exception {
         bots.directory.selectDocument("file1.png", 1);
         device.waitForIdle();
-        bots.main.clickDelete();
+        bots.keyboard.performDeleteAction();
 
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
-        bots.directory.assertDocumentsAbsent("file1.png");
+        bots.directory.waitUntilDocumentDoesNotExist("file1.png");
     }
 
     @HugeLongTest
@@ -129,12 +159,10 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_1_ID);
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
-
         bots.directory.waitForDocument("file1.png");
-        bots.directory.assertDocumentsVisible("file1.png");
 
         switchRoot(ROOT_0_ID);
-        bots.directory.assertDocumentsAbsent("file1.png");
+        bots.directory.waitUntilDocumentDoesNotExist("file1.png");
     }
 
     @DesktopTest(cujs = {"b/434068359"})
@@ -173,7 +201,6 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.clearSelection();
         }
 
-        device.waitForIdle();
         bots.directory.openDocument("Dir1");
         bots.directory.selectDocument("ChildDir1", 1);
 
@@ -187,7 +214,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testDeleteDocument_Cancel() throws Exception {
         bots.directory.selectDocument("file1.png", 1);
         device.waitForIdle();
-        bots.main.clickDelete();
+        bots.keyboard.performDeleteAction();
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
 
@@ -233,7 +260,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         // Android devices a more reliable way is to wait until notification goes away, but ARC++
         // uses Chrome OS notifications so it isn't even an option.
         bots.directory.waitForDocument("0.txt");
-        bots.directory.waitForDocument(nameOfLastFile, true);
+        bots.directory.waitForDocument(nameOfLastFile);
 
         final int expectedCount = Shared.MAX_DOCS_IN_INTENT + 1;
         List<DocumentInfo> children = mDocsHelper.listChildren(target, -1);

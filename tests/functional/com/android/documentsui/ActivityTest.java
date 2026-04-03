@@ -39,7 +39,6 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
-import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
@@ -48,7 +47,9 @@ import com.android.documentsui.bots.Bots;
 import com.android.documentsui.files.FilesActivity;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
@@ -63,6 +64,7 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
 
     static final long TIMEOUT = 5000L;
     static final int NIGHT_MODE_CHANGE_WAIT_TIME = 1000;
+    static final int MAX_ESCAPE_ATTEMPTS = 3;
 
     // Testing files. For custom ones, override initTestFiles().
     public static final String dirName1 = "Dir1";
@@ -130,17 +132,39 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
      * over DocsUI, obscuring its UI from UiAutomator. Try to close them before starting.
      */
     public static void closeNonDocsUiWindows(Context context, UiDevice device) {
-        // Look for any window that is not from the application under test
         final String appPackageName = context.getPackageName();
-        final List<UiObject2> otherAppViews = device.findObjects(
-                By.pkg(Pattern.compile("^(?!" + appPackageName + "$).*"))
-        );
+        final Pattern otherPackagesPattern = Pattern.compile("^(?!" + appPackageName + "$).*");
+
+        Set<String> packagesToClose = new HashSet<>();
+        // Look for any window that is not from the application under test.
+        List<UiObject2> otherAppViews = device.findObjects(By.pkg(otherPackagesPattern));
+
         if (otherAppViews != null && !otherAppViews.isEmpty()) {
-            Log.w(TAG, "Attempting to close open windows from other application");
-            for (int i = 0; i < otherAppViews.size(); i++) {
-                device.pressKeyCode(KeyEvent.KEYCODE_ESCAPE);
-                device.waitForIdle();
+            for (UiObject2 view : otherAppViews) {
+                String pkg = view.getApplicationPackage();
+                if (pkg != null) {
+                    packagesToClose.add(pkg);
+                }
             }
+        }
+
+        if (!packagesToClose.isEmpty()) {
+            Log.i(TAG, "Found views from other packages: " + packagesToClose);
+            for (String pkg : packagesToClose) {
+                Log.d(TAG, "Attempting to close windows from package: " + pkg);
+                for (int i = 0; i < MAX_ESCAPE_ATTEMPTS; i++) {
+                    // Check if the package still has any visible elements before sending key.
+                    if (device.findObject(By.pkg(pkg)) == null) {
+                        Log.d(TAG, "Package " + pkg + " seems closed.");
+                        break; // Stop trying for this package.
+                    }
+
+                    Log.d(TAG, "Sending KEYCODE_ESCAPE to package: " + pkg + " Attempt " + i);
+                    device.pressKeyCode(KeyEvent.KEYCODE_ESCAPE);
+                    device.waitForIdle();
+                }
+            }
+            Log.i(TAG, "Finished attempts to close windows from other packages.");
         }
     }
 
@@ -223,20 +247,6 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
 
         mDocsHelper.createDocument(rootDir1, "text/plain", fileName3);
         mDocsHelper.createDocument(rootDir1, "text/plain", fileName4);
-    }
-
-    void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument(fileName1);
-        bots.directory.waitForDocument(fileName2);
-        bots.directory.waitForDocument(dirName1);
-        bots.directory.waitForDocument(fileNameNoRename);
-        bots.directory.assertDocumentsCount(4);
-    }
-
-    void assertDefaultContentOfTestDir1() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument(fileName3);
-        bots.directory.waitForDocument(fileName4);
-        bots.directory.assertDocumentsCount(2);
     }
 
     /**

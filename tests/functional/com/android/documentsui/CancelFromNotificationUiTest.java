@@ -22,8 +22,8 @@ import static com.android.documentsui.StubProvider.EXTRA_SIZE;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.util.Material3Config.getRes;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -148,9 +148,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testCopyDocument_Cancel() throws Exception {
-        bots.directory.findDocument(TARGET_FILE);
-        device.waitForIdle();
-
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -166,37 +163,29 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
-        bots.directory.findDocument(TARGET_FILE);
-        device.waitForIdle();
-
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
         // Must use openRoot below as the UI itself is being tested
         bots.main.doCopy(
                 () -> {
-                    EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+                    EspressoBotsKt.openRoot(context, ROOT_1_ID, getRes(R.layout.pick_activity));
                 });
 
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
         switchRoot(ROOT_1_ID);
-        device.waitForIdle();
-        assertFalse(bots.directory.hasDocuments(TARGET_FILE));
+        bots.directory.waitUntilDocumentDoesNotExist(TARGET_FILE);
 
         switchRoot(ROOT_0_ID);
-        device.waitForIdle();
-        assertTrue(bots.directory.hasDocuments(TARGET_FILE));
+        bots.directory.waitForDocument(TARGET_FILE);
     }
 
     @HugeLongTest
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testMoveDocument_Cancel() throws Exception {
-        bots.directory.findDocument(TARGET_FILE);
-        device.waitForIdle();
-
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -212,26 +201,21 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
-        bots.directory.findDocument(TARGET_FILE);
-        device.waitForIdle();
-
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
         // Must use openRoot below as the UI itself is being tested
         bots.main.doMove(
                 () -> {
-                    EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+                    EspressoBotsKt.openRoot(context, ROOT_1_ID, getRes(R.layout.pick_activity));
                 });
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
         switchRoot(ROOT_1_ID);
-        device.waitForIdle();
-        assertFalse(bots.directory.hasDocuments(TARGET_FILE));
+        bots.directory.waitUntilDocumentDoesNotExist(TARGET_FILE);
 
         switchRoot(ROOT_0_ID);
-        device.waitForIdle();
-        assertTrue(bots.directory.hasDocuments(TARGET_FILE));
+        bots.directory.waitForDocument(TARGET_FILE);
     }
 }

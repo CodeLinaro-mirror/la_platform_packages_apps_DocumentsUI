@@ -51,12 +51,11 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @DisableFlags({FLAG_ZIP_NG_RO})
-    public void browseArchiveViaDefaultAction() throws Exception {
+    public void browseArchiveViaDefaultAction() {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -65,16 +64,14 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaDefaultAction() throws Exception {
         createArchiveInRootDir0();
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertExtractedArchive();
     }
 
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
-    public void cannotExtractArchiveInReadOnlyFolder() throws Exception {
+    public void cannotExtractArchiveInReadOnlyFolder() {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertNotNull("Expect an error snackbar", bots.directory.getSnackbar(
                 context.getString(R.string.cannot_extract_in_read_only_folder)));
@@ -84,7 +81,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Extract");
         assertExtractedArchive();
@@ -94,13 +90,12 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -109,7 +104,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaActionMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Extract");
         assertExtractedArchive();
@@ -119,11 +113,10 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaActionMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Browse");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -133,11 +126,10 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -146,7 +138,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaDefaultAction() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("broken.zip");
         bots.directory.openDocument("broken.zip");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
@@ -155,7 +146,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -166,7 +156,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -184,13 +173,10 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void assertExtractedArchive() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument("archive");
         bots.directory.openDocument("archive");
-        bots.directory.waitForDocument("hello");
         bots.directory.openDocument("hello");
         bots.directory.waitForDocument("hello.txt");
         bots.directory.waitForDocument("hello2.txt");
-        bots.directory.waitForDocument("inside_folder");
         bots.directory.openDocument("inside_folder");
         bots.directory.waitForDocument("hello_insside.txt");
     }

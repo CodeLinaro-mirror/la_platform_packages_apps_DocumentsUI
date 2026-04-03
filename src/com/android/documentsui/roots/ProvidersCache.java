@@ -212,7 +212,7 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 derivedIcon = getRes(R.drawable.ic_root_trash);
                 derivedType = RootInfo.TYPE_TRASH;
                 rootId = TRASH_ROOT_ID;
-                flags = Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD;
+                flags = Root.FLAG_SUPPORTS_IS_CHILD;
                 title = mContext.getString(getRes(R.string.root_trash));
                 availableBytes = -1;
             }

@@ -38,7 +38,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
@@ -66,7 +66,7 @@ public abstract class MenuManager {
     protected final Context mContext;
     protected final Features mFeatures;
     protected final Injector<?> mInjector;
-    @Nullable protected final ApprovedDocHandlers mApprovedDocHandlers;
+    @Nullable protected final ApprovedDocMenuController mApprovedDocMenuController;
 
     protected Menu mOptionMenu;
 
@@ -84,7 +84,7 @@ public abstract class MenuManager {
             Context context,
             Features features,
             Injector<?> injector,
-            @Nullable ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocMenuController approvedDocMenuController) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
@@ -92,7 +92,7 @@ public abstract class MenuManager {
         mContext = context;
         mFeatures = features;
         mInjector = injector;
-        mApprovedDocHandlers = approvedDocHandlers;
+        mApprovedDocMenuController = approvedDocMenuController;
     }
 
     /** @see ActionModeController */
@@ -159,8 +159,8 @@ public abstract class MenuManager {
      * @param selection Details about the current selection of documents.
      */
     public void updateApprovedDocHandlers(Menu menu, SelectionDetails selection) {
-        if (mApprovedDocHandlers != null) {
-            mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selection);
+        if (mApprovedDocMenuController != null) {
+            mApprovedDocMenuController.updateApprovedDocHandlerMenus(menu, selection);
         }
     }
 
@@ -555,13 +555,20 @@ public abstract class MenuManager {
     }
 
     protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
-        boolean enabled = selectionDetails.canDelete();
-        Menus.setEnabledAndVisible(delete, enabled);
-        // The delete menu item's visibility is tied to the trash flow's status.
-        // Since the XML defaults to never showing this action, we must manually make it visible
-        // when trash is disabled to give users a direct way to delete items.
+        boolean canDelete = selectionDetails.canDelete();
         if (!isTrashFlowEnabled()) {
+            // When trash is disabled, promote "Delete" to the primary action bar.
+            // This ensures users have a direct way to delete items when trash isn't available.
+            Menus.setEnabledAndVisible(delete, canDelete);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        } else if (selectionDetails.canTrash()
+                && mState.stack.getRoot() != null
+                && mState.stack.getRoot().isLocalOnly()) {
+            // Hide "Delete" (Delete Forever) if moving to trash is possible on a local root.
+            Menus.setEnabledAndVisible(delete, false);
+        } else {
+            // Otherwise, show "Delete" in the overflow menu based on selection capability.
+            Menus.setEnabledAndVisible(delete, canDelete);
         }
     }
 

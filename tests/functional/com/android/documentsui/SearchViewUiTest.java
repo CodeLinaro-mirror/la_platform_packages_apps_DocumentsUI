@@ -63,6 +63,9 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.lifecycle.ActivityLifecycleCallback;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -86,6 +89,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @LargeTest
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
@@ -239,7 +244,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("file1");
 
         bots.directory.assertDocumentsCountOnList(true, 2);
-        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
     }
 
     @Test
@@ -377,7 +383,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Click Everywhere, to search everywhere.
         bots.search.clickMenuItem(R.string.search_location_everywhere);
 
-        // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
         bots.directory.waitForDocument("file1.log");
@@ -569,7 +574,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Click the search icon and wait until the only result is the file that was searched for.
         bots.search.doSearch(TestFilesRule.FILE_NAME_1);
         directoryList.wait(hasOneChild(), mTimeout);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
 
         // Select the document. This implicitly verifies that the bar at the top shows the text "1
         // selected" which, in all conditions, occludes the search input box.
@@ -688,11 +692,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultSingleSelection() throws Exception {
         bots.search.doSearch("file");
-        device.waitForIdle();
 
         // Click file1.log; check that one element is selected.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-        bots.directory.assertSelection(1);
 
         // Verify that the breadcrumb path shows the correct information.
         onView(withId(R.id.breadcrumb_path_holder))
@@ -703,8 +705,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testDirectoryChangedOnSearchBreadcrumbClick() throws Exception {
         bots.search.doSearch("file");
-        bots.directory.findDocument(TestFilesRule.DIR_NAME_1).waitUntilGone(mTimeout);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.DIR_NAME_1);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         // Click the first item of the path, which should take us to the directory listing.
         onView(allOf(withText("TEST_ROOT_0"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
@@ -717,7 +718,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.doSearch("file");
-        device.waitForIdle();
 
         // Click file1.log and NO_RENAMEfile.txt which should stop breadcrumb path.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
@@ -869,8 +869,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Search and expect 3 files to match.
         bots.search.doSearch("file");
-        device.waitForIdle();
-        bots.directory.assertDocumentsPresent(expectedMatches);
+        for (String expectedMatch : expectedMatches) {
+            bots.directory.waitForDocument(expectedMatch);
+        }
         // Verify that only dropdown options are shown, and not chips.
         bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
         onView(withId(R.id.search_chip_group)).check(matches(not(isDisplayed())));
@@ -879,8 +880,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         mActivityScenario.recreate();
         // Close the keyboard because it might appear after activity recreation.
         closeSoftKeyboard();
-        device.waitForIdle();
-        bots.directory.assertDocumentsPresent(expectedMatches);
+        for (String expectedMatch : expectedMatches) {
+            bots.directory.waitForDocument(expectedMatch);
+        }
         bots.search.assertInputEquals("file");
         // Verify that only dropdown and chips states are preserved.
         bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
@@ -891,18 +893,17 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testOptionsChangeTriggersSearch() throws Exception {
         // Check that we have .log, .png, and .txt files visible.
-        bots.directory.assertDocumentsPresent(
-                TestFilesRule.FILE_NAME_1,
-                TestFilesRule.FILE_NAME_2,
-                TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
 
         // Trigger search for images only.
         bots.search
                 .clickChip(R.string.chip_title_images)
                 .perform(new WaitForCheckState(true, mTimeout));
 
-        bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
 
         // Uncheck images chip.
         bots.search
@@ -912,39 +913,55 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
 
         // Start a regular search.
-        bots.search.expand();
         bots.search.doSearch("file");
         // Wait for search to complete ("Dir1" should disappear).
-        bots.directory.findDocument(TestFilesRule.DIR_NAME_1).waitUntilGone(mTimeout);
-
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.DIR_NAME_1);
         // Check that .log, .png, and .txt files are again visible.
-        bots.directory.assertDocumentsPresent(
-                TestFilesRule.FILE_NAME_1,
-                TestFilesRule.FILE_NAME_2,
-                TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
 
         // Trigger a type dropdown and select images.
         bots.search.clickDropdownTrigger(R.id.search_file_type_trigger);
         bots.search.clickMenuItem(R.string.chip_title_images);
 
         // Wait for .txt file to be gone and check that png file is present.
-        bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_NO_RENAME);
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
     }
 
     /** Change the dark/light theme and wait for the device to settle. */
     private void changeNightMode(String mode) {
-        try (ParcelFileDescriptor ignored =
-                InstrumentationRegistry.getInstrumentation()
-                        .getUiAutomation()
-                        .executeShellCommand("cmd uimode night " + mode)) {
-            // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
-            // descriptor leak. The command output is ignored.
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        CountDownLatch latch = new CountDownLatch(1);
+        ActivityLifecycleCallback callback =
+                (activity, stage) -> {
+                    if (activity instanceof FilesActivity && stage == Stage.RESUMED) {
+                        latch.countDown();
+                    }
+                };
+        ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(callback);
+
+        try {
+            try (ParcelFileDescriptor ignored =
+                    InstrumentationRegistry.getInstrumentation()
+                            .getUiAutomation()
+                            .executeShellCommand("cmd uimode night " + mode)) {
+                // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
+                // descriptor leak. The command output is ignored.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                latch.await(mTimeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            ActivityLifecycleMonitorRegistry.getInstance().removeLifecycleCallback(callback);
         }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
+        device.waitForIdle();
     }
 
     @Test
@@ -964,10 +981,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testClickingRootAfterSearchListsRootsFiles() throws UiObjectNotFoundException {
         // Verify that the files in the current root we expect to see later are here at the start.
-        bots.directory.assertDocumentsPresent(
-                TestFilesRule.FILE_NAME_1,
-                TestFilesRule.FILE_NAME_2,
-                TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
         // Change to the Recent view and run a search. Any root would do, but we are certain
         // Recent root exists.
         switchRoot("Recent");
@@ -978,10 +994,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         switchRoot(ROOT_0_ID);
         // Give the app time to list the directory.
         device.waitForIdle();
-        bots.directory.assertDocumentsPresent(
-                TestFilesRule.FILE_NAME_1,
-                TestFilesRule.FILE_NAME_2,
-                TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
     }
 
     @Test

@@ -60,7 +60,7 @@ public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testBandSelection_allFiles() throws Exception {
         bots.main.switchToGridMode();
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect startDir = bots.directory.findDocument(TestFilesRule.DIR_NAME_1).getBounds();
+        Rect startDir = bots.directory.findDocumentBounds(TestFilesRule.DIR_NAME_1);
         Point start = new Point(dirListBounds.right - getScaledEdgeGap(), startDir.centerY());
         Point end = new Point(dirListBounds.left + 1, dirListBounds.bottom - 1);
         bots.gesture.bandSelection(start, end);
@@ -82,7 +82,7 @@ public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
         // Work out the start and end of the drag selection to go select the top row of documents
         // if this is done in the opposite direction it will trigger the drawer to be swiped open.
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect startDoc = bots.directory.findDocument(createdDocs.get(0).displayName).getBounds();
+        Rect startDoc = bots.directory.findDocumentBounds(createdDocs.get(0).displayName);
         Point endPoint = new Point(dirListBounds.left + 1, startDoc.centerY());
         Point startPoint = new Point(dirListBounds.right - getScaledEdgeGap(), startDoc.centerY());
 
@@ -90,7 +90,7 @@ public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
         // calculate it dynamically to avoid failing on different devices.
         int docsInTopRow = 0;
         for (DocumentInfo doc : createdDocs) {
-            Rect docBounds = bots.directory.findDocument(doc.displayName).getBounds();
+            Rect docBounds = bots.directory.findDocumentBounds(doc.displayName);
             if (docBounds.centerY() != startDoc.centerY()) {
                 break;
             }
