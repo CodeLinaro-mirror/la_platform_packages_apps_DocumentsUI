@@ -23,4 +23,8 @@ object SharedUtils {
     fun createInfo(context: Context, labelRes: Int, value: Any): ListItem.Info {
         return ListItem.Info(context.getString(labelRes), value.toString())
     }
+
+    fun createInfoSelectable(context: Context, labelRes: Int, value: Any): ListItem.InfoSelectable {
+        return ListItem.InfoSelectable(context.getString(labelRes), value.toString())
+    }
 }

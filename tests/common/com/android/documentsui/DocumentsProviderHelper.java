@@ -24,6 +24,7 @@ import static android.provider.DocumentsContract.buildRootsUri;
 import static androidx.core.util.Preconditions.checkArgument;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.base.Providers.AUTHORITY_DOWNLOADS;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 
@@ -103,6 +104,13 @@ public class DocumentsProviderHelper {
 
         assertTrue(info != null && info.isDirectory());
         return storageDocsHelper;
+    }
+
+    /** Initializes a helper for the Downloads authority. */
+    public static DocumentsProviderHelper setupDownloadsAuthorityDocsHelper(Context context)
+            throws Exception {
+        return new DocumentsProviderHelper(
+                UserId.DEFAULT_USER, AUTHORITY_DOWNLOADS, context, AUTHORITY_DOWNLOADS);
     }
 
     public DocumentsProviderHelper(UserId userId, String authority, Context context, String name) {

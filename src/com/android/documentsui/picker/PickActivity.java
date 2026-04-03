@@ -16,6 +16,8 @@
 
 package com.android.documentsui.picker;
 
+import static android.view.KeyEvent.META_CTRL_ON;
+
 import static com.android.documentsui.base.State.ACTION_CREATE;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
@@ -48,13 +50,12 @@ import android.view.ViewGroup.MarginLayoutParams;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.ActionModeController;
 import com.android.documentsui.BaseActivity;
@@ -70,7 +71,6 @@ import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.UserManagerProvider;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.MimeTypes;
@@ -88,8 +88,6 @@ import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
-import kotlinx.coroutines.Dispatchers;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -103,7 +101,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
     private static final String TAG = "PickActivity";
 
-    private Injector<ActionHandler<PickActivity>> mInjector;
+    @VisibleForTesting protected Injector<ActionHandler<PickActivity>> mInjector;
     private SharedInputHandler mSharedInputHandler;
 
     public PickActivity() {
@@ -242,6 +240,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                     new SelectionBarController(
                             findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
+                            mInjector.focusManager,
                             mInjector.menuManager,
                             mInjector.selectionMgr);
         } else {
@@ -289,6 +288,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
         mSharedInputHandler =
                 new SharedInputHandler(
+                        this,
                         mInjector.focusManager,
                         mInjector.selectionMgr,
                         mInjector.searchManager::cancelSearch,
@@ -636,6 +636,18 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return mSharedInputHandler.onKeyDown(keyCode, event)
                 || super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+        if (isUseMaterial3FlagEnabled()
+                && event.hasModifiers(META_CTRL_ON)
+                && keyCode == KeyEvent.KEYCODE_SPACE) {
+            mInjector.actions.toggleFocusedItemSelection();
+            return true;
+        }
+
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override

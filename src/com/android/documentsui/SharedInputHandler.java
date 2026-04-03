@@ -16,9 +16,14 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.Window;
+import android.widget.EditText;
 
 import androidx.recyclerview.selection.SelectionTracker;
 
@@ -34,6 +39,7 @@ public class SharedInputHandler {
 
     private static final String TAG = "SharedInputHandler";
 
+    private final Activity mActivity;
     private final FocusHandler mFocusManager;
     private final Procedure mSearchCanceler;
     private final Procedure mDirPopper;
@@ -43,6 +49,7 @@ public class SharedInputHandler {
     private final DrawerController mDrawer;
 
     public SharedInputHandler(
+            Activity activity,
             FocusHandler focusHandler,
             SelectionTracker<String> selectionMgr,
             Procedure searchCanceler,
@@ -50,6 +57,7 @@ public class SharedInputHandler {
             Features features,
             DrawerController drawer,
             Runnable searchKeyboardShortcutExecutor) {
+        mActivity = activity;
         mFocusManager = focusHandler;
         mSearchCanceler = searchCanceler;
         mSelectionMgr = selectionMgr;
@@ -113,6 +121,22 @@ public class SharedInputHandler {
     }
 
     private boolean onDelete() {
+        // An EditText (as used by the PickActivity's SaveFragment) will capture (its KeyEvent
+        // handler returns true) KeyEvent.KEYCODE_DEL events (hitting the backspace key) if the
+        // backspace deletes a character. But it will not capture (handler returns false) if the
+        // caret was at the start of the EditText (and so there is no "previous character" to
+        // delete). This includes when the EditText's contents are empty, but also happens for
+        // non-empty contents (if the caret is at the start).
+        //
+        // This onDelete method (via SharedInputHandler.onKeyDown) can therefore see a KEYCODE_DEL
+        // for which it would be surprising to run mDirPopper (navigating to the parent directory
+        // of the current one). To avoid that, return early if an EditText was focused.
+        Window window = (mActivity != null) ? mActivity.getWindow() : null;
+        View view = (window != null) ? window.getCurrentFocus() : null;
+        if ((view instanceof EditText) && isUseMaterial3FlagEnabled()) {
+            return true;
+        }
+
         mDirPopper.run();
         return true;
     }
@@ -141,6 +165,10 @@ public class SharedInputHandler {
     private boolean onEscape() {
         if (mSearchCanceler.run()) {
             return true;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mFocusManager.clearFocus();
         }
 
         if (mSelectionMgr.hasSelection()) {

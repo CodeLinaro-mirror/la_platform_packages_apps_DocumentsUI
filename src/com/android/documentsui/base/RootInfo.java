@@ -284,6 +284,10 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         return DocumentsContract.buildRootUri(authority, rootId);
     }
 
+    public Uri getDocumentUri() {
+        return DocumentsContract.buildDocumentUri(authority, documentId);
+    }
+
     @Override
     @Nullable
     public String getTitle() {
