@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.scrollCompletelyTo
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.util.HumanReadables
@@ -29,16 +28,15 @@ import java.util.concurrent.TimeoutException
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view matching the given matcher exists as a direct child in the
- * given RecyclerView. It will attempt to scroll through the RecyclerView's items to find a match.
- * This differs from WaitUntilVisible which should be used only if the view already exists in the
- * RecyclerView. If timeoutMs is 0, it will check the RecyclerView exactly once. Typical use:
+ * An action that waits until a document matching the given matcher is gone from the given
+ * RecyclerView. It will attempt to scroll through the RecyclerView's items to see if the item
+ * exists. If timeoutMs is 0, it will check the RecyclerView exactly once. Typical usage:
  *
  *  <pre>
- *   onView(withId(R.id.rec_view_id)).perform(WaitUntilExistsInRecyclerView(matcher, 500L))
+ *   onView(withId(R.id.rec_view_id)).perform(WaitUntilGoneFromRecyclerView(matcher, 500L))
  *  </pre>
  */
-class WaitUntilExistsInRecyclerView(
+class WaitUntilGoneFromRecyclerView(
     private val matcher: Matcher<View>,
     private val timeoutMs: Long = 500L,
 ) : ViewAction {
@@ -47,7 +45,8 @@ class WaitUntilExistsInRecyclerView(
     }
 
     override fun getDescription(): String {
-        return "wait up to ${timeoutMs}ms for the view matching $matcher to exist in RecyclerView"
+        return "wait up to ${timeoutMs}ms for the view matching $matcher to be gone from " +
+            " RecyclerView"
     }
 
     override fun perform(uiController: UiController, view: View) {
@@ -55,29 +54,28 @@ class WaitUntilExistsInRecyclerView(
 
         while (true) {
             try {
-                // Try to scroll to the child. If this succeeds, the item exists and is fully
-                // visible. Use atPosition(0) to handle cases where the matcher matches multiple
-                // items.
-                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
-                        matcher,
-                        scrollCompletelyTo(),
-                    )
-                    .atPosition(0)
+                // Try to scroll to the child. If this succeeds, the item still exists.
+                RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(matcher)
                     .perform(uiController, view)
-                return
             } catch (_: Exception) {
-                if (System.currentTimeMillis() >= endTime) {
-                    break
-                }
-                // If not found, wait a bit and retry until timeout.
-                uiController.loopMainThreadForAtLeast(100L)
+                // The item was not found in the adapter.
+                return
             }
+
+            if (System.currentTimeMillis() >= endTime) {
+                break
+            }
+
+            // If found, wait a bit and retry until timeout.
+            uiController.loopMainThreadForAtLeast(100L)
         }
 
         throw PerformException.Builder()
             .withActionDescription(description)
             .withCause(
-                TimeoutException("Waited ${timeoutMs}ms for view matching $matcher in RecyclerView")
+                TimeoutException(
+                    "Waited ${timeoutMs}ms for view matching $matcher to be gone from RecyclerView"
+                )
             )
             .withViewDescription(HumanReadables.describe(view))
             .build()

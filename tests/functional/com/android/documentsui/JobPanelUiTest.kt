@@ -605,6 +605,6 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         // Verify that we're in the trash page.
         val trashWindowTitle = context.getString(R.string.root_trash)
         bots.main.assertWindowTitle(trashWindowTitle)
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1)
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
     }
 }

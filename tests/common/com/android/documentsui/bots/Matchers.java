@@ -19,14 +19,25 @@ package com.android.documentsui.bots;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.matcher.ViewMatchers;
+
+import com.android.documentsui.R;
 
 import junit.framework.AssertionFailedError;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Support methods for working with Espresso related matchers 'n stuff.
@@ -50,5 +61,42 @@ public final class Matchers {
         catch (Exception|AssertionFailedError e) {
             return false;
         }
+    }
+
+    /**
+     * Return a matcher for the document root container (item_root) with a TextView descendant with
+     * the given label.
+     */
+    public static Matcher<View> documentMatcher(String label) {
+        return allOf(withId(R.id.item_root), ViewMatchers.hasDescendant(withText(label)));
+    }
+
+    /** Return a matcher for the first document root container (item_root) in the directory list. */
+    public static Matcher<View> firstDocumentMatcher() {
+        return allOf(withId(R.id.item_root), documentAtPositionMatcher(0));
+    }
+
+    /**
+     * Returns a matcher that matches the child at the specified position within a parent matched by
+     * the given matcher.
+     */
+    public static Matcher<View> documentAtPositionMatcher(final int position) {
+        return new TypeSafeMatcher<>() {
+            private final Matcher<View> mParentMatcher = withId(R.id.dir_list);
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                mParentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup
+                        && mParentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
     }
 }

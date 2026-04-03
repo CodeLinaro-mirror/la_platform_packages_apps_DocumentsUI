@@ -40,7 +40,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.R
@@ -53,7 +52,6 @@ import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestFilesRule
 import java.io.IOException
 import junit.framework.Assert.assertNotNull
-import junit.framework.Assert.assertNull
 import kotlin.math.roundToInt
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assume.assumeTrue
@@ -181,8 +179,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("file0.log")
         assertNotNull(selectionHotspot)
         selectionHotspot.click()
-        device!!.waitForIdle()
-        assertNull(device!!.findObject(By.text("1 selected")))
+        bots.directory.assertNoSelection()
     }
 
     @Test

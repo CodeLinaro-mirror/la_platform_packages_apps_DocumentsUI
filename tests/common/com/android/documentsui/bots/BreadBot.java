@@ -17,9 +17,15 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.hamcrest.CoreMatchers.allOf;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
@@ -31,11 +37,11 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject2;
 
+import com.android.documentsui.R;
 import com.android.documentsui.actions.WaitUntilGone;
 import com.android.documentsui.actions.WaitUntilVisible;
 
@@ -152,7 +158,7 @@ public class BreadBot extends Bots.BaseBot {
     }
 
     public void clickItem(String label) {
-        findHorizontalEntry(label).click();
+        getHorizontalEntry(label).perform(click());
     }
 
     public void assertItemsPresent(String... items) {
@@ -168,7 +174,7 @@ public class BreadBot extends Bots.BaseBot {
             }
         }
         if (!absent.isEmpty()) {
-            Assert.fail("Expected iteams " + Arrays.asList(items) + ", but missing " + absent);
+            Assert.fail("Expected items " + Arrays.asList(items) + ", but missing " + absent);
         }
     }
 
@@ -199,12 +205,15 @@ public class BreadBot extends Bots.BaseBot {
     }
 
     private boolean hasHorizontalEntry(String label) {
-        return findHorizontalEntry(label) != null;
+        try {
+            getHorizontalEntry(label).check(matches(isDisplayed()));
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    private UiObject2 findHorizontalEntry(String label) {
-        UiObject2 breadcrumb = mDevice.findObject(By.res(mBreadCrumbId));
-        return breadcrumb.findObject(By.text(label));
+    private ViewInteraction getHorizontalEntry(String label) {
+        return onView(allOf(withText(label), isDescendantOfA(withId(R.id.horizontal_breadcrumb))));
     }
 }

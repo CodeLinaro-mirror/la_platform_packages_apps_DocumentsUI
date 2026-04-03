@@ -26,7 +26,8 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view in the hierarchy becomes visible. Typical use:
+ * An action that waits until a view, that already exists in the hierarchy, becomes visible. Typical
+ * use:
  * <pre>
  *  onView(withId(R.id.my_view_id)).perform(WaitUntilVisible(500L))
  * </pre>
