@@ -80,6 +80,8 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRenameFile() throws Exception {
         createTestFiles();
 
+        var originalFile = bots.directory.findDocument(fileName);
+
         bots.directory.selectDocument(fileName, 1);
         device.waitForIdle();
 
@@ -90,8 +92,8 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.directory.waitUntilDocumentDoesNotExist(fileName);
-        bots.directory.waitForDocument(newFileName);
+        originalFile.waitUntilGone(3000);
+        bots.directory.assertDocumentsVisible(newFileName);
         // Snackbar will not show if no exception.
         assertNull(bots.directory.getSnackbar(context.getString(R.string.rename_error)));
     }
@@ -116,20 +118,14 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.hideHiddenFilesIfNeeded();
 
         // By default non-desktop folders like Android/Music don't show.
-        for (String folder : desktopFolders) {
-            bots.directory.waitUntilDocumentDoesNotExist(folder);
-        }
+        bots.directory.assertDocumentsAbsent(desktopFolders);
 
         bots.main.showHiddenFiles();
         // Assert these folder are now showing.
-        for (String folder : desktopFolders) {
-            bots.directory.waitForDocument(folder);
-        }
+        bots.directory.assertDocumentsPresent(desktopFolders);
 
         bots.main.hideHiddenFiles();
         // Assert these folder are gone.
-        for (String folder : desktopFolders) {
-            bots.directory.waitUntilDocumentDoesNotExist(folder);
-        }
+        bots.directory.assertDocumentsAbsent(desktopFolders);
     }
 }

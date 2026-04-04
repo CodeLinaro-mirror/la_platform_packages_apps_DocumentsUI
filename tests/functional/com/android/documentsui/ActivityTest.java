@@ -39,6 +39,7 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
@@ -247,6 +248,20 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
 
         mDocsHelper.createDocument(rootDir1, "text/plain", fileName3);
         mDocsHelper.createDocument(rootDir1, "text/plain", fileName4);
+    }
+
+    void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument(fileName1);
+        bots.directory.waitForDocument(fileName2);
+        bots.directory.waitForDocument(dirName1);
+        bots.directory.waitForDocument(fileNameNoRename);
+        bots.directory.assertDocumentsCount(4);
+    }
+
+    void assertDefaultContentOfTestDir1() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument(fileName3);
+        bots.directory.waitForDocument(fileName4);
+        bots.directory.assertDocumentsCount(2);
     }
 
     /**

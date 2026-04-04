@@ -25,8 +25,8 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view becomes hidden, but still exists. If the view already hidden
- * then this returns straight away. Typical use:
+ * An action that waits until a view becomes hidden. If the view already hidden then this returns
+ * straight away. Typical use:
  * <pre>
  *  onView(withId(R.id.my_view_id)).perform(WaitUntilGone(500L))
  * </pre>

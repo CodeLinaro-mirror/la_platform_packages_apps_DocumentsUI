@@ -21,20 +21,19 @@ import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-import static com.android.documentsui.actions.MouseClickActionKt.mouseClick;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.annotation.Nullable;
 import android.app.Activity;
@@ -50,9 +49,9 @@ import android.view.View;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
@@ -136,13 +135,15 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.openDocument(parentDirName);
         }
 
+        bots.directory.waitForDocument(fileName, /* withScroll= */ true);
         bots.directory.selectDocument(fileName, 1);
 
-        bots.keyboard.performDeleteAction();
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
-        bots.directory.waitUntilDocumentDoesNotExist(fileName);
+        bots.directory.findDocument(fileName).waitUntilGone(5000);
+        assertFalse(bots.directory.hasDocuments(fileName));
     }
 
     @Test
@@ -153,10 +154,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    public void testFilesListed() {
-        bots.directory.waitForDocument("file0.log");
-        bots.directory.waitForDocument("file1.png");
-        bots.directory.waitForDocument("file2.csv");
+    public void testFilesListed() throws Exception {
+        bots.directory.assertDocumentsVisible("file0.log", "file1.png", "file2.csv");
     }
 
     @Test
@@ -169,18 +168,20 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         String newFileName = "mxuadkjf.txt";
         mTestFilesRule.docsHelper.createDocument(root, "text/plain", newFileName);
 
-        // Documents should be present.
-        bots.directory.waitForDocument("file0.log");
-        bots.directory.waitForDocument("file1.png");
-        bots.directory.waitForDocument("file2.csv");
         bots.directory.waitForDocument(newFileName);
+        // Documents should be present, but may not necessary be visible on small screen.
+        bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv", newFileName);
     }
 
     @DesktopTest(cujs = {"b/434068747"})
     @Test
     public void testNavigate_byBreadcrumb() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
-        bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);
+        bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);  // wait for known content
+        bots.directory.assertDocumentsVisible(TestFilesRule.CHILD_DIR_1);
+
+        device.waitForIdle();
+        bots.breadcrumb.assertItemsPresent(TestFilesRule.DIR_NAME_1, "TEST_ROOT_0");
 
         bots.breadcrumb.clickItem("TEST_ROOT_0");
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
@@ -289,7 +290,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         // Recent).
         switchRoot(primaryRoot.title);
         bots.directory.openDocument("Download");
-        bots.directory.waitForDocument(fileName);
+        bots.directory.waitForDocument(fileName, /* withScroll= */ true);
 
         // Open Recent and wait for the document to appear.
         switchRoot("Recent");
@@ -338,8 +339,9 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             // this week to make the test run more efficiently.
             switchRoot("Recent");
 
-            // Verify that just created zip file appears among recent files.
-            bots.directory.waitForDocument(createdFileName);
+            // Verify that just created zip file appears among recent files. It should appear on top
+            // so no scrolling.
+            assertTrue(bots.directory.findDocument(createdFileName).exists());
         } finally {
             if (createdFileName != null) {
                 cleanupFile(createdFileName, primaryRoot.title, "Download");
@@ -349,21 +351,21 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
-    public void testSingleClickToSelect_enabled() {
+    public void testSingleClickToSelect_enabled() throws Exception {
         doTestSingleClickToSelect(true);
     }
 
     @Test
     @DisableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
-    public void testSingleClickToSelect_disabled() {
+    public void testSingleClickToSelect_disabled() throws Exception {
         doTestSingleClickToSelect(false);
     }
 
-    private void doTestSingleClickToSelect(boolean flagEnabled) {
+    private void doTestSingleClickToSelect(boolean flagEnabled) throws Exception {
         final String label = TestFilesRule.DIR_NAME_1;
-        var labelMatcher =
-                allOf(withText(label), ViewMatchers.isDescendantOfA(withId(R.id.item_root)));
-        onView(labelMatcher).perform(mouseClick());
+        UiObject2 ancestorObject = bots.directory.findItemAndSelectionHotspot(label)[0];
+        UiObject2 labelObject = ancestorObject.findObject(By.text(label));
+        labelObject.click();
 
         if (flagEnabled) {
             bots.directory.assertSelection(1);
@@ -398,7 +400,9 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
     public void testOnConfigurationChanged_LocaleResetsSelection() throws Exception {
         final String[] frenchDownloads = new String[1];
+        device.waitForIdle();
         bots.directory.selectDocument("file0.log", 1);
+        bots.directory.assertSelection(1);
 
         mActivityScenario.onActivity(
                 activity -> {
@@ -423,7 +427,9 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
     public void testConfigurationChange_ResizeAppPreservesSelection() throws Exception {
         final String[] downloads = new String[1];
+        device.waitForIdle();
         bots.directory.selectDocument("file0.log", 1);
+        bots.directory.assertSelection(1);
 
         // This simulates a minor config change where the activity is not recreated,
         // and only onConfigurationChanged is called.

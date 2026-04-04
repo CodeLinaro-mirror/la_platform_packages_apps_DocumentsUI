@@ -133,12 +133,12 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testDeleteDocument() throws Exception {
         bots.directory.selectDocument("file1.png", 1);
         device.waitForIdle();
-        bots.keyboard.performDeleteAction();
+        bots.main.clickDelete();
 
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
-        bots.directory.waitUntilDocumentDoesNotExist("file1.png");
+        bots.directory.assertDocumentsAbsent("file1.png");
     }
 
     @HugeLongTest
@@ -159,10 +159,12 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_1_ID);
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
+
         bots.directory.waitForDocument("file1.png");
+        bots.directory.assertDocumentsVisible("file1.png");
 
         switchRoot(ROOT_0_ID);
-        bots.directory.waitUntilDocumentDoesNotExist("file1.png");
+        bots.directory.assertDocumentsAbsent("file1.png");
     }
 
     @DesktopTest(cujs = {"b/434068359"})
@@ -201,6 +203,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.clearSelection();
         }
 
+        device.waitForIdle();
         bots.directory.openDocument("Dir1");
         bots.directory.selectDocument("ChildDir1", 1);
 
@@ -214,7 +217,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testDeleteDocument_Cancel() throws Exception {
         bots.directory.selectDocument("file1.png", 1);
         device.waitForIdle();
-        bots.keyboard.performDeleteAction();
+        bots.main.clickDelete();
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
 
@@ -260,7 +263,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         // Android devices a more reliable way is to wait until notification goes away, but ARC++
         // uses Chrome OS notifications so it isn't even an option.
         bots.directory.waitForDocument("0.txt");
-        bots.directory.waitForDocument(nameOfLastFile);
+        bots.directory.waitForDocument(nameOfLastFile, true);
 
         final int expectedCount = Shared.MAX_DOCS_IN_INTENT + 1;
         List<DocumentInfo> children = mDocsHelper.listChildren(target, -1);

@@ -98,7 +98,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         bots.roots.openRoot(TRASH_ROOT.title)
 
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
     }
 
     /**
@@ -111,7 +111,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openRoot(TRASH_ROOT.title)
 
         // First, check that the trashed files are visible in the UI.
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
 
         // Then, ensure the "Empty Trash" banner is visible.
         bots.main.assertEmptyTrashBannerIsVisible()
@@ -126,7 +126,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the previously trashed files are now gone.
-        trashedFileNames.forEach { bots.directory.waitUntilDocumentDoesNotExist(it) }
+        bots.directory.assertDocumentsAbsent(*trashedFileNames.toTypedArray())
 
         // Verify that Empty trash bin button is disabled.
         bots.main.assertEmptyTrashNowButtonEnabled(false)
@@ -139,7 +139,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openRoot(TRASH_ROOT.title)
 
         // First, check that the trashed files are visible in the UI.
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
 
         // Select the first two files to permanently delete.
         val filesToPermanentlyDelete = trashedFileNames.take(2)
@@ -156,11 +156,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the selected files are now gone.
-        filesToPermanentlyDelete.forEach { bots.directory.waitUntilDocumentDoesNotExist(it) }
+        bots.directory.assertDocumentsAbsent(*filesToPermanentlyDelete.toTypedArray())
 
         // Verify that the remaining files are still in the trash.
         val remainingFiles = trashedFileNames.drop(2)
-        remainingFiles.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
     }
 
     /** Tests permanently deleting items from within a trashed folder. */
@@ -168,6 +168,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     fun testPermanentlyDeleteItemsFromTrashedFolder() {
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
+
+        // First, check that the trashed folder is visible in the UI.
+        bots.directory.assertDocumentsPresent(trashedFolderName)
 
         // Open the trashed folder.
         bots.directory.openDocument(trashedFolderName)
@@ -185,7 +188,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         }
 
         // Check that the files are visible inside the folder.
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
 
         // Select the first two files to permanently delete.
         val filesToPermanentlyDelete = trashedFileNames.take(2)
@@ -202,16 +205,16 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the selected files are now gone from the folder.
-        filesToPermanentlyDelete.forEach { bots.directory.waitUntilDocumentDoesNotExist(it) }
+        bots.directory.assertDocumentsAbsent(*filesToPermanentlyDelete.toTypedArray())
 
         // Verify that the remaining files are still in the folder.
         val remainingFiles = trashedFileNames.drop(2)
-        remainingFiles.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
 
         // Go back to the trash root and verify the folder is still there.
         device!!.pressBack()
         device!!.waitForIdle()
-        bots.directory.waitForDocument(trashedFolderName)
+        bots.directory.assertDocumentsPresent(trashedFolderName)
     }
 
     /** Tests that restoring selected items from the Trash view works correctly. */
@@ -226,7 +229,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openRoot(TRASH_ROOT.title)
 
         // First, check that the trashed files are visible in the UI.
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
 
         // Select the first two files to restore.
         val filesToRestore = trashedFileNames.take(2)
@@ -239,16 +242,17 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the selected files are now gone from the trash.
-        filesToRestore.forEach { bots.directory.waitUntilDocumentDoesNotExist(it) }
+        bots.directory.assertDocumentsAbsent(*filesToRestore.toTypedArray())
 
         // Verify that the remaining files are still in the trash.
         val remainingFiles = trashedFileNames.drop(2)
-        remainingFiles.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
 
         // Go back to the original directory and verify the files are restored.
         bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
-        filesToRestore.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*filesToRestore.toTypedArray())
     }
 
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
@@ -261,6 +265,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
+
+        // Verify the trashed folder is visible.
+        bots.directory.assertDocumentsPresent(trashedFolderName)
 
         // Open the trashed folder.
         bots.directory.openDocument(trashedFolderName)
@@ -285,16 +292,17 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.main.clickActionItem("Restore")
 
         // Verify that the selected files are now gone from the trash.
-        filesToRestore.forEach { bots.directory.waitUntilDocumentDoesNotExist(it) }
+        bots.directory.assertDocumentsAbsent(*filesToRestore.toTypedArray())
 
         // Verify that the remaining files are still in the trash.
         val remainingFiles = trashedFileNames.drop(2)
-        remainingFiles.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
 
         // Go back to the original directory and verify the files are restored.
         bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(trashedFolderName)
-        filesToRestore.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*filesToRestore.toTypedArray())
     }
 
     /** Verifies that attempting to open a trashed item shows a dialog to restore it. */
@@ -309,7 +317,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openRoot(TRASH_ROOT.title)
 
         // Check that the trashed files are visible in the UI.
-        trashedFileNames.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
 
         // Attempt to open the first trashed file.
         bots.directory.openDocument(trashedFileNames.first())
@@ -321,6 +329,8 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Click "Cancel" and ensure the file remains in the trash.
         bots.main.clickDialogCancelButton(false)
+        device!!.waitForIdle()
+        bots.directory.assertDocumentsPresent(trashedFileNames.first())
 
         // Attempt to open the file again.
         bots.directory.openDocument(trashedFileNames.first())
@@ -331,12 +341,13 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the file is no longer in the trash.
-        bots.directory.waitUntilDocumentDoesNotExist(trashedFileNames.first())
+        bots.directory.assertDocumentsAbsent(trashedFileNames.first())
 
         // Verify that the file is now back in its original location.
         bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
-        bots.directory.waitForDocument(trashedFileNames.first())
+        bots.directory.assertDocumentsPresent(trashedFileNames.first())
     }
 
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
@@ -349,6 +360,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
+
+        // Verify the trashed folder is visible.
+        bots.directory.assertDocumentsPresent(trashedFolderName)
 
         // Open the trashed folder.
         bots.directory.openDocument(trashedFolderName)
@@ -365,6 +379,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val fileToOpen = trashedFileNames.first()
 
+        // Verify the file is visible inside the trashed folder.
+        bots.directory.assertDocumentsPresent(fileToOpen)
+
         // Attempt to open the file.
         bots.directory.openDocument(fileToOpen)
         device!!.waitForIdle()
@@ -375,6 +392,8 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Click "Cancel" and ensure the file is still in the folder.
         bots.main.clickDialogCancelButton(false)
+        device!!.waitForIdle()
+        bots.directory.assertDocumentsPresent(fileToOpen)
 
         // Attempt to open the file again.
         bots.directory.openDocument(fileToOpen)
@@ -385,16 +404,18 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify the file is no longer in the trashed folder.
-        bots.directory.waitUntilDocumentDoesNotExist(fileToOpen)
+        bots.directory.assertDocumentsAbsent(fileToOpen)
 
         // Go back to the trash root. The folder should still be there.
         device!!.pressBack()
-        bots.directory.waitForDocument(trashedFolderName)
+        device!!.waitForIdle()
+        bots.directory.assertDocumentsPresent(trashedFolderName)
 
         // Now, check that the restored file is in its original location.
         bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
-        bots.directory.waitForDocument(fileToOpen)
+        bots.directory.assertDocumentsPresent(fileToOpen)
     }
 
     /**
@@ -416,7 +437,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
         // Enable "Show hidden files" from the overflow menu to reveal hidden folders.
         bots.main.showHiddenFilesIfNeeded()
+        device!!.waitForIdle()
         bots.directory.openDocument(".trash-storage")
+        device!!.waitForIdle()
 
         // Navigate into the subfolder corresponding to the original parent directory.
         // For this test environment, the files are moved from DIR_NAME_1.
@@ -425,7 +448,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Identify the trashed file and verify it is present in the hidden folder.
         val fileToRestore = trashedFileNames.first()
-        bots.directory.waitForDocument(fileToRestore)
+        bots.directory.assertDocumentsPresent(fileToRestore)
 
         // Select the file and click "Restore" from the menu.
         bots.directory.selectDocument(fileToRestore, 1)
@@ -433,12 +456,13 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         // Verify that the file is physically removed from the hidden trash folder.
-        bots.directory.waitUntilDocumentDoesNotExist(fileToRestore)
+        bots.directory.assertDocumentsAbsent(fileToRestore)
 
         // Navigate back to the original directory and verify the file is restored.
         bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
-        bots.directory.waitForDocument(fileToRestore)
+        bots.directory.assertDocumentsPresent(fileToRestore)
     }
 
     /**
@@ -449,6 +473,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     @Throws(Exception::class)
     private fun moveFilesToTrash(): List<String> {
         bots.roots.openRoot(StubProvider.ROOT_0_ID)
+        device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
 
         val rootInfo = mDocsHelper!!.getRoot(ROOT_0_ID)
@@ -459,7 +484,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val filesToTrash = documents.take(3).map { it.displayName }
 
-        filesToTrash.forEach { bots.directory.waitForDocument(it) }
+        bots.directory.assertDocumentsPresent(*filesToTrash.toTypedArray())
 
         filesToTrash.forEachIndexed { index, fileName ->
             bots.directory.selectDocument(fileName, index + 1)
@@ -485,7 +510,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.selectDocument(TestFilesRule.DIR_NAME_1, 1)
         bots.main.clickToolbarItem(R.id.action_menu_move_to_trash)
 
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.DIR_NAME_1)
+        bots.directory.assertDocumentsAbsent(TestFilesRule.DIR_NAME_1)
 
         device!!.waitForIdle()
 

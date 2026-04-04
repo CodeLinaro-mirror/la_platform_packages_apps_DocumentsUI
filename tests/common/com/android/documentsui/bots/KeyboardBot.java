@@ -22,7 +22,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
-import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -64,10 +63,5 @@ public class KeyboardBot extends Bots.BaseBot {
 
     public void pressKey(int keyCode, int metaState) {
         mDevice.pressKeyCode(keyCode, metaState);
-    }
-
-    /** Performs a delete action by pressing Shift + Forward Delete keys. */
-    public void performDeleteAction() {
-        pressKey(KeyEvent.KEYCODE_FORWARD_DEL, KeyEvent.META_SHIFT_ON);
     }
 }

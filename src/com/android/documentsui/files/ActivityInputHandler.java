@@ -26,41 +26,21 @@ import android.view.KeyEvent;
 final class ActivityInputHandler {
 
     private final Runnable mDeleteOrTrashHandler;
-    private final Runnable mDeleteForeverHandler;
 
-    ActivityInputHandler(Runnable deleteOrTrashHandler, Runnable deleteForeverHandler) {
+    ActivityInputHandler(Runnable deleteOrTrashHandler) {
         mDeleteOrTrashHandler = deleteOrTrashHandler;
-        mDeleteForeverHandler = deleteForeverHandler;
     }
 
     boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_FORWARD_DEL:
-                // Standard 'Delete' key should also support Shift for permanent delete
-                if (event.isShiftPressed()) {
-                    mDeleteForeverHandler.run();
-                } else {
-                    mDeleteOrTrashHandler.run();
-                }
+                mDeleteOrTrashHandler.run();
                 return true;
             case KeyEvent.KEYCODE_DEL:
-                if (isUseMaterial3FlagEnabled()) {
-                    // Strict check for Alt + Shift + Backspace
-                    if (event.hasModifiers(KeyEvent.META_ALT_ON | KeyEvent.META_SHIFT_ON)) {
-                        mDeleteForeverHandler.run();
-                        return true;
-                    }
-                    // Strict check for Alt + Backspace
-                    if (event.hasModifiers(KeyEvent.META_ALT_ON)) {
-                        mDeleteOrTrashHandler.run();
-                        return true;
-                    }
-                } else if (event.isAltPressed()) {
-                    if (event.isShiftPressed()) {
-                        mDeleteForeverHandler.run();
-                    } else {
-                        mDeleteOrTrashHandler.run();
-                    }
+                if (isUseMaterial3FlagEnabled()
+                        ? event.hasModifiers(KeyEvent.META_ALT_ON)
+                        : event.isAltPressed()) {
+                    mDeleteOrTrashHandler.run();
                     return true;
                 }
                 return false;

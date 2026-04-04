@@ -24,6 +24,7 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -148,6 +149,9 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testCopyDocument_Cancel() throws Exception {
+        bots.directory.findDocument(TARGET_FILE);
+        device.waitForIdle();
+
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -163,6 +167,9 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
+        bots.directory.findDocument(TARGET_FILE);
+        device.waitForIdle();
+
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -176,16 +183,21 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         assertTrue(mErrorReason, mOperationExecuted);
 
         switchRoot(ROOT_1_ID);
-        bots.directory.waitUntilDocumentDoesNotExist(TARGET_FILE);
+        device.waitForIdle();
+        assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
         switchRoot(ROOT_0_ID);
-        bots.directory.waitForDocument(TARGET_FILE);
+        device.waitForIdle();
+        assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }
 
     @HugeLongTest
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testMoveDocument_Cancel() throws Exception {
+        bots.directory.findDocument(TARGET_FILE);
+        device.waitForIdle();
+
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -201,6 +213,9 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
+        bots.directory.findDocument(TARGET_FILE);
+        device.waitForIdle();
+
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
@@ -213,9 +228,11 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         assertTrue(mErrorReason, mOperationExecuted);
 
         switchRoot(ROOT_1_ID);
-        bots.directory.waitUntilDocumentDoesNotExist(TARGET_FILE);
+        device.waitForIdle();
+        assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
         switchRoot(ROOT_0_ID);
-        bots.directory.waitForDocument(TARGET_FILE);
+        device.waitForIdle();
+        assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }
 }

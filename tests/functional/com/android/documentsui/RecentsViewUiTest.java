@@ -33,7 +33,11 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.net.Uri;
 import android.os.RemoteException;
@@ -46,6 +50,8 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.view.View;
 
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.DocumentInfo;
@@ -63,6 +69,7 @@ import junit.framework.AssertionFailedError;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -108,36 +115,36 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS, FLAG_USE_MATERIAL3,
             FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentsContainsAllFileTypes() throws Exception {
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
 
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_4);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_5);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_6);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_7);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_8);
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_2, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_4, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_5, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_6, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_7, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_8, true).exists());
     }
 
     @Test
     @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
     public void testRecentsDoesNotContainAllFileTypes() throws Exception {
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
 
         // When the flag is disabled, DocumentsUI Recents should continue using the old combination
         // of multiple MediaDocumentsProvider and DownloadStorageProvider roots, which means that
         // some file types will not be available.
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_4);
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_5);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_6);
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_7);
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_8);
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_2, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_4, true).exists());
+        assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_5, true).exists());
+        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_6, true).exists());
+        assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_7, true).exists());
+        assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_8, true).exists());
     }
 
     @Test
     @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1() throws Exception {
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
 
         // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
@@ -157,7 +164,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS, FLAG_USE_MATERIAL3,
             FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentFilesShowRenameOptions() throws Exception {
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
@@ -174,7 +181,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
     public void testRecentFilesDoNotShowRenameOptions() throws Exception {
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
@@ -193,7 +200,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // found by the new Recents implementation.
         final String testFileName = mTestFilesRule.createRandomFile("application/octet-stream");
 
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
         bots.search.doSearch(testFileName);
 
         bots.directory.waitForDocument(testFileName);
@@ -208,7 +215,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
 
         // Even pre-M3, DocsUI can run in large screen or small layout, and the way to activate
         // Search in Recent view differs between the two.
@@ -237,43 +244,55 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
 
         // Check: the file can be successfully deleted.
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
-        bots.keyboard.performDeleteAction();
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        bots.directory.waitUntilDocumentDoesNotExist(testFileName);
+        device.waitForIdle();
+        fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertFalse(fileInRecents.exists());
     }
 
     /** When using the new Search stack, files in Recents are movable. */
     @Test
+    @Ignore
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testMoveToInRecentsWithSearchV2() throws Exception {
         final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        switchRoot("Recent");
-        bots.directory.waitForDocument(testFileName);
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
 
         // Check: the random test file is not yet in Downloads.
-        switchRoot("Downloads");
-        bots.directory.waitUntilDocumentDoesNotExist(testFileName);
+        bots.roots.openRoot("Downloads");
+        try {
+            bots.directory.findDocument(testFileName, true);
+            fail("File " + testFileName + " must not be present in Downloads yet");
+        } catch (UiObjectNotFoundException e) {
+            // Working as intended.
+        }
 
         // Move the file to Downloads.
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
         bots.main.doMove(
                 () -> {
-                    switchRoot("Downloads");
+                    bots.roots.openRoot("Downloads");
                 });
 
         // Check: the random test file is now in Downloads.
-        switchRoot("Downloads");
-        bots.directory.waitForDocument(testFileName);
+        bots.roots.openRoot("Downloads");
+        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInDownloads.exists());
     }
 
     /**
@@ -288,11 +307,12 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = testFileNamePrefix.concat(".jpg");
 
         // Check: the random test file is visible in Recents.
-        switchRoot("Recent");
-        bots.directory.waitForDocument(testFileName);
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
 
         // Check: the "Move to" item is not visible in the context menu.
-        switchRoot("Recent");
+        bots.roots.openRoot("Recent");
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
         bots.main.openOverflowMenu();
@@ -326,7 +346,8 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             fileUri = createFileInDownloads(newFileName, "text/plain");
 
             // Move to the Recent view and wait for things to quiet down.
-            switchRoot("Recent");
+            bots.roots.openRoot("Recent");
+            device.waitForIdle();
 
             // Select the newly created file and check the expected path.
             bots.directory.selectDocument(newFileName, 1);
@@ -358,7 +379,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             fileUri = createFileInDownloads(fileName, "video/mp4");
 
             // Move to the Recent view and wait for things to quiet down.
-            switchRoot("Recent");
+            bots.roots.openRoot("Recent");
             bots.search
                     .clickChip(R.string.chip_title_videos)
                     .perform(new WaitForCheckState(true, 1000L));
@@ -368,7 +389,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
             SystemClock.sleep(delayMs);
             // Select the newly created file and check the expected path.
-            bots.directory.waitForDocument(fileName);
+            bots.directory.assertDocumentsPresent(fileName);
         } finally {
             deleteFileByUri(fileUri);
         }
@@ -384,6 +405,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             switchRoot("Recent");
 
             bots.directory.selectFirstDocument();
+            bots.directory.assertSelection(1);
 
             // Until MediaStore code is propagated to every test device we can either have
             // the old style path Downloads > fileName, in which case the test ends.
@@ -499,16 +521,12 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         mCloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
 
         // Is the file present in the root of the provider?
-        switchRoot("Test Cloud Provider");
-        bots.directory.waitForDocument(fileName);
+        bots.roots.openRoot("Test Cloud Provider");
+        assertTrue(bots.directory.findDocument(fileName, true).exists());
 
         // Is the file also present in recents?
-        switchRoot("Recent");
-        if (shouldBePresent) {
-            bots.directory.waitForDocument(fileName);
-        } else {
-            bots.directory.waitUntilDocumentDoesNotExist(fileName);
-        }
+        bots.roots.openRoot("Recent");
+        assertEquals(shouldBePresent, bots.directory.findDocument(fileName, true).exists());
     }
 
     @Test

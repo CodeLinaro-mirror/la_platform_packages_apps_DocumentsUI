@@ -245,8 +245,8 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         bots.keyboard.pressEnter();
 
         // Assert the old file is gone, the new file appears.
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
-        bots.directory.waitForDocument(newName);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsPresent(newName);
     }
 
     @Test
@@ -276,7 +276,7 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         device.waitForIdle();
 
         // Assert the file is gone.
-        bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
     }
 
     @Test
@@ -296,9 +296,9 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         device.waitForIdle();
 
         // Assert a zip file is created.
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
         final String zipFileName = isZipNgFlagEnabled() ? "file1.zip" : "file1.log.zip";
-        bots.directory.waitForDocument(zipFileName);
+        bots.directory.assertDocumentsPresent(zipFileName);
     }
 
     @DesktopTest(cujs = {"b/434068578"})

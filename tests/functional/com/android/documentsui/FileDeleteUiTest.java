@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static android.content.Context.RECEIVER_EXPORTED;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 
 import static org.junit.Assert.fail;
@@ -35,6 +36,7 @@ import android.util.Log;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
@@ -168,7 +170,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
 
-        bots.keyboard.performDeleteAction();
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 

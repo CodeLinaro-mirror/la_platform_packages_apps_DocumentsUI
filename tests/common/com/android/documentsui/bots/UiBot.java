@@ -39,7 +39,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
@@ -270,18 +269,11 @@ public class UiBot extends Bots.BaseBot {
         assertNotNull(listModeBtn);
     }
 
-    /** Checks if the current view state is in grid mode. */
+    /** Checks that the current view state is in grid mode. */
     public boolean isInGridMode() {
-        try {
-            // In grid mode, there should be the list mode button. This may or may not be visible
-            // (e.g. during selection the toolbar is gone and so it is hidden).
-            onView(withId(R.id.sub_menu_list))
-                    .check(matches(anyOf(isDisplayed(), not(isDisplayed()))));
-            return true;
-        } catch (Throwable t) {
-            // It must be in list mode.
-            return false;
-        }
+        // In grid mode, there should be the list mode button that is visible.
+        final UiObject2 listModeBtn = menuListMode();
+        return listModeBtn != null;
     }
 
     public void switchToListMode() {

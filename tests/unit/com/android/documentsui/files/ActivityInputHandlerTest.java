@@ -27,12 +27,8 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 import androidx.test.filters.MediumTest;
 import androidx.test.runner.AndroidJUnit4;
@@ -50,69 +46,22 @@ public class ActivityInputHandlerTest {
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private ActivityInputHandler mActivityInputHandler;
-    private boolean mDeleteOrTrashHappened;
-    private boolean mDeleteForeverHappened;
+    private boolean mDeleteHappened;
 
     @Before
     public void setUp() {
-        mDeleteOrTrashHappened = false;
-        mDeleteForeverHappened = false;
-        mActivityInputHandler =
-                new ActivityInputHandler(
-                        () -> {
-                            mDeleteOrTrashHappened = true;
-                        },
-                        () -> {
-                            mDeleteForeverHappened = true;
-                        });
+        mDeleteHappened = false;
+        mActivityInputHandler = new ActivityInputHandler(() -> {
+            mDeleteHappened = true;
+        });
     }
 
     @Test
-    public void testDeleteOrTrash() {
-        // ALT + BACKSPACE (No Shift)
+    public void testDelete() {
         KeyEvent event =
-                new KeyEvent(
-                        0,
-                        0,
-                        MotionEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_DEL,
-                        0,
-                        KeyEvent.META_ALT_ON);
-        assertTrue(mActivityInputHandler.onKeyDown(event.getKeyCode(), event));
-        assertTrue(mDeleteOrTrashHappened);
-        assertFalse(mDeleteForeverHappened);
-    }
-
-    @Test
-    public void testDeleteForever() {
-        // SHIFT + ALT + BACKSPACE
-        KeyEvent event =
-                new KeyEvent(
-                        0,
-                        0,
-                        MotionEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_DEL,
-                        0,
-                        KeyEvent.META_ALT_ON | KeyEvent.META_SHIFT_ON);
-        assertTrue(mActivityInputHandler.onKeyDown(event.getKeyCode(), event));
-        assertFalse(mDeleteOrTrashHappened);
-        assertTrue(mDeleteForeverHappened);
-    }
-
-    @Test
-    public void testDeleteForever_WithForwardDel() {
-        // SHIFT + FORWARD_DEL
-        KeyEvent event =
-                new KeyEvent(
-                        0,
-                        0,
-                        MotionEvent.ACTION_DOWN,
-                        KeyEvent.KEYCODE_FORWARD_DEL,
-                        0,
-                        KeyEvent.META_SHIFT_ON);
-        assertTrue(mActivityInputHandler.onKeyDown(event.getKeyCode(), event));
-        assertFalse(mDeleteOrTrashHappened);
-        assertTrue(mDeleteForeverHappened);
+                new KeyEvent(0, 0, ACTION_DOWN, KEYCODE_DEL, 0, META_ALT_ON | META_ALT_LEFT_ON);
+        assertThat(mActivityInputHandler.onKeyDown(event.getKeyCode(), event)).isTrue();
+        assertThat(mDeleteHappened).isTrue();
     }
 
     @Test
@@ -127,7 +76,6 @@ public class ActivityInputHandlerTest {
                         0,
                         META_ALT_ON | META_ALT_LEFT_ON | META_CTRL_ON | META_CTRL_LEFT_ON);
         assertThat(mActivityInputHandler.onKeyDown(event.getKeyCode(), event)).isFalse();
-        assertThat(mDeleteOrTrashHappened).isFalse();
-        assertThat(mDeleteForeverHappened).isFalse();
+        assertThat(mDeleteHappened).isFalse();
     }
 }

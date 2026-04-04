@@ -555,20 +555,13 @@ public abstract class MenuManager {
     }
 
     protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
-        boolean canDelete = selectionDetails.canDelete();
+        boolean enabled = selectionDetails.canDelete();
+        Menus.setEnabledAndVisible(delete, enabled);
+        // The delete menu item's visibility is tied to the trash flow's status.
+        // Since the XML defaults to never showing this action, we must manually make it visible
+        // when trash is disabled to give users a direct way to delete items.
         if (!isTrashFlowEnabled()) {
-            // When trash is disabled, promote "Delete" to the primary action bar.
-            // This ensures users have a direct way to delete items when trash isn't available.
-            Menus.setEnabledAndVisible(delete, canDelete);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else if (selectionDetails.canTrash()
-                && mState.stack.getRoot() != null
-                && mState.stack.getRoot().isLocalOnly()) {
-            // Hide "Delete" (Delete Forever) if moving to trash is possible on a local root.
-            Menus.setEnabledAndVisible(delete, false);
-        } else {
-            // Otherwise, show "Delete" in the overflow menu based on selection capability.
-            Menus.setEnabledAndVisible(delete, canDelete);
         }
     }
 

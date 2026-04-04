@@ -60,10 +60,8 @@ class NavigationBot(device: UiDevice, context: Context, timeout: Long, @LayoutRe
         // Try standard roots first
         val roots = rootsAndShortcuts.roots.filter { it.title == label }
         val shortcuts = rootsAndShortcuts.shortcuts.filter { it.folderTitle == label }
-        val hasDownloadsShortcut =
-            roots.any { it.title == "Downloads" } && shortcuts.any { it.title == "Downloads" }
 
-        if (roots.isNotEmpty() && !hasDownloadsShortcut) {
+        if (roots.isNotEmpty()) {
             scenario.onActivity { activity -> activity.onRootPicked(roots[0]) }
         } else if (shortcuts.isNotEmpty()) {
             scenario.onActivity { activity -> activity.onShortcutPicked(shortcuts[0]) }
