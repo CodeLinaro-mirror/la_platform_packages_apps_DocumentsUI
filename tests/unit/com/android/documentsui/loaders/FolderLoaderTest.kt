@@ -37,6 +37,7 @@ import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestDocumentsProvider
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
+import com.google.common.truth.Truth.assertThat
 import java.time.Duration
 import java.util.concurrent.CountDownLatch
 import org.junit.Assert.assertEquals
@@ -378,6 +379,49 @@ class FolderLoaderTest() {
             val directoryResult = loader.loadInBackground()
             assertNotNull(directoryResult)
             assertFalse(directoryResult!!.hasLimitedFunctionalityWhenOffline)
+        }
+
+        @Test
+        fun testLockedCursorLockDoesNotStopLoaderReset() {
+            val closeLatch = CountDownLatch(1)
+            val rootFolderInfo = DocumentInfo()
+            rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
+            rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+            mockProvider.setCloseLatch(closeLatch)
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val listener = TestLoadCompletedListener(1)
+            loader.registerListener(1, listener)
+            // Must set the loader in the "started" state. This also causes the loader go through
+            // the full cycle, including a call to deliverResults.
+            loader.startLoading()
+
+            // Wait for the result and check we got them.
+            listener.await()
+            assertThat(listener.result).isNotNull()
+            assertThat(listener.loadCount).isEqualTo(1)
+
+            // Now we are ready with the reset path. The reset calls close, which is held
+            // indefinitely by the lock. Yet, as it is run on the background thread, we expect the
+            // reset method to complete with no delay.
+            loader.reset()
+            // Now release the close method of the cursor, which allows it to finally close.
+            closeLatch.countDown()
+            // While one could expect the cursor to be in the closed state, DirectoryResults not
+            // only closes the cursor but also sets it to null. Unfortunately, we have no signal
+            // when the background thread is done, so we just sleep for a short time, and expect
+            // the closeResult to complete its job.
+            Thread.sleep(100)
+            assertThat(listener.result?.cursor).isNull()
         }
     }
 }

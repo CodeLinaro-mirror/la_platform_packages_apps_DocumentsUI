@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.view.KeyEvent;
 
 /**
@@ -35,7 +37,9 @@ final class ActivityInputHandler {
                 mDeleteOrTrashHandler.run();
                 return true;
             case KeyEvent.KEYCODE_DEL:
-                if (event.isAltPressed()) {
+                if (isUseMaterial3FlagEnabled()
+                        ? event.hasModifiers(KeyEvent.META_ALT_ON)
+                        : event.isAltPressed()) {
                     mDeleteOrTrashHandler.run();
                     return true;
                 }

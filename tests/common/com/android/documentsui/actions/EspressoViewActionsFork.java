@@ -103,6 +103,9 @@ public class EspressoViewActionsFork {
          *
          * I wanted include this in the javadoc but the formatter kept mangling the table :/
          */
+        // The InputVerifier needs us to pass in the last DOWN event timestamp into every subsequent
+        // event until it sees an UP event. Set the DOWN timestamp on the ACTION_DOWN event and
+        // reuse it for the subsequent events.
         DownResultHolder touchResult =
                 sendDown(
                         uiController,
@@ -111,7 +114,8 @@ public class EspressoViewActionsFork {
                         MotionEvent.ACTION_DOWN,
                         inputDevice,
                         buttonState,
-                        NO_BUTTONS); // ACTION_DOWN shouldn't have actionButton
+                        /* actionButton= */ NO_BUTTONS,
+                        /* existingDownTime= */ null);
         DownResultHolder buttonResult =
                 sendDown(
                         uiController,
@@ -120,7 +124,8 @@ public class EspressoViewActionsFork {
                         MotionEvent.ACTION_BUTTON_PRESS,
                         inputDevice,
                         buttonState,
-                        buttonState); // actionButton same as buttonState
+                        /* actionButton= */ buttonState,
+                        /* existingDownTime= */ touchResult.mDown.getEventTime());
         try {
             // The up events use NO_BUTTONS for buttonState and copy actionButton from downEvent.
             boolean touchFailed =
@@ -152,8 +157,8 @@ public class EspressoViewActionsFork {
 
     /**
      * Copied from espresso/core/java/androidx/test/espresso/action/MotionEvents.java with
-     * additional arguments for action and actionButton so we can send ACTION_DOWN and
-     * ACTION_BUTTON_PRESS events.
+     * additional arguments for action, actionButton and existingDownTime so we can send ACTION_DOWN
+     * and ACTION_BUTTON_PRESS events.
      */
     private static DownResultHolder sendDown(
             UiController uiController,
@@ -162,7 +167,8 @@ public class EspressoViewActionsFork {
             int action,
             int inputDevice,
             int buttonState,
-            int actionButton) {
+            int actionButton,
+            Long existingDownTime) {
         checkNotNull(uiController);
         checkNotNull(coordinates);
         checkNotNull(precision);
@@ -177,7 +183,8 @@ public class EspressoViewActionsFork {
                                 action,
                                 inputDevice,
                                 buttonState,
-                                actionButton);
+                                actionButton,
+                                existingDownTime);
                 // The down event should be considered a tap if it is long enough to be detected
                 // but short enough not to be a long-press. Assume that TapTimeout is set at
                 // least twice the detection time for a tap (no need to sleep for the whole
@@ -227,8 +234,8 @@ public class EspressoViewActionsFork {
 
     /**
      * Copied from espresso/core/java/androidx/test/espresso/action/MotionEvents.java with
-     * additional arguments for action and actionButton so we can send ACTION_DOWN and
-     * ACTION_BUTTON_PRESS events.
+     * additional arguments for action, actionButton and existingDownTime so we can send ACTION_DOWN
+     * and ACTION_BUTTON_PRESS events.
      */
     private static MotionEvent obtainDownEvent(
             float[] coordinates,
@@ -236,14 +243,20 @@ public class EspressoViewActionsFork {
             int action,
             int inputDevice,
             int buttonState,
-            int actionButton) {
+            int actionButton,
+            Long existingDownTime) {
         checkNotNull(coordinates);
         checkNotNull(precision);
 
-        long downTime = SystemClock.uptimeMillis();
+        // The event time is time for this specific event and the DOWN time is the time when the
+        // user originally pressed down to start a stream of position events. If there is not an
+        // existing DOWN time, then assume that this is the DOWN event and both time stamps should
+        // be the same.
+        long eventTime = SystemClock.uptimeMillis();
+        long downTime = existingDownTime == null ? eventTime : existingDownTime;
         return obtain(
                 downTime,
-                downTime,
+                eventTime,
                 action,
                 coordinates,
                 precision[0],

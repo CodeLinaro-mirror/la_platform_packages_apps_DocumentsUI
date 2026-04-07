@@ -28,6 +28,7 @@ import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -115,14 +116,16 @@ class ApprovedDocHandlersTest {
         val handlers = getApprovedDocHandlers(selectionDetails)
 
         assertThat(handlers).hasSize(1)
-        assertThat(handlers[0].componentName).isEqualTo(testComponent)
-        assertThat(handlers[0].label).isEqualTo("Test App")
-        assertThat(handlers[0].icon).isNull()
+        val handler = handlers[0]
+        assertThat(handler.isEnabled).isTrue()
+        assertThat(handler.componentName).isEqualTo(testComponent)
+        assertThat(handler.label).isEqualTo("Test App")
+        assertThat(handler.icon).isNull()
 
         val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
         verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
         assertThat(intentCaptor.value.categories)
-            .contains(ApprovedDocHandlers.APPROVED_HANDLER_CATEGORY)
+            .contains(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER)
     }
 
     @Test
@@ -140,7 +143,7 @@ class ApprovedDocHandlersTest {
         val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
         verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
         assertThat(intentCaptor.value.categories)
-            .contains(ApprovedDocHandlers.APPROVED_HANDLER_CATEGORY)
+            .contains(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER)
     }
 
     @Test

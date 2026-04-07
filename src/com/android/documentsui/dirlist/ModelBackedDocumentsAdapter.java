@@ -67,6 +67,9 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
      */
     private List<String> mModelIds = new ArrayList<>();
 
+    /** A lazily instantiated HashMap from mModelIds elements to mModelIds indexes. */
+    private HashMap<String, Integer> mModelIdsAsHashMap;
+
     private Set<String> mJustFinishedSyncingModelIds = new HashSet<>();
     private Set<String> mPreviousSyncInProgressModelIds = new HashSet<>();
     private EventListener<Model.Update> mModelUpdateListener;
@@ -248,6 +251,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
 
     private void onModelUpdate(Model model) {
         String[] modelIds = model.getModelIds();
+        mModelIdsAsHashMap = null;
         mModelIds = new ArrayList<>(modelIds.length);
         for (String id : modelIds) {
             mModelIds.add(id);
@@ -305,6 +309,33 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     private void onModelUpdateFailed(Exception e) {
         Log.w(TAG, "Model update failed.", e);
         mModelIds.clear();
+        mModelIdsAsHashMap = null;
+    }
+
+    /**
+     * Equivalent to mModelIds.indexOf(modelId) but optimized, since mModelIds is an ArrayList and
+     * ArrayList.indexOf has O(N) algorithmic complexity.
+     *
+     * <p>If mModelIds.size() is 'large' (for some arbitrary threshold) then this lazily creates a
+     * HashMap of the indexOf results. HashMap.get has O(log(N)) algorithmic complexity.
+     *
+     * <p>When hitting Ctrl-A (select all) in a directory holding N files, recyclerview-selection's
+     * EventBridge's onItemStateChanged can trigger on all N files, each calling this object's
+     * getPosition method, synchronously, on the UI thread. This lazy-HashMap optimization reduces
+     * the overall complexity from O(N²) to O(N×log(N)).
+     */
+    private int getIndexOf(String modelId) {
+        if ((mModelIds.size() < 32) || !isUseMaterial3FlagEnabled()) {
+            return mModelIds.indexOf(modelId);
+        } else if (mModelIdsAsHashMap == null) {
+            mModelIdsAsHashMap = new HashMap<String, Integer>();
+            for (int i = 0; i < mModelIds.size(); i++) {
+                mModelIdsAsHashMap.put(mModelIds.get(i), i);
+            }
+        }
+
+        Integer i = mModelIdsAsHashMap.get(modelId);
+        return (i != null) ? i.intValue() : -1;
     }
 
     @Override
@@ -314,7 +345,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
 
     @Override
     public int getAdapterPosition(String modelId) {
-        return mModelIds.indexOf(modelId);
+        return getIndexOf(modelId);
     }
 
     @Override
@@ -324,7 +355,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
 
     @Override
     public int getPosition(String id) {
-        int position = mModelIds.indexOf(id);
+        int position = getIndexOf(id);
         return position >= 0 ? position : RecyclerView.NO_POSITION;
     }
 

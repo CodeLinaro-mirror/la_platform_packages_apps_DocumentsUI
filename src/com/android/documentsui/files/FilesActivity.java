@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static android.view.KeyEvent.KEYCODE_REFRESH;
+
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
@@ -85,6 +87,7 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
 
 import kotlin.Unit;
+
 import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
@@ -281,7 +284,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::popDir,
                         mInjector.features,
                         mDrawer,
-                        mInjector.searchManager::onSearchBarClicked);
+                        this::onSearchKeyboardShortcut);
 
         RootsFragment.show(getSupportFragmentManager(), /* includeApps= */ false,
                 /* intent= */ null);
@@ -531,6 +534,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @CallSuper
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (DEBUG) Log.d(TAG, "onKeyDown: " + keyCode + ", " + event);
+
+        if (isUseMaterial3FlagEnabled() && keyCode == KEYCODE_REFRESH && event.hasNoModifiers()) {
+            final DirectoryFragment dir = getDirectoryFragment();
+            if (dir != null) dir.onRefresh();
+            return true;
+        }
+
         return mActivityInputHandler.onKeyDown(keyCode, event)
                 || mSharedInputHandler.onKeyDown(keyCode, event)
                 || super.onKeyDown(keyCode, event);
@@ -563,7 +574,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                     mInjector.actions.copyToClipboard();
                     return true;
                 case KeyEvent.KEYCODE_R:
-                case KeyEvent.KEYCODE_REFRESH:
                     {
                         if (!isUseMaterial3FlagEnabled()) break;
                         final DirectoryFragment dir = getDirectoryFragment();

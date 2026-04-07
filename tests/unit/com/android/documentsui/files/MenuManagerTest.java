@@ -30,18 +30,24 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static kotlinx.coroutines.test.TestCoroutineDispatchersKt.StandardTestDispatcher;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -97,6 +103,9 @@ import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.test.TestCoroutineScheduler;
 import kotlinx.coroutines.test.TestDispatcher;
 
+import org.mockito.InOrder;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -105,6 +114,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -331,7 +341,14 @@ public final class MenuManagerTest {
 
         testResources = TestResources.create();
         testResources.stringArrays.put(
-                R.array.approved_document_handlers, new String[] {"com.test.package"});
+                R.array.approved_document_handlers,
+                new String[] {
+                    "com.test.package",
+                    "com.test.package1",
+                    "com.test.package2",
+                    "com.test.package3",
+                    "com.test.package4"
+                });
 
         mLifecycleOwner = new TestLifecycleOwner(Lifecycle.State.STARTED, testDispatcher);
 
@@ -368,16 +385,18 @@ public final class MenuManagerTest {
                         activity.injector,
                         mApprovedDocHandlers);
 
-        mApprovedDocHandlers.getUpdateEvents().observe(
-                mLifecycleOwner,
-                unit -> {
-                    if (mgr != null) {
-                        mgr.updateContextMenu();
-                        if (selectionDetails.size() > 0) {
-                            mgr.updateActionMenu(testMenu, selectionDetails);
-                        }
-                    }
-                });
+        mApprovedDocHandlers
+                .getUpdateEvents()
+                .observe(
+                        mLifecycleOwner,
+                        unit -> {
+                            if (mgr != null) {
+                                mgr.updateContextMenu();
+                                if (selectionDetails.size() > 0) {
+                                    mgr.updateActionMenu(testMenu, selectionDetails);
+                                }
+                            }
+                        });
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -412,6 +431,67 @@ public final class MenuManagerTest {
             }
         }
         return null;
+    }
+
+    /**
+     * Creates a {@link ResolveInfo} representing an app that can handle a document.
+     * This will be displayed as a regular menu item in the menu.
+     */
+    private ResolveInfo createResolveInfo(String packageName, String name, String label) {
+        ResolveInfo info = new ResolveInfo();
+        info.activityInfo = spy(new ActivityInfo());
+        info.activityInfo.packageName = packageName;
+        info.activityInfo.name = name;
+        doReturn(label).when(info.activityInfo).loadLabel(any());
+        return info;
+    }
+
+    /**
+     * Creates a {@link ResolveInfo} representing an app that can handle a document.
+     * This will be displayed as an action button with an icon.
+     */
+    private ResolveInfo createButtonResolveInfo(String packageName, String name, String label) {
+        ResolveInfo info = createResolveInfo(packageName, name, label);
+        info.activityInfo.metaData = new android.os.Bundle();
+        info.activityInfo.metaData.putBoolean(ApprovedDocHandlers.AS_BUTTON_METADATA_KEY, true);
+        doReturn(Mockito.mock(android.graphics.drawable.Drawable.class))
+                .when(info.activityInfo).loadIcon(any());
+        return info;
+    }
+
+    /**
+     * Counts all menu items (both regular menu items and action buttons) with a matching prefix.
+     */
+    private int countAllMenuItems(TestMenu menu, String prefix) {
+        return countMenuItems(menu, prefix, /* countButtonsOnly= */ false);
+    }
+
+    /**
+     * Counts only menu items displayed as action buttons (icons) with a matching prefix.
+     */
+    private int countActionButtons(TestMenu menu, String prefix) {
+        return countMenuItems(menu, prefix, /* countButtonsOnly= */ true);
+    }
+
+    /**
+     * Counts menu items with a matching prefix.
+     *
+     * @param countButtonsOnly If true, only counts items displayed as action buttons (icons). If
+     *     false, counts all matching items (buttons and regular items).
+     */
+    private int countMenuItems(TestMenu menu, String prefix, boolean countButtonsOnly) {
+        int foundCount = 0;
+        for (int i = 0; i < menu.size(); i++) {
+            TestMenuItem item = menu.getItem(i);
+            String title = String.valueOf(item.getTitle());
+            if (title != null && title.startsWith(prefix)) {
+                if (!countButtonsOnly
+                        || item.getShowAsAction() == android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM) {
+                    foundCount++;
+                }
+            }
+        }
+        return foundCount;
     }
 
     @Test
@@ -554,7 +634,7 @@ public final class MenuManagerTest {
 
         mgr.updateActionMenu(testMenu, selectionDetails);
 
-        // These trash items should be be disabled but remain visible as the actions are only
+        // These trash items should be disabled but remain visible as the actions are only
         // temporarily unavailable.
         mActionModeTrash.assertDisabledAndVisible();
         mActionModeRestoreFromTrash.assertDisabledAndVisible();
@@ -1271,20 +1351,21 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
         Flags.FLAG_ENABLE_TRASH_FLOW_RO
     })
-    @SdkSuppress(minSdkVersion = 37)
     public void testContextMenu_containsDocumentsWithUnavailableContent_trash() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.canTrash = true;
+        selectionDetails.canRestore = true;
 
         mgr.updateContextMenu(testMenu, selectionDetails);
 
-        // These trash items should be be disabled but remain visible as the actions are only
+        // These trash items should be disabled but remain visible as the actions are only
         // temporarily unavailable.
         mDirMoveToTrash.assertDisabledAndVisible();
         mDirRestoreFromTrash.assertDisabledAndVisible();
@@ -1987,6 +2068,7 @@ public final class MenuManagerTest {
 
         mActionHandler.returnNullApprovedHandlerIntent = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
 
         // Check that the approved document handler menu item is removed.
         item = findItemByTitle(testMenu, "Test App");
@@ -2009,6 +2091,8 @@ public final class MenuManagerTest {
 
         mActionHandler.returnNullApprovedHandlerIntent = true;
         mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
         item = findItemByTitle(testMenu, "Test App");
         assertNull("Approved document handler menu item should be removed.", item);
     }
@@ -2027,5 +2111,169 @@ public final class MenuManagerTest {
         // Check that the approved document handler menu item is not added.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNull("Approved document handler menu item should not be added.", item);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_noDuplicates() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        // First update triggers the load.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        // Advance scheduler to complete load and trigger observer update.
+        testScheduler.advanceUntilIdle();
+        // Call update again to ensure no duplicates.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        int foundCount = countAllMenuItems(testMenu, "Test App");
+        assertEquals(
+                "Approved document handler menu item should be present exactly once.",
+                1,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
+        ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        assertEquals(
+                "Should limit the number of approved document handlers as menu items",
+                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_limitsNumberOfButtons() {
+        ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        int buttonCount = countActionButtons(testMenu, "App ");
+
+        assertEquals(
+                "Should limit the total number of approved document handlers in the menu including"
+                    + " buttons",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+
+        assertEquals(
+                "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                buttonCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
+        ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        assertEquals(
+                "Should limit the number of approved document handlers as menu items",
+                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_approvedDocumentHandler_limitsNumberOfButtons() {
+        ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        int buttonCount = countActionButtons(testMenu, "App ");
+
+        assertEquals(
+                "Should limit the total number of approved document handlers in the menu including"
+                        + " buttons",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+
+        assertEquals(
+                "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                buttonCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_disabledWhileUpdating() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        // Initial load to populate cache.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Item should be present after initial load", item);
+        item.assertEnabledAndVisible();
+        // Reset interactions on the mock item after initial setup
+        reset(item);
+
+        ArgumentCaptor<BroadcastReceiver> receiverCaptor =
+                ArgumentCaptor.forClass(BroadcastReceiver.class);
+        verify(activity).registerReceiver(receiverCaptor.capture(), any(IntentFilter.class));
+        BroadcastReceiver receiver = receiverCaptor.getValue();
+
+        // Mark as outdated via broadcast.
+        Intent intent = new Intent(Intent.ACTION_PACKAGE_CHANGED);
+        intent.setData(Uri.parse("package:com.test.package"));
+        receiver.onReceive(activity, intent);
+
+        // Let the entire sequence of updates complete.
+        testScheduler.advanceUntilIdle();
+
+        // Verify the calls to setEnabled on the mock item.
+        item = findItemByTitle(testMenu, "Test App"); // Get the same item instance
+        assertNotNull("Item should still be present", item);
+
+        InOrder inOrder = inOrder(item);
+        // It should have been disabled first due to the outdated cache
+        inOrder.verify(item).setEnabled(false);
+        // Then re-enabled after the background refresh
+        inOrder.verify(item).setEnabled(true);
+
+        // Finally, check the end state
+        assertTrue("Item should be visible at the end", item.isVisible());
+        assertTrue("Item should be enabled at the end", item.isEnabled());
     }
 }
