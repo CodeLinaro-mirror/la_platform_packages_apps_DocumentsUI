@@ -53,7 +53,7 @@
     <string name="menu_select" msgid="1366061076507142387">"انتخاب"</string>
     <string name="menu_sort" msgid="3362419226163725275">"مرتب کردن براساس..."</string>
     <string name="menu_copy" msgid="7404820171352314754">"کپی در..."</string>
-    <string name="menu_move" msgid="2310760789561129882">"انتقال به…"</string>
+    <string name="menu_move" msgid="2310760789561129882">"بردن به…"</string>
     <string name="menu_compress" msgid="37539111904724188">"فشرده کردن"</string>
     <string name="menu_zip" msgid="5734673122376258045">"فایل فشرده"</string>
     <string name="menu_extract" msgid="8171946945982532262">"استخراج در…"</string>
