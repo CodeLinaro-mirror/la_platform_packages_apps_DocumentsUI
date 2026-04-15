@@ -386,8 +386,10 @@ final class ListDocumentHolder extends DocumentHolder {
                         metadataList.add(summary);
                         mMetadataView.setCompoundDrawablesWithIntrinsicBounds(
                                 R.drawable.ic_summary, 0, 0, 0);
+                        mMetadataView.setTooltipText(summary);
                     } else {
                         mMetadataView.setCompoundDrawables(null, null, null, null);
+                        mMetadataView.setTooltipText(null);
                     }
 
                     if (isUseMaterial3FlagEnabled()) {

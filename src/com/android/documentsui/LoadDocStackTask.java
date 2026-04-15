@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.PairedTask;
+import com.android.documentsui.base.PathExtractorKt;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -77,9 +78,13 @@ public class LoadDocStackTask extends PairedTask<Activity, Uri, DocumentStack> {
             }
 
             try {
-                final Path path = mDocs.findDocumentPath(docUri, mUserId);
+                // SearchV2 enables MediaStore file URIs, for which path cannot be extracted. For
+                // those cases we attempt to convert docUri to a URI form which path can be
+                // extracted. This changes the URI for SearchV2 only.
+                Uri pathCapableUri = PathExtractorKt.tryGetExternalStorageUri(mOwner, docUri);
+                final Path path = mDocs.findDocumentPath(pathCapableUri, mUserId);
                 if (path != null) {
-                    return buildStack(docUri.getAuthority(), path);
+                    return buildStack(pathCapableUri.getAuthority(), path);
                 } else {
                     Log.i(TAG, "Remote provider doesn't support findDocumentPath.");
                 }

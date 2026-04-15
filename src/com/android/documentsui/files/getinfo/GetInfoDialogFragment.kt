@@ -35,7 +35,6 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Shared
 import com.android.documentsui.util.Material3Config
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.collections.get
 import kotlinx.coroutines.launch
 
 /**
@@ -50,11 +49,14 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
     /** Whether to show the debug information as a section. */
     private var showDebug: Boolean = false
 
+    /** The summary of the document if available. */
+    private var summary: String? = null
+
     /** Lazily initialized ViewModel. */
     private val viewModel: GetInfoViewModel by viewModels {
         val application = requireActivity().application
         val fileTypeLookup = DocumentsApplication.getFileTypeLookup(requireContext())
-        GetInfoViewModel.Factory(application, doc, fileTypeLookup, showDebug)
+        GetInfoViewModel.Factory(application, doc, fileTypeLookup, showDebug, summary)
     }
 
     override fun onCreate(savedInstanceBundle: Bundle?) {
@@ -69,6 +71,7 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
                     DocumentInfo() // Fallback to avoid lateinit crash if dismissed immediately.
                 }
         showDebug = arguments?.getBoolean(Shared.EXTRA_SHOW_DEBUG, false) ?: false
+        summary = arguments?.getString(Shared.EXTRA_SUMMARY)
 
         if (doc.documentId == null) {
             // Because we're using `lateinit` on the var (if it doesn't exist, that is bad) we need
@@ -133,7 +136,25 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
                 when (item) {
                     is ListItem.Header -> createHeaderView(inflater, container, item)
                     is ListItem.Info ->
-                        createInfoView(inflater, container, item, isFirstInSection, isLastInSection)
+                        createInfoView(
+                            inflater,
+                            container,
+                            item.label,
+                            item.value,
+                            selectable = false,
+                            isFirstInSection,
+                            isLastInSection,
+                        )
+                    is ListItem.InfoSelectable ->
+                        createInfoView(
+                            inflater,
+                            container,
+                            item.label,
+                            item.value,
+                            selectable = true,
+                            isFirstInSection,
+                            isLastInSection,
+                        )
                 }
             container.addView(view)
         }
@@ -154,7 +175,8 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
     }
 
     /**
-     * Creates a UI row out of ListItem.Info, e.g. "Type". Each row has 4 different possible states:
+     * Creates a UI row out of ListItem.Info or ListItem.InfoSelectable, e.g. "Type". Each row has 4
+     * different possible states:
      * - Single: Represents only a single item in the row (all 4 corners have a larger radius).
      * - Top: When the list has >1 item (top 2 corners have a larger radius).
      * - Middle: When the list has >2 items (no corners have larger radius).
@@ -165,14 +187,19 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
     private fun createInfoView(
         inflater: LayoutInflater,
         parent: ViewGroup,
-        item: ListItem.Info,
+        label: String,
+        value: String,
+        selectable: Boolean,
         isFirstInSection: Boolean,
         isLastInSection: Boolean,
     ): View {
         val view = inflater.inflate(R.layout.get_info_item_m3, parent, false)
 
-        view.findViewById<TextView>(R.id.item_label).text = item.label
-        view.findViewById<TextView>(R.id.item_value).text = item.value
+        view.findViewById<TextView>(R.id.item_label).text = label
+        view.findViewById<TextView>(R.id.item_value).apply {
+            text = value
+            setTextIsSelectable(selectable)
+        }
 
         // Apply the correct background drawable based on the position of
         // the item in the section. The border radius is different based on
@@ -214,7 +241,7 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
          * down to the dialog.
          */
         @JvmStatic
-        fun show(fm: FragmentManager, doc: DocumentInfo, showDebug: Boolean) {
+        fun show(fm: FragmentManager, doc: DocumentInfo, showDebug: Boolean, summary: String?) {
             if (fm.isStateSaved) {
                 Log.w(TAG, "Skip showing get info dialog because state saved")
                 return
@@ -230,6 +257,7 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
                 Bundle().apply {
                     putParcelable(Shared.EXTRA_DOC, doc)
                     putBoolean(Shared.EXTRA_SHOW_DEBUG, showDebug)
+                    putString(Shared.EXTRA_SUMMARY, summary)
                 }
             dialog.arguments = args
             dialog.show(fm, TAG)

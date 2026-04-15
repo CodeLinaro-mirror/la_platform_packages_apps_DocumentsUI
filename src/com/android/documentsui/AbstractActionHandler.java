@@ -221,6 +221,39 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             Runnable closeSelectionBar,
             ClipStore clipStore,
             LoadingHandler handler) {
+        this(
+                activity,
+                state,
+                providers,
+                docs,
+                searchMgr,
+                executors,
+                injector,
+                peekViewManager,
+                actionModeAddons,
+                closeSelectionBar,
+                clipStore,
+                handler,
+                injector.focusManager,
+                injector.selectionMgr);
+    }
+
+    @VisibleForTesting
+    protected AbstractActionHandler(
+            T activity,
+            State state,
+            ProvidersAccess providers,
+            DocumentsAccess docs,
+            SearchViewManager searchMgr,
+            Lookup<String, Executor> executors,
+            Injector<?> injector,
+            @Nullable PeekViewManager peekViewManager,
+            @Nullable ActionModeAddons actionModeAddons,
+            Runnable closeSelectionBar,
+            ClipStore clipStore,
+            LoadingHandler handler,
+            FocusHandler focusHandler,
+            SelectionTracker<String> selectionMgr) {
 
         assert (activity != null);
         assert (state != null);
@@ -233,8 +266,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         mState = state;
         mProviders = providers;
         mDocs = docs;
-        mFocusHandler = injector.focusManager;
-        mSelectionMgr = injector.selectionMgr;
+        mFocusHandler = focusHandler;
+        mSelectionMgr = selectionMgr;
         mSearchMgr = searchMgr;
         mExecutors = executors;
         mDialogs = injector.dialogs;
@@ -264,6 +297,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 root.authority,
                 root.rootId,
                 listener).executeOnExecutor(ProviderExecutor.forAuthority(root.authority));
+    }
+
+    @Override
+    public UserId getSelectedUser() {
+        return mActivity.getSelectedUser();
     }
 
     @Override
@@ -364,11 +402,21 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     /** Shows a dialog with the metadata of the selected document. */
     private void showGetInfoDialog(DocumentInfo doc) {
+        String summary = null;
+        if (mSummariesViewModel != null) {
+            SummaryProviderManager summaryProviderManager = mInjector.getSummaryProviderManager();
+            if (summaryProviderManager != null && summaryProviderManager.isEnabled()) {
+                String modelId = ModelId.build(doc.userId, doc.authority, doc.documentId);
+                summary = mSummariesViewModel.getSummaries().getValue().get(modelId);
+            }
+        }
+
         GetInfoDialogFragment.show(
                 mActivity.getSupportFragmentManager(),
                 doc,
                 mInjector.features.isDebugSupportEnabled()
-                        && (DEBUG || DebugFlags.getDocumentDetailsEnabled()));
+                        && (DEBUG || DebugFlags.getDocumentDetailsEnabled()),
+                summary);
     }
 
     private void showInspector(DocumentInfo doc) {
@@ -503,7 +551,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @Override
     public void toggleFocusedItemSelection() {
-        throw new UnsupportedOperationException("Can't toggle selection");
+        final String id = mFocusHandler.getFocusModelId();
+        if (id != null) {
+            if (mSelectionMgr.isSelected(id)) {
+                mSelectionMgr.deselect(id);
+            } else {
+                mSelectionMgr.select(id);
+            }
+        }
     }
 
     @Override
@@ -952,6 +1007,21 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
         }
 
+        return selection;
+    }
+
+    /**
+     * If an item is currently focused, then returns it, else returns the items that are currently
+     * selected.
+     */
+    public Selection<String> getFocusedOrSelected() {
+        final MutableSelection<String> selection = new MutableSelection<>();
+        final String focused = mFocusHandler.getFocusModelId();
+        if (focused != null) {
+            selection.add(focused);
+        } else {
+            mSelectionMgr.copySelection(selection);
+        }
         return selection;
     }
 

@@ -48,6 +48,7 @@ class GetInfoViewModel(
     private val doc: DocumentInfo,
     private val fileTypeLookup: Lookup<String, String>,
     private val showDebug: Boolean,
+    private val summary: String?,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : AndroidViewModel(application) {
 
@@ -135,12 +136,12 @@ class GetInfoViewModel(
                 dirCountItems,
                 streamTypes,
                 metadataItems ->
-                buildItemList(dirCountItems, streamTypes, metadataItems)
+                buildItemList(dirCountItems, streamTypes, metadataItems, summary)
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = buildItemList(emptyList(), emptyList(), emptyList()),
+                initialValue = buildItemList(emptyList(), emptyList(), emptyList(), summary),
             )
 
     /**
@@ -151,6 +152,7 @@ class GetInfoViewModel(
         dirCountItems: List<ListItem>,
         streamTypes: List<ListItem>,
         metadataItems: List<ListItem>,
+        summary: String?,
     ): List<ListItem> {
         val context = getApplication<Application>()
 
@@ -193,9 +195,16 @@ class GetInfoViewModel(
                 )
             }
 
-            // If the summary is available on partial documents, show that as well.
-            if (doc.isPartial && doc.summary != null) {
-                add(createInfo(context, R.string.sort_dimension_summary, doc.summary ?: ""))
+            val description = summary ?: if (doc.isPartial) doc.summary else null
+
+            if (!description.isNullOrEmpty()) {
+                add(
+                    SharedUtils.createInfoSelectable(
+                        context,
+                        R.string.sort_dimension_summary,
+                        description,
+                    )
+                )
             }
 
             addAll(dirCountItems)
@@ -288,10 +297,11 @@ class GetInfoViewModel(
         private val doc: DocumentInfo,
         private val fileTypeLookup: Lookup<String, String>,
         private val showDebug: Boolean,
+        private val summary: String?,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return GetInfoViewModel(application, doc, fileTypeLookup, showDebug) as T
+            return GetInfoViewModel(application, doc, fileTypeLookup, showDebug, summary) as T
         }
     }
 

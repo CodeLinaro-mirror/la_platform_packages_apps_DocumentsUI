@@ -15,23 +15,38 @@
  */
 package com.android.documentsui.base
 
+import android.content.AttributionSource
 import android.content.Context
+import android.content.IContentProvider
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.os.Bundle
+import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.TestContentResolver
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.roots.ProvidersAccess
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestProvidersAccess
 import junit.framework.AssertionFailedError
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.whenever
 
 private val columnNames =
     arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Root.COLUMN_TITLE)
@@ -48,10 +63,10 @@ private fun toPath(stack: DocumentStack): String {
     return names.joinToString("/")
 }
 
-@EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class PathExtractorTest {
+    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
     /** Testable variant of PathExtractor with methods that use content resolver stubbed out. */
     class TestablePathExtractor(context: Context, providersAccess: ProvidersAccess) :
@@ -88,37 +103,40 @@ class PathExtractorTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
     fun testSuccessfullyGetPath() {
         // Setup.
         val docInfo =
             DocumentInfo().apply {
                 userId = UserId.DEFAULT_USER
-                authority = "download.id"
+                authority = Providers.AUTHORITY_STORAGE
                 documentId = "file.txt.id"
                 displayName = "file.txt"
                 mimeType = "text/plain"
                 deriveFields()
             }
         val pathIds = listOf("foo.id", docInfo.documentId)
-        val rootId = "download-root.id"
+        val rootId = Providers.ROOT_ID_DEVICE
 
         // When fetching DocumentsContract.Path.
         pathExtractor.documentPath = DocumentsContract.Path(rootId, pathIds)
         // Map from path ID to cursor with the display name.
         pathExtractor.displayNameCursorMap =
             mapOf(
-                "content://download.id/root" to createDisplayNameCursor("Downloads"),
-                "content://download.id/document/foo.id" to createDisplayNameCursor("Foo"),
-                "content://download.id/document/file.txt.id" to createDisplayNameCursor("file.txt"),
+                "content://${Providers.AUTHORITY_STORAGE}/document/foo.id" to
+                    createDisplayNameCursor("Foo"),
+                "content://${Providers.AUTHORITY_STORAGE}/document/file.txt.id" to
+                    createDisplayNameCursor("file.txt"),
             )
 
         // The actual test.
         val stack = pathExtractor.getDocumentStack(docInfo)
-        Assert.assertEquals("Downloads/Foo/file.txt", toPath(stack))
+        Assert.assertEquals("Device/Foo/file.txt", toPath(stack))
     }
 
     // TODO(b/444316005): Special case, where Recent view uses Media document provider. Remove.
     @Test
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
     fun testApproximatePathForMediaFile() {
         val docInfo =
             DocumentInfo().apply {
@@ -140,7 +158,58 @@ class PathExtractorTest {
         Assert.assertEquals("Recents/Audio/file.mp3", toPath(stack))
     }
 
+    @Test
+    @DisableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    fun testTryGetExternalStorageUriForMediaUriAndSearchV2Disabled() {
+        val mediaUri = "content://com.android.providers.media.documents/document/file%3A6".toUri()
+        Assert.assertEquals(mediaUri, tryGetExternalStorageUri(context, mediaUri))
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
+    fun testTryGetExternalStorageUriForMediaUriAndSearchV2Enabled() {
+        val client = mock<IContentProvider>()
+        val resolver = TestContentResolver(client, context)
+        val spyContext = spy(context)
+        whenever(spyContext.contentResolver) doReturn (resolver)
+
+        // The first call to the client is to resolve media URI.
+        val mediaUri = "content://com.android.providers.media.documents/document/file%3A6".toUri()
+        whenever(
+            client.call(
+                any<AttributionSource>(),
+                any<String>(),
+                eq("get_media_uri"),
+                isNull(),
+                any<Bundle>(),
+            )
+        ) doReturn
+            (Bundle().apply { putParcelable("uri", "content://media/external/file/6".toUri()) })
+        // The second call to the client is to resolve document URI.
+        val externalStorageUri = "content://com.android.externalstorage.documents/file%3A6".toUri()
+        whenever(
+            client.call(
+                any<AttributionSource>(),
+                any<String>(),
+                eq("get_document_uri"),
+                isNull(),
+                any<Bundle>(),
+            )
+        ) doReturn (Bundle().apply { putParcelable("uri", externalStorageUri) })
+
+        Assert.assertEquals(externalStorageUri, tryGetExternalStorageUri(spyContext, mediaUri))
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
+    fun testTryGetExternalStorageUriForNonmediaUriAndSearchV2Enabled() {
+        val downloadsUri =
+            "content://com.android.providers.downloads.documents/document/msf%3A6".toUri()
+        Assert.assertEquals(downloadsUri, tryGetExternalStorageUri(context, downloadsUri))
+    }
+
     @Test(expected = NoSuchElementException::class)
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
     fun testIllegalArgumentException_isWrapped() {
         // Setup.
         val docInfo = createTestDocumentInfo()
@@ -156,6 +225,7 @@ class PathExtractorTest {
     }
 
     @Test(expected = RuntimeException::class)
+    @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
     fun testRuntimeException_isPropagated() {
         // Setup.
         val docInfo = createTestDocumentInfo()
