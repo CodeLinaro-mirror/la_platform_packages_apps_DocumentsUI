@@ -295,7 +295,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         this::popDir,
                         mInjector.features,
                         mDrawer,
-                        mInjector.searchManager::onSearchBarClicked);
+                        this::onSearchKeyboardShortcut);
         setupLayout(intent);
         mInjector.actions.initLocation(intent);
         Metrics.logPickerLaunchedFrom(Shared.getCallingPackageName(this));

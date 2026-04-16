@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.documentsui.loaders
+package com.android.documentsui.dirlist
 
+import android.app.Application
 import android.content.ContentResolver
 import android.database.ContentObserver
 import android.database.Cursor
@@ -26,6 +27,7 @@ import android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID
 import android.provider.DocumentsContract.Document.COLUMN_SUMMARY
 import android.util.Log
 import androidx.core.database.getStringOrNull
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +36,8 @@ import androidx.lifecycle.viewModelScope
 import com.android.documentsui.ModelId
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Providers
+import com.android.documentsui.base.UserId
+import com.android.documentsui.loaders.QueryOptions
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,9 +62,9 @@ typealias Summaries = Map<String, String>
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 open class SummariesViewModel(
-    private val contentResolver: ContentResolver,
+    application: Application,
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     /**
      * Data used to open and monitor the cursor. We push a new data here everytime we need to
@@ -111,7 +115,7 @@ open class SummariesViewModel(
                 }
             }
 
-        val contentResolver = contentResolver
+        val contentResolver = queryInfo.userId.getContentResolver(getApplication())
         val cursor =
             try {
                 contentResolver.query(
@@ -137,6 +141,7 @@ open class SummariesViewModel(
     }
 
     private suspend fun performQuery(queryInfo: QueryInfo): Summaries {
+        val contentResolver = queryInfo.userId.getContentResolver(getApplication())
         return try {
             contentResolver
                 .query(queryInfo.parentUri, summaryProjection, queryInfo.queryArgs, null)
@@ -199,6 +204,7 @@ open class SummariesViewModel(
         val summaryAuthority = summaryAuthorityUri?.authority ?: return null
 
         val isRecents = parentDoc?.authority == null && parentDoc?.documentId.isNullOrEmpty()
+        val userId = parentDoc?.userId ?: UserId.CURRENT_USER
 
         val parentUri =
             if (isRecents) {
@@ -246,26 +252,28 @@ open class SummariesViewModel(
         }
         queryArgs.putParcelable(EXTRA_URI, contextUri)
 
-        return QueryInfo(parentUri, queryArgs, docIdToModelId)
+        return QueryInfo(userId, parentUri, queryArgs, docIdToModelId)
     }
 
     /**
      * Encapsulates all data required to execute and monitor a summary query.
      *
+     * @property userId The [UserId] of the user that owns the documents.
      * @property parentUri The child documents URI used for the query.
      * @property queryArgs The [Bundle] of arguments for the content resolver query.
      * @property docIdToModelId A mapping from provider document IDs to internal ModelIds.
      */
     private data class QueryInfo(
+        val userId: UserId,
         val parentUri: Uri,
         val queryArgs: Bundle,
         val docIdToModelId: Map<String, String>,
     )
 
-    class Factory(private val contentResolver: ContentResolver) : ViewModelProvider.Factory {
+    class Factory(private val application: Application) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return SummariesViewModel(contentResolver, Dispatchers.IO) as T
+            return SummariesViewModel(application, Dispatchers.IO) as T
         }
     }
 

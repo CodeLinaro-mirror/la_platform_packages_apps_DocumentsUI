@@ -28,6 +28,7 @@ import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.annotation.StringRes
 import androidx.test.core.app.ActivityScenario
 import androidx.test.filters.SdkSuppress
+import com.android.documentsui.bots.rightClickDocument
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.picker.PickActivity
@@ -296,17 +297,15 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testNoAvailableLocallyState_downloadIconOnline_disabledOffline() {
+    fun testNoAvailableLocallyState_noIconsOnline_disabledOffline() {
         setIsOnline(true)
 
         // No sync state flags are set.
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
 
-        // A download icon should be shown when online.
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.DISPLAY_NAME_0,
-            R.id.download_icon,
-        )
+        // No icons should be shown online.
+        bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
+        bots.directory.assertDocumentEnabled(TestCloudProvider.DISPLAY_NAME_0)
 
         setIsOnline(false)
 
@@ -326,17 +325,9 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testNoAvailableLocallyState_butDirectory_downloadIconNotShownOnline_enabledOffline() {
-        setIsOnline(true)
-
+    fun testNoAvailableLocallyState_butDirectory_enabledOffline() {
         // The "available locally" sync state flag is not set.
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DIR_ID, 0)
-
-        // Directories don't display the download icon when online.
-        bots.directory.assertObjectsEventuallyHiddenOnDocument(
-            TestCloudProvider.DIR_DISPLAY_NAME,
-            R.id.download_icon,
-        )
 
         setIsOnline(false)
 
@@ -345,17 +336,9 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testNoAvailableLocallyState_butVirtual_downloadIconNotShownOnline_enabledOffline() {
-        setIsOnline(true)
-
+    fun testNoAvailableLocallyState_butVirtual_enabledOffline() {
         // The "available locally" sync state flag is not set.
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.VIRTUAL_ID, 0)
-
-        // Virtual files don't display the download icon when online.
-        bots.directory.assertObjectsEventuallyHiddenOnDocument(
-            TestCloudProvider.VIRTUAL_DISPLAY_NAME,
-            R.id.download_icon,
-        )
 
         setIsOnline(false)
 
@@ -565,7 +548,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testDownloadEndsWithNoFlags_progressIcon_thenDownloadIcon() {
+    fun testDownloadEndsWithErrorFlag_progressIcon_thenErrorIcon() {
         setIsOnline(true)
 
         // Set the "download in progress" state.
@@ -580,10 +563,13 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
             android.R.id.progress,
         )
 
-        // End download in "needs download" state.
-        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+        // End download in error state.
+        cloudProviderDocsHelper?.setSyncState(
+            TestCloudProvider.DOC_ID_0,
+            Document.SYNC_STATE_FLAG_UPLOAD_ERROR,
+        )
 
-        // The progress icon should be replaced with a download icon, rather than a tick.
+        // The progress icon should be replaced with an error icon, rather than a tick.
         bots.directory.assertObjectsEventuallyHiddenOnDocument(
             TestCloudProvider.DISPLAY_NAME_0,
             android.R.id.progress,
@@ -594,7 +580,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         )
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DISPLAY_NAME_0,
-            R.id.download_icon,
+            R.id.sync_error_icon,
         )
     }
 
@@ -639,7 +625,10 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     fun testDifferentDocumentsCanShowDifferentIcons() {
         setIsOnline(true)
 
-        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+        cloudProviderDocsHelper?.setSyncState(
+            TestCloudProvider.DOC_ID_0,
+            Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS,
+        )
         cloudProviderDocsHelper?.setSyncState(
             TestCloudProvider.DOC_ID_1,
             Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS,
@@ -655,7 +644,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
 
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DISPLAY_NAME_0,
-            R.id.download_icon,
+            android.R.id.progress,
         )
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DISPLAY_NAME_1,
@@ -664,34 +653,6 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         if (isInPicker) {
             // The virtual doc will be disabled in the picker and thus won't show any sync error
             // icons.
-            bots.directory.assertDocumentDisabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
-            bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
-        } else {
-            bots.directory.assertObjectsEventuallyAppearOnDocument(
-                TestCloudProvider.VIRTUAL_DISPLAY_NAME,
-                R.id.sync_error_icon,
-            )
-        }
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.DIR_DISPLAY_NAME,
-            R.id.upload_icon,
-        )
-
-        cloudProviderDocsHelper?.setSyncState(
-            TestCloudProvider.DOC_ID_0,
-            Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS,
-        )
-        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_1, 0)
-
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.DISPLAY_NAME_0,
-            android.R.id.progress,
-        )
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.DISPLAY_NAME_1,
-            R.id.download_icon,
-        )
-        if (isInPicker) {
             bots.directory.assertDocumentDisabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
             bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
         } else {
@@ -743,7 +704,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         )
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -756,7 +717,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the menu items are still visible and enabled offline.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -816,7 +777,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -831,7 +792,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Reopen the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the menu items are still visible but those that require content required
             // are disabled offline.
@@ -895,7 +856,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DIR_ID, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         val openContextMenuItems = intArrayOf(R.string.menu_open_in_new_window)
@@ -910,7 +871,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME, TIMEOUT)
 
         // Check that the menu items are still visible but those that require content required
         // are disabled offline. However, open menu items are an exception for folders and should
@@ -967,7 +928,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.VIRTUAL_ID, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -980,7 +941,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, TIMEOUT)
 
         // Check that the menu items are still visible and enabled offline.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -1034,19 +995,23 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testSearchLocally_noAvailableLocallyState() {
+    fun testSearchLocally_noAvailableLocallyStateAndDownloadInProgress() {
         setIsOnline(true)
 
-        // No sync state flags are set.
-        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+        // Set the "download progress" state but do not set the "available locally" state so the
+        // file becomes disabled offline.
+        cloudProviderDocsHelper?.setSyncState(
+            TestCloudProvider.DOC_ID_0,
+            Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS,
+        )
 
         // Search for the file.
         bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
 
-        // A download icon should be shown when online.
+        // A progress icon should be shown when online.
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DISPLAY_NAME_0,
-            R.id.download_icon,
+            android.R.id.progress,
         )
 
         setIsOnline(false)
@@ -1058,7 +1023,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(
@@ -1068,14 +1033,18 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     }
 
     @Test
-    fun testSearchEverywhere_noAvailableLocallyState() {
+    fun testSearchEverywhere_noAvailableLocallyStateAndDownloadInProgress() {
         setIsOnline(true)
 
         // Open a root that does not have the file we are searching for.
         switchRoot("Paging Root")
 
-        // No sync state flags are set.
-        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+        // Set the "download progress" state but do not set the "available locally" state so the
+        // file becomes disabled offline.
+        cloudProviderDocsHelper?.setSyncState(
+            TestCloudProvider.DOC_ID_0,
+            Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS,
+        )
 
         // Search for the file.
         bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
@@ -1084,10 +1053,10 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Click Everywhere, to search everywhere.
         bots.search.clickMenuItem(R.string.search_location_everywhere)
 
-        // A download icon should be shown when online.
+        // A progress icon should be shown when online.
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DISPLAY_NAME_0,
-            R.id.download_icon,
+            android.R.id.progress,
         )
 
         setIsOnline(false)
@@ -1099,7 +1068,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(
@@ -1119,30 +1088,29 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
 
         // Create a new file to ensure one exists in Recent. This won't have any sync state flags
         // set.
+        val recentFileName = "recentFileInTest"
         cloudProviderDocsHelper.createDocument(
             cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID),
             "text/plain",
-            "recentFileInTest",
+            recentFileName,
         )
         // Open Recent.
         switchRoot("Recent")
 
-        // A download icon should be shown when online.
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            "recentFileInTest",
-            R.id.download_icon,
-        )
+        // No icons should be shown online and the document should remain enabled.
+        bots.directory.assertDocumentEnabled(recentFileName)
+        bots.directory.assertDocumentSyncIconsNotVisible(recentFileName)
 
         setIsOnline(false)
 
         // The document should be disabled and no icons should be shown.
-        bots.directory.assertDocumentDisabled("recentFileInTest")
-        bots.directory.assertDocumentSyncIconsNotVisible("recentFileInTest")
+        bots.directory.assertDocumentDisabled(recentFileName)
+        bots.directory.assertDocumentSyncIconsNotVisible(recentFileName)
 
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument("recentFileInTest")
+            rightClickDocument(recentFileName, TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(

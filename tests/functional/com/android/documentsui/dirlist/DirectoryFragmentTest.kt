@@ -16,6 +16,7 @@
 package com.android.documentsui.dirlist
 
 import android.app.ActivityManager
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
@@ -56,7 +57,6 @@ import com.android.documentsui.flags.Flags
 import com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_NEW_OPEN_WITH
-import com.android.documentsui.loaders.SummariesViewModel
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -148,7 +148,10 @@ class DirectoryFragmentTest {
         activity = mock(BaseActivity::class.java)
         val testDispatcher = StandardTestDispatcher()
         val ioTestDispatcher = UnconfinedTestDispatcher(testDispatcher.scheduler)
-        val summariesViewModel = SummariesViewModel(context.contentResolver, ioTestDispatcher)
+        val mockApp = mock(Application::class.java)
+        `when`(mockApp.contentResolver).thenReturn(context.contentResolver)
+        `when`(mockApp.applicationContext).thenReturn(mockApp)
+        val summariesViewModel = SummariesViewModel(mockApp, ioTestDispatcher)
         `when`(activity.displayState).thenReturn(env.state)
         `when`(activity.getInjector()).thenReturn(injector)
         `when`(activity.getSystemService(Context.ACTIVITY_SERVICE))

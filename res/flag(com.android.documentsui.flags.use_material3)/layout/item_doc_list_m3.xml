@@ -14,8 +14,7 @@
      limitations under the License.
 -->
 
-<com.android.documentsui.dirlist.ListDocumentView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
@@ -77,31 +76,6 @@
 
           </com.google.android.material.card.MaterialCardView>
 
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/download_icon"
-            android:layout_width="@dimen/list_inline_sync_cloud_icon_size"
-            android:layout_height="@dimen/list_inline_sync_cloud_icon_size"
-            android:layout_gravity="bottom|end"
-            android:focusable="false"
-            android:visibility="gone"
-            android:clickable="false">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:tint="?attr/colorSurfaceContainerLowest"
-                android:src="@drawable/ic_cloud_m3" />
-
-            <ImageView
-                android:layout_width="@dimen/list_inline_sync_inner_cloud_icon_size"
-                android:layout_height="@dimen/list_inline_sync_inner_cloud_icon_size"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_download_m3" />
         </FrameLayout>
 
         <FrameLayout
@@ -269,4 +243,4 @@
 
     </FrameLayout>
 
-</com.android.documentsui.dirlist.ListDocumentView>
+</LinearLayout>

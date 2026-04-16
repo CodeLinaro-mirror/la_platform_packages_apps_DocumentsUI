@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.documentsui.loaders
+package com.android.documentsui.dirlist
 
 import android.app.Application
 import android.net.Uri
@@ -109,7 +109,7 @@ class SummariesViewModelTest {
             summaryProvider.setDocumentSummaries(expectedSummaries)
             summaryProvider.setNextChildDocumentsReturns(*childDocs)
 
-            val viewModel = SummariesViewModel(mockApp.contentResolver, ioTestDispatcher)
+            val viewModel = SummariesViewModel(mockApp, ioTestDispatcher)
             viewModel.update(authorityUri, parentDoc, modelIds, null, null)
 
             // Wait for the flow to emit the first non-empty result.
@@ -137,7 +137,7 @@ class SummariesViewModelTest {
             val modelIds = listOf(createModelId("doc1"))
             summaryProvider.setThrownRuntimeMessage("Faked failure")
 
-            val viewModel = SummariesViewModel(mockApp.contentResolver, ioTestDispatcher)
+            val viewModel = SummariesViewModel(mockApp, ioTestDispatcher)
 
             // Collect the flow in the background to trigger the query.
             backgroundScope.launch(UnconfinedTestDispatcher(testDispatcher.scheduler)) {
@@ -173,7 +173,7 @@ class SummariesViewModelTest {
             summaryProvider.setDocumentSummaries(mapOf(doc1.documentId to "Initial Summary"))
             summaryProvider.setNextChildDocumentsReturns(*childDocs)
 
-            val viewModel = SummariesViewModel(mockApp.contentResolver, ioTestDispatcher)
+            val viewModel = SummariesViewModel(mockApp, ioTestDispatcher)
 
             // Keep a persistent subscription.
             backgroundScope.launch(UnconfinedTestDispatcher(testDispatcher.scheduler)) {
@@ -212,7 +212,7 @@ class SummariesViewModelTest {
             summaryProvider.setDocumentSummaries(mapOf(doc1.documentId to "Initial Summary"))
             summaryProvider.setNextChildDocumentsReturns(*childDocs)
 
-            val viewModel = SummariesViewModel(mockApp.contentResolver, ioTestDispatcher)
+            val viewModel = SummariesViewModel(mockApp, ioTestDispatcher)
 
             // Keep a persistent subscription.
             backgroundScope.launch(UnconfinedTestDispatcher(testDispatcher.scheduler)) {

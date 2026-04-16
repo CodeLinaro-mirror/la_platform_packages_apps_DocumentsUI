@@ -16,6 +16,7 @@
 
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import static org.mockito.Mockito.doReturn;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
@@ -34,7 +36,7 @@ import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.loaders.SummariesViewModel;
+import com.android.documentsui.dirlist.SummariesViewModel;
 
 import java.util.function.Consumer;
 
@@ -51,10 +53,6 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     public boolean returnNullApprovedHandlerIntent = false;
 
     public DocumentInfo nextRootDocument;
-
-    // TODO(b/464388012): Reference actual intent category when it's available.
-    public static final String APPROVED_HANDLER_CATEGORY =
-            "android.provider.category.APPROVED_DOCUMENT_HANDLER";
 
     public TestActionHandler() {
         this(TestEnv.create());
@@ -142,7 +140,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
         final Intent intent = new Intent();
         intent.setComponent(handler);
-        intent.addCategory(APPROVED_HANDLER_CATEGORY);
+        intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
         return intent;
     }
 }
