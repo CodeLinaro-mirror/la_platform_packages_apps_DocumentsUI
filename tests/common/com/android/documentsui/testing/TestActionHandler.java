@@ -16,25 +16,30 @@
 
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.TestActionModeAddons;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.dirlist.SummariesViewModel;
 
 import java.util.function.Consumer;
+
 import javax.annotation.Nullable;
 
 public class TestActionHandler extends AbstractActionHandler<TestActivity> {
@@ -49,15 +54,21 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
     public DocumentInfo nextRootDocument;
 
-    // TODO(b/464388012): Reference actual intent category when it's available.
-    public static final String APPROVED_HANDLER_CATEGORY =
-            "android.provider.category.APPROVED_DOCUMENT_HANDLER";
-
     public TestActionHandler() {
         this(TestEnv.create());
     }
 
     public TestActionHandler(TestEnv env) {
+        this(env, createMockSummariesViewModel());
+    }
+
+    private static SummariesViewModel createMockSummariesViewModel() {
+        SummariesViewModel mock = mock(SummariesViewModel.class);
+        doReturn(new MutableLiveData<>()).when(mock).getSummariesLiveData();
+        return mock;
+    }
+
+    public TestActionHandler(TestEnv env, SummariesViewModel summariesViewModel) {
         super(
                 TestActivity.create(env),
                 env.state,
@@ -71,6 +82,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
                 mock(Runnable.class),
                 null);
 
+        mSummariesViewModel = summariesViewModel;
         mEnv = env;
     }
 
@@ -128,7 +140,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
         final Intent intent = new Intent();
         intent.setComponent(handler);
-        intent.addCategory(APPROVED_HANDLER_CATEGORY);
+        intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
         return intent;
     }
 }

@@ -267,9 +267,9 @@ final class DirectoryAddonsAdapter extends DocumentsAdapter {
         if (!isSyncStateEnabled()) {
             return;
         }
-        // Network state change only updates UI for roots that have limited functionality when
-        // offline.
-        if (!mEnv.getDisplayState().stack.getRoot().hasLimitedFunctionalityWhenOffline()) {
+        // Network state change only updates UI for directory lists that contain files on roots
+        // that have limited functionality when offline.
+        if (!mEnv.getModel().hasLimitedFunctionalityWhenOffline()) {
             return;
         }
         boolean shouldShowBefore = mHeaderMessage.shouldShow();

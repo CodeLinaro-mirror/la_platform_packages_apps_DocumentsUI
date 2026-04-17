@@ -150,6 +150,7 @@ public class SearchViewManager implements
             mSearchOptionsController = searchOptionsController;
             mLocationOption = SearchLocationOption.ROOT_FOLDER;
             if (mSearchOptionsController != null) {
+                mSearchOptionsController.restoreState(savedState);
                 mSearchOptionsController.setOptionChangeListener(this::onSearchOptionsChanged);
             }
         }
@@ -450,20 +451,31 @@ public class SearchViewManager implements
         } else if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
         } else {
-            // Always show chips in search v2.
-            mChipViewManager.setChipsRowVisible(/* show */ true);
+            // Always show chips in search v2 as long as there is no current search query (i.e.
+            // don't show search options and chips both at the same time).
+            mChipViewManager.setChipsRowVisible(/* show */ !isSearching());
         }
     }
 
     /**
      * "Closes" docked search. Since the docked search cannot be hidden, all this method does is to
      * set the text to empty string and transfers focus.
+     *
+     * @return Whether or not any changes were made to the UI.
      */
-    private void closeDockedSearch() {
+    private boolean closeDockedSearch() {
+        boolean changed = false;
         if (isSearchV2Enabled() && mDockedSearchEditText != null) {
-            mDockedSearchEditText.setText("");
-            mDockedSearchEditText.clearFocus();
+            if (!TextUtils.isEmpty(mDockedSearchEditText.getText())) {
+                mDockedSearchEditText.setText("");
+                changed = true;
+            }
+            if (mDockedSearchEditText.hasFocus()) {
+                mDockedSearchEditText.clearFocus();
+                changed = true;
+            }
         }
+        return changed;
     }
 
     /**
@@ -472,10 +484,11 @@ public class SearchViewManager implements
      * @return True if it cancels search. False if it does not operate search currently.
      */
     public boolean cancelSearch() {
+        boolean handled = false;
         if (isSearchV2Enabled()) {
             // Show the chips again, once the search has been canceled.
             useSearchOptions(SearchOptionsControls.CHIPS);
-            closeDockedSearch();
+            handled = closeDockedSearch();
         }
 
         if ((isExpanded() || isSearching())) {
@@ -488,9 +501,9 @@ public class SearchViewManager implements
                 mSearchView.setIconified(true);
             }
 
-            return true;
+            handled = true;
         }
-        return false;
+        return handled;
     }
 
     private int getPixelForDp(int dp) {
@@ -543,6 +556,22 @@ public class SearchViewManager implements
                     mDockedSearchEditText.clearFocus();
                 }
             }
+        }
+    }
+
+    /**
+     * Called when the user hits the KeyEvent.KEYCODE_SEARCH key (or Alt-Space, which is an
+     * Android-wide equivalent).
+     */
+    public void onSearchKeyboardShortcut() {
+        if (mDockedSearchEditText != null) {
+            mDockedSearchEditText.requestFocus();
+            return;
+        }
+
+        onSearchBarClicked();
+        if ((mSearchView != null) && isUseMaterial3FlagEnabled()) {
+            mSearchView.requestFocus();
         }
     }
 
@@ -655,6 +684,9 @@ public class SearchViewManager implements
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
+        if (mSearchOptionsController != null) {
+            mSearchOptionsController.saveState(state);
+        }
     }
 
     /**
@@ -983,6 +1015,9 @@ public class SearchViewManager implements
      * @return The subset of roots that can be searched.
      */
     private Collection<RootInfo> getAllSearchableRoots(Stream<RootInfo> roots) {
+        if (mSearchView == null) {
+            return Collections.emptyList();
+        }
         return roots.filter(
                         r ->
                                 !Providers.AUTHORITY_MEDIA.equals(r.authority)

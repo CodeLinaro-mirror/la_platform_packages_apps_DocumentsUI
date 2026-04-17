@@ -18,12 +18,17 @@ package com.android.documentsui.loaders
 import android.database.Cursor
 import android.database.CursorWrapper
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
+import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.core.os.BundleCompat
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
@@ -31,6 +36,7 @@ import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
+import com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES
 import com.android.documentsui.flags.Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
@@ -360,6 +366,7 @@ class SearchLoaderTest {
     // Collection of plain tests that do not use parameters.
     @SmallTest
     class PlainTests : BaseLoaderTest() {
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
         @get:Rule val setFlags = OverrideFlagsRule()
 
         @get:Rule val expect: Expect = Expect.create()
@@ -367,30 +374,6 @@ class SearchLoaderTest {
         lateinit var executor: ExecutorService
         val contentLock = ContentLock()
         val contentObserver = LockingContentObserver(contentLock) {}
-
-        private class TestListener(private val count: Int) :
-            Loader.OnLoadCompleteListener<DirectoryResult> {
-            var result: DirectoryResult? = null
-            var loadCount = 0
-            private var latch = CountDownLatch(count)
-
-            override fun onLoadComplete(loader: Loader<DirectoryResult?>, data: DirectoryResult?) {
-                result = data
-                loadCount++
-                latch.countDown()
-            }
-
-            fun await(timeout: Long = 5, unit: TimeUnit = TimeUnit.SECONDS) {
-                if (!latch.await(timeout, unit)) {
-                    throw InterruptedException("Test listener latch timed out.")
-                }
-            }
-
-            fun reset() {
-                latch = CountDownLatch(count)
-                result = null
-            }
-        }
 
         @Before
         fun setUpTest() {
@@ -420,12 +403,14 @@ class SearchLoaderTest {
             sortModel: SortModel,
             queryDelayMs: Long = 100L,
             firstPassWaitMs: Long = 200L,
+            closeLatch: CountDownLatch? = null,
             initialFile: String = "file-01.txt",
         ): SearchLoader {
             val downloads = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
             downloads.apply {
                 setNextChildDocumentsReturns(environment.model.createFile(initialFile))
                 setQueryDelay(queryDelayMs)
+                setCloseLatch(closeLatch)
             }
             return SearchLoader(
                 activity,
@@ -728,7 +713,7 @@ class SearchLoaderTest {
                 }
 
             val loader = createLoader(mockSortModel)
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             // First load.
@@ -774,7 +759,7 @@ class SearchLoaderTest {
                     queryDelayMs = resultsDelayMs,
                     firstPassWaitMs = 2 * resultsDelayMs,
                 )
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             // Start loading and ensure a result is delivered.
@@ -818,7 +803,7 @@ class SearchLoaderTest {
                     firstPassWaitMs = firstPassWaitMs,
                 )
             // Expect only one task to deliver results. AsyncTaskLoader cancels the other task.
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             loader.startLoading()
@@ -838,6 +823,190 @@ class SearchLoaderTest {
             }
 
             expect.that(listener.result).isNull()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenOnlyRootIsCloud_andNoDocs() {
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot()),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(0)
+            // The cloud root has limited functionality when offline.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenOnlyRootIsCloud_andDocsReturned() {
+            // Have the cloud root return documents.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.getCloudRoot().authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot()),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(2)
+            // The cloud root has limited functionality when offline.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isNotSet_whenMultipleRoots_butNoCloudDocs() {
+            // Have only the Downloads root return documents.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.DOWNLOADS.authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot(), TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(2)
+            // No cloud files present.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isFalse()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenMultipleRoots_andCloudDocs() {
+            // Have the cloud root return docs.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.getCloudRoot().authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(1, 1, arrayOf("png"))
+                )
+                get(TestProvidersAccess.DOWNLOADS.authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot(), TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(3)
+            // No cloud files present.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY)
+        fun testLockedCursorLockDoesNotStopLoaderReset() {
+            val closeLatch = CountDownLatch(1)
+            val loader =
+                createLoader(
+                    environment.state.sortModel,
+                    queryDelayMs = 0L,
+                    firstPassWaitMs = 100L,
+                    closeLatch = closeLatch,
+                )
+            val listener = TestLoadCompletedListener(1)
+            loader.registerListener(1, listener)
+
+            // Start loading and ensure a result is delivered.
+            loader.startLoading()
+            listener.await()
+
+            expect.that(listener.loadCount).isEqualTo(1)
+            expect.that(listener.result).isNotNull()
+            expect
+                .that(listener.result!!.fileNames.toTypedArray())
+                .isEqualTo(arrayOf("file-01.txt"))
+
+            // Reset the loader. This is called on the main test thread just like reset is called on
+            // the main UI thread. It must be quick even if the loader closes slowly.
+            val totalLoadTime = measureTime { loader.reset() }
+
+            // We expect this operation to take around 10 or fewer milliseconds. For example, on
+            // Intel i3 12th Gen, the operation takes less than 0.2ms. However, we give it full 5s,
+            // similar to the timeout used by bots.
+            expect.that(totalLoadTime).isLessThan(5000.milliseconds)
+            closeLatch.countDown()
         }
     }
 }

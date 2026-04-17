@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Məlumat əldə edin"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Gizli faylları göstərin"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Gizli faylları göstərməyin"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"Təzələyin"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Təsvir sütununu göstərin"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Təsvir sütununu göstərməyin"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> mənbəsində baxın"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Maksimum <xliff:g id="COUNT">%1$d</xliff:g> fayl paylaşıla bilər"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Əməliyyata icazə verilmir"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Əməliyyata icazə verilmir"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Bununla açın…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Tətbiq tapılmadı"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Dəstəklənən tətbiqlər quraşdırılmayıb. Play Marketdəki tətbiqlərdən birini quraşdırmağa cəhd edin."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Market-də axtarın"</string>
     <string name="share_via" msgid="8725082736005677161">"Bunun vasitəsilə paylaş:"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Bu fayl başqa formata çevrildi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Bu fayl başqa formata çevrildi:}other{Bu fayllar başqa formata çevrildi:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# element Mübadilə buferinə əlavə edildi}other{# element Mübadilə buferinə əlavə edildi}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Yalnız oxu"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Bu fayllara baxa bilərsiniz, amma bəzi əməliyyatlar dəstəklənmir"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Bu arxiv yalnız oxuma rejimində olan məkanda yerləşir və burada çıxarıla bilməz."</string>

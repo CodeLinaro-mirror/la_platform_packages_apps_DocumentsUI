@@ -28,12 +28,11 @@ import android.provider.DocumentsContract.Document
 import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
 import com.android.documentsui.DirectoryResult
+import com.android.documentsui.DocumentsApplication
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.roots.RootCursorWrapper
-
-const val TAG = "SearchV2"
 
 val FILE_ENTRY_COLUMNS =
     arrayOf(
@@ -90,6 +89,7 @@ abstract class BaseFileLoader(
 ) : AsyncTaskLoader<DirectoryResult>(context) {
 
     companion object {
+        const val TAG = "SearchV2"
         var instanceCounter = 0
     }
 
@@ -97,30 +97,33 @@ abstract class BaseFileLoader(
 
     /**
      * The cancellation signal passed to the `client.query()` method that allows us to notify the
-     * client about the query being cancelled while it is still being run. Extending classes need to
+     * client about the query being canceled while it is still being run. Extending classes need to
      * set it to a non-null value if they wish to be able to cancel queries in progress.
      */
     protected var cancelNotifier: CancellationSignal? = null
     private var storedResult: DirectoryResult? = null
 
+    /** A convenience debug logging method. */
+    protected fun debugLog(message: String, e: Exception? = null) {
+        if (DEBUG) {
+            Log.d(TAG, "${this::class.simpleName}#$myInstance: $message", e)
+        }
+    }
+
     /**
      * Overrides the default implementation to notify content provider clients with still running
-     * queries that the loading has been cancelled. This only takes place if the cancelNotifier
+     * queries that the loading has been canceled. This only takes place if the cancelNotifier
      * instance variable has been initialized by extending classes.
      */
     override fun cancelLoadInBackground() {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.cancelLoadInBackground")
-        }
+        debugLog("cancelLoadInBackground")
         super.cancelLoadInBackground()
 
         synchronized(this) { cancelNotifier?.cancel() }
     }
 
     override fun deliverResult(result: DirectoryResult?) {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.deliverResult")
-        }
+        debugLog("deliverResult")
         if (isReset) {
             closeResult(result)
             return
@@ -138,9 +141,7 @@ abstract class BaseFileLoader(
     }
 
     override fun onStartLoading() {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.onStartLoading")
-        }
+        debugLog("onStartLoading")
         val isCursorStale: Boolean = checkIfCursorStale(storedResult)
         if (storedResult != null && !isCursorStale) {
             deliverResult(storedResult)
@@ -157,23 +158,17 @@ abstract class BaseFileLoader(
     open fun resetInternal() {}
 
     override fun onStopLoading() {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.onStopLoading")
-        }
+        debugLog("onStopLoading")
         cancelLoad()
     }
 
     override fun onCanceled(result: DirectoryResult?) {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.onCanceled")
-        }
+        debugLog("onCanceled")
         closeResult(result)
     }
 
     override fun onReset() {
-        if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}#$myInstance.onReset")
-        }
+        debugLog("onReset")
         super.onReset()
 
         // Ensure the loader is stopped
@@ -185,11 +180,11 @@ abstract class BaseFileLoader(
 
     /** Quietly closes the result cursor, if results are still available. */
     fun closeResult(result: DirectoryResult?) {
-        try {
-            result?.close()
-        } catch (e: Exception) {
-            if (DEBUG) {
-                Log.d(TAG, "Failed to close result", e)
+        executor.execute {
+            try {
+                result?.close()
+            } catch (e: Exception) {
+                debugLog("Failed to close result", e)
             }
         }
     }
@@ -202,9 +197,7 @@ abstract class BaseFileLoader(
         if (cursor.isClosed) {
             return true
         }
-        if (DEBUG) {
-            Log.d(TAG, "Long check of cursor staleness")
-        }
+        debugLog("Long check of cursor staleness")
         val count = cursor.count
         // Do not check if moveToPosition succeeded (returned true), as moveToPosition(-1) always
         // returns false.
@@ -240,10 +233,7 @@ abstract class BaseFileLoader(
     ): Cursor? {
         val authority = locationUri.authority ?: return null
         val resolver = rootInfo.userId.getContentResolver(context) ?: return null
-        resolver.acquireUnstableContentProviderClient(authority).use { client ->
-            if (client == null) {
-                return null
-            }
+        DocumentsApplication.acquireUnstableProviderOrThrow(resolver, authority).use { client ->
             // TODO(b:440453094): Fix handling of cancel signal is documents providers.
             val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
             return createRootCursorWrapper(rootInfo, locationUri, cursor)

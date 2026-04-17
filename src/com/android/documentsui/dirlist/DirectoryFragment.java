@@ -26,6 +26,7 @@ import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
@@ -93,6 +94,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.MutableSelection;
@@ -168,6 +170,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -267,6 +270,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private @Nullable PathExtractor mPathExtractor;
     private @Nullable String mSelectedItemKey = null;
+
+    private AtomicInteger mVersion = new AtomicInteger(0);
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -593,6 +598,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         return mRootView;
     }
 
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        if (mDragHoverListener != null) {
+            mDragHoverListener.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         mInjector.actions.unregisterDisplayStateChangedListener(mOnDisplayStateChanged);
@@ -708,6 +720,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mFocusManager = mInjector.getFocusManager(mRecView, mModel);
         mActions = mInjector.getActionHandler(mContentLock);
 
+        if (isUseFileSummaryEnabled()) {
+            mActions.bindSummariesViewModel(this, createSummariesViewModel());
+        }
+
         mRecView.setAccessibilityDelegateCompat(
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
@@ -770,6 +786,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                     new SelectionTracker.SelectionObserver<>() {
                         @Override
                         public void onSelectionChanged() {
+                            handleSearchResultSelection();
+                        }
+
+                        @Override
+                        public void onSelectionRestored() {
+                            // When selection is restored (e.g. after window size change), it
+                            // doesn't trigger onSelectionChanged(), so we need to call the same
+                            // handleSearchResultSelection() here.
                             handleSearchResultSelection();
                         }
                     });
@@ -989,12 +1013,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return;
         }
         mSelectedItemKey = selectedId;
+        final int taskVersion = mVersion.incrementAndGet();
         ProviderExecutor.forAuthority(info.authority)
                 .execute(
                         () -> {
                             try {
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
-                                mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
+                                mHandler.post(
+                                        () -> {
+                                            showSearchResultBreadcrumb(
+                                                    controller, stack, taskVersion);
+                                        });
                             } catch (Exception e) {
                                 if (DEBUG) {
                                     Log.d(TAG, "Failed to get stack for " + info, e);
@@ -1011,14 +1040,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      * @param controller A non-null breadcrumb controller.
      * @param stack The stack to be used to create a path.
      */
-    private void showSearchResultBreadcrumb(BreadcrumbController controller, DocumentStack stack) {
+    private void showSearchResultBreadcrumb(
+            BreadcrumbController controller, DocumentStack stack, int version) {
+        if (version != mVersion.get()) {
+            return;
+        }
         controller.getModel().setFromStack(stack);
-        controller.setVisible(true);
+        controller.setSearchBreadcrumbVisible(true);
         if (stack.getRoot() != null && stack.getRoot().isRecents()) {
             // No click consumer for recents, as it would only take us back to recents.
             return;
         }
-        controller.setClickConsumer(
+        controller.setSearchBreadcrumbClickConsumer(
                 (i) -> {
                     // Remove items after the i-th element.
                     while (stack.size() > i + 1) {
@@ -1039,20 +1072,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     public void setSearchResultBreadcrumbHidden(@NonNull BreadcrumbController controller) {
         if (isSearchV2Enabled()) {
+            mVersion.incrementAndGet();
             mSelectedItemKey = null;
-            mHandler.post(() -> hideSearchResultBreadcrumb(controller));
+            controller.setSearchBreadcrumbVisible(false);
         }
-    }
-
-    /**
-     * Hides the breadcrumb path and disables click listener on the given controller.
-     *
-     * @param controller The non-null breadcrumb controller to be adjusted.
-     */
-    private void hideSearchResultBreadcrumb(BreadcrumbController controller) {
-        controller.setVisible(false);
-        controller.getModel().setPath(new String[0]);
-        controller.setClickConsumer(null);
     }
 
     private void onCopyDestinationPicked(int resultCode, Intent data) {
@@ -1792,27 +1815,37 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void renameDocuments(Selection selected) {
+    /**
+     * Displays the "Rename" dialog box for the first selected document. Does nothing if there are
+     * no selected documents. Does nothing if the selected document is a shortcut folder. Does
+     * nothing if the selected document does not support the rename operation.
+     */
+    public void renameDocuments(@NonNull Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_RENAME);
 
         if (selected.isEmpty()) {
             return;
         }
 
-        // Batch renaming not supported
-        // Rename option is only available in menu when 1 document selected
-        assert selected.size() == 1;
-
         // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
         List<DocumentInfo> docs = mModel.getDocuments(selected);
 
-        // Block the file operation if the selected document is a shortcut folder.
-        if (isHomeScreenFilesFlagEnabled() && mActions.blockOperationForShortcuts(
-                List.of(docs.get(0).derivedUri), docs.get(0).userId)) {
-            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+        // Batch renaming is not supported. Only consider the first document.
+        final DocumentInfo doc = docs.get(0);
+
+        if (isUseMaterial3FlagEnabled() && !doc.isRenameSupported()) {
+            if (DEBUG) Log.d(TAG, "Cannot rename " + redact(doc) + ": Operation not supported");
             return;
         }
-        RenameDocumentFragment.show(getChildFragmentManager(), docs.get(0));
+
+        // Block the file operation if the selected document is a shortcut folder.
+        if (isHomeScreenFilesFlagEnabled()
+                && mActions.blockOperationForShortcuts(List.of(doc.derivedUri), doc.userId)) {
+            Log.e(TAG, "Cannot rename protected folder " + redact(doc));
+            return;
+        }
+
+        RenameDocumentFragment.show(getChildFragmentManager(), doc);
     }
 
     Model getModel() {
@@ -2015,18 +2048,25 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             getRootDocumentAndMaybeRefreshDocument();
             return;
         }
+        boolean initialLoad = isSearchV2Enabled() && mDocumentsInitialLoad;
         if (isSearchV2Enabled() && mDocumentsInitialLoad) {
             mDocumentsInitialLoad = false;
-            return;
         }
-        mActions.refreshDocument(doc, (boolean refreshSupported) -> {
-            if (refreshSupported) {
-                mRefreshLayout.setRefreshing(false);
-            } else {
-                // If Refresh API isn't available, we will explicitly reload the loader
-                mActions.loadDocumentsForCurrentStack();
-            }
-        });
+        mActions.refreshDocument(
+                doc,
+                (boolean refreshSupported) -> {
+                    if (refreshSupported) {
+                        mRefreshLayout.setRefreshing(false);
+                    } else {
+                        // If Refresh API isn't available, we will explicitly reload the loader,
+                        // unless it's the initial load, in which case reloading is redundant, as
+                        // refresh did not happen.
+                        if (isSearchV2Enabled() && initialLoad) {
+                            return;
+                        }
+                        mActions.loadDocumentsForCurrentStack();
+                    }
+                });
     }
 
     private void getRootDocumentAndMaybeRefreshDocument() {
@@ -2046,6 +2086,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         mActions.loadDocumentsForCurrentStack();
                     }
                 });
+    }
+
+    protected SummariesViewModel createSummariesViewModel() {
+        return new ViewModelProvider(
+                        this, new SummariesViewModel.Factory(getBaseActivity().getApplication()))
+                .get(SummariesViewModel.class);
     }
 
     private final class ModelUpdateListener implements EventListener<Model.Update> {
@@ -2077,7 +2123,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
             mAdapter.notifyDataSetChanged();
 
-            if (mRestoredState != null) {
+            boolean shouldRestoreSelection = mRestoredState != null;
+            // When search_v2 is ON, we also check if the Model is still in loading state, where
+            // the Model will be empty, so nothing will be restored, we need to wait for the next
+            // update with loading=false.
+            if (isSearchV2Enabled()) {
+                shouldRestoreSelection = shouldRestoreSelection && !mModel.isLoading();
+            }
+            if (shouldRestoreSelection) {
                 mSelectionMgr.onRestoreInstanceState(mRestoredState);
                 mRestoredState = null;
             }

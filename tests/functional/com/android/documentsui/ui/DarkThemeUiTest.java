@@ -18,33 +18,25 @@ package com.android.documentsui.ui;
 
 import static org.junit.Assume.assumeFalse;
 
-import android.content.Context;
 import android.content.res.Configuration;
 
-import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.tests.R;
 import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * This class test default Dark Theme (Night Mode Disable)
  * Verify ActionBar background, Window background, and GridItem background to meet Light style
  */
 @SmallTest
-@RunWith(AndroidJUnit4.class)
 public class DarkThemeUiTest extends ThemeUiTestBase {
-    Context mTestContext;
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        mTestContext = InstrumentationRegistry.getContext();
+    public void setUpTest() throws Exception {
         mTheme = getThemeByUiMode(mTargetContext, Configuration.UI_MODE_NIGHT_YES);
     }
 

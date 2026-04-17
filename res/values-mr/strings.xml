@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"माहिती मिळवा"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"लपवलेल्या फाइल दाखवा"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"लपवलेल्या फाइल दाखवू नका"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"रिफ्रेश करा"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"वर्णनाचा स्तंभ दाखवा"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"वर्णनाचा स्तंभ दाखवू नका"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> मध्ये पहा"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> हून अधिक फाइल शेअर करू शकत नाही"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"कृतीस अनुमती नाही"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"कृतीला अनुमती नाही"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"हे वापरून उघडा…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"कोणतेही अ‍ॅप आढळले नाही"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"सपोर्ट करत असलेली कोणतीही ॲप्स इंस्टॉल केलेली नाहीत. Google Play Store वरून एखादे इंस्टॉल करून पहा."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store मध्ये शोधा"</string>
     <string name="share_via" msgid="8725082736005677161">"द्वारे शेअर करा"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ही फाइल अन्‍य स्‍वरूपात रूपांतरित केली होती: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{या फाइलचे दुसऱ्या फॉरमॅटमध्ये रूपांतर केले आहे:}other{या फाइलचे दुसऱ्या फॉरमॅटमध्ये रूपांतर केले आहे:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{क्लिपबोर्डमध्ये # आयटम जोडला आहे}other{क्लिपबोर्डमध्ये # आयटम जोडले आहेत}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"रीड-ओन्ली"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"तुम्ही या फाइल पाहू शकता, पण काही कृतींना सपोर्ट नाही"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"हे संग्रहण रीड-ओन्ली स्थानावर आहे आणि ते इथे एक्स्ट्रॅक्ट केले जाऊ शकत नाही."</string>

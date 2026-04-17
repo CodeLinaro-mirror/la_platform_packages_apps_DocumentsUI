@@ -16,6 +16,7 @@
 package com.android.documentsui.dirlist
 
 import android.app.ActivityManager
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
@@ -76,6 +77,9 @@ import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -93,6 +97,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 class DirectoryFragmentTest {
@@ -141,6 +146,12 @@ class DirectoryFragmentTest {
         doNothing().`when`(injector).updateSharedSelectionTracker(any())
         // Mock the activity and its dependencies.
         activity = mock(BaseActivity::class.java)
+        val testDispatcher = StandardTestDispatcher()
+        val ioTestDispatcher = UnconfinedTestDispatcher(testDispatcher.scheduler)
+        val mockApp = mock(Application::class.java)
+        `when`(mockApp.contentResolver).thenReturn(context.contentResolver)
+        `when`(mockApp.applicationContext).thenReturn(mockApp)
+        val summariesViewModel = SummariesViewModel(mockApp, ioTestDispatcher)
         `when`(activity.displayState).thenReturn(env.state)
         `when`(activity.getInjector()).thenReturn(injector)
         `when`(activity.getSystemService(Context.ACTIVITY_SERVICE))
@@ -152,7 +163,7 @@ class DirectoryFragmentTest {
         `when`(activity.applicationContext).thenReturn(context.applicationContext)
         `when`(activity.providersAccess).thenReturn(mock(ProvidersAccess::class.java))
 
-        fragment = DirectoryFragmentWithActivity(context, activity)
+        fragment = DirectoryFragmentWithActivity(context, activity, summariesViewModel)
         fragment.arguments = Bundle()
 
         // Need this to create selection tracker inside onActivityCreated().
@@ -447,6 +458,7 @@ class DirectoryFragmentTest {
 class DirectoryFragmentWithActivity(
     private val context: Context,
     private val fakeActivity: BaseActivity,
+    private val summariesViewModel: SummariesViewModel,
 ) : DirectoryFragment() {
     override fun getBaseActivity(): BaseActivity = fakeActivity
 
@@ -456,6 +468,10 @@ class DirectoryFragmentWithActivity(
 
     override fun onRefresh() {
         onRefreshCalled = true
+    }
+
+    override fun createSummariesViewModel(): SummariesViewModel {
+        return summariesViewModel
     }
 
     val jobProgressObserver: BroadcastReceiver

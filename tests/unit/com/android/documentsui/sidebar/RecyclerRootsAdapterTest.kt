@@ -16,7 +16,10 @@
 package com.android.documentsui.sidebar
 
 import android.content.Context
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import android.view.KeyEvent
+import android.view.View
 import android.view.View.OnDragListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,12 +34,17 @@ import com.android.documentsui.R
 import com.android.documentsui.base.Features
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
+import com.android.documentsui.base.UserId
+import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_HEADER
 import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_NAV_RAIL_ROOT
 import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_ROOT
 import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_SPACER
 import com.android.documentsui.testing.TestProvidersAccess
+import com.android.documentsui.testing.TestResolveInfo
 import com.android.documentsui.util.Material3Config.Companion.getRes
+import com.google.android.material.button.MaterialButton
 import com.google.common.truth.Expect
 import kotlin.jvm.java
 import org.junit.Before
@@ -61,6 +69,7 @@ class RecyclerRootsAdapterTest {
     private lateinit var items: MutableList<Item>
 
     @get:Rule val expect = Expect.create()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     @Before
     fun setup() {
@@ -116,6 +125,49 @@ class RecyclerRootsAdapterTest {
 
         verify(spyItem).bindView(viewHolder.itemView)
         expect.that(viewHolder.itemView.getTag(R.id.item_position_tag)).isEqualTo(0)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3)
+    fun testOnBindViewHolderRootAndAppItemHidesActionIcon() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val resolveInfo = TestResolveInfo.create()
+        resolveInfo.activityInfo.packageName = "com.documentsui.test"
+        val rootAndAppItem = RootAndAppItem(rootInfo, resolveInfo, null, false)
+        items.add(rootAndAppItem)
+        val viewHolder = adapter.onCreateViewHolder(parent, 0)
+
+        adapter.onBindViewHolder(viewHolder, 0)
+
+        val actionIcon = viewHolder.itemView.findViewById<MaterialButton?>(getRes(R.id.action_icon))
+        expect.that(actionIcon?.visibility).isEqualTo(View.GONE)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    @DisableFlags(Flags.FLAG_HOME_SCREEN_FILES_RO)
+    fun testOnBindViewHolderRootAndAppItemHasActionIcon() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val resolveInfo = TestResolveInfo.create()
+        resolveInfo.activityInfo.packageName = "com.documentsui.test"
+        val rootAndAppItem = RootAndAppItem(rootInfo, resolveInfo, null, false)
+        items.add(rootAndAppItem)
+        val viewHolder = adapter.onCreateViewHolder(parent, 0)
+
+        adapter.onBindViewHolder(viewHolder, 0)
+
+        val actionIcon = viewHolder.itemView.findViewById<MaterialButton?>(getRes(R.id.action_icon))
+        expect.that(actionIcon?.visibility).isEqualTo(View.VISIBLE)
     }
 
     @Test

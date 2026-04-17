@@ -92,7 +92,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() {
-        super.setUp();
         mCloudDocsHelper =
                 new DocumentsProviderHelper(
                         userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
@@ -546,6 +545,51 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         onView(withId(R.id.search_location_trigger)).check(matches(not(isDisplayed())));
         bots.search.findChip(R.string.chip_title_images).check(matches(isDisplayed()));
         bots.search.assertSearchIsClosed();
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSelectionBeRestoredAfterConfigurationChange() throws Exception {
+        switchRoot("Recent");
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+
+        // Recreate activity scenario to simulate configuration changes.
+        mActivityScenario.recreate();
+
+        // Assert the selection is restored and breadcrumb for the selected file is displayed.
+        bots.directory.assertSelection(1);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+        if (bots.main.inDrawerLayout()) {
+            onView(withId(R.id.breadcrumb_top_divider)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_ALLFILES_ROOT_FOR_RECENTS)
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSelectionBeRestoredAfterConfigurationChange_allFilesRoot() throws Exception {
+        switchRoot("Recent");
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+
+        // Recreate activity scenario to simulate configuration changes.
+        mActivityScenario.recreate();
+
+        // Assert the selection is restored and breadcrumb for the selected file is displayed.
+        bots.directory.assertSelection(1);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+        // The breadcrumb full path is only supported when the use_allfiles_root_for_recents flag
+        // is ON.
+        onView(withId(R.id.breadcrumb_path_holder))
+                .check(
+                        bots.breadcrumb.pathMatches(
+                                // The root path could be either "Device label" or
+                                // "Virtual SD Card" (on emulator with SD cards).
+                                ".*",
+                                ExternalStorageProviderTestFilesRule.TEMPORARY_FILES_DIR_NAME,
+                                TestFilesRule.FILE_NAME_2));
+        if (bots.main.inDrawerLayout()) {
+            onView(withId(R.id.breadcrumb_top_divider)).check(matches(isDisplayed()));
+        }
     }
 }
 

@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"માહિતી મેળવો"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"છુપાવેલી ફાઇલો બતાવો"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"છુપાવેલી ફાઇલો બતાવશો નહીં"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"રિફ્રેશ કરો"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"વર્ણનની કૉલમ બતાવો"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"વર્ણનની કૉલમ બતાવશો નહીં"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>માં જુઓ"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>થી વધુ ફાઇલ શેર કરી શકાતી નથી"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ક્રિયાની મંજૂરી નથી"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ઍક્શનને મંજૂરી નથી"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"આની સાથે ખોલો…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"કોઈ ઍપ મળી નથી"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"કોઈ સપોર્ટેડ ઍપ ઇન્સ્ટૉલ કરેલી નથી. Play Storeમાંથી એક ઍપ ઇન્સ્ટૉલ કરવાનો પ્રયાસ કરી જુઓ."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store પર શોધો"</string>
     <string name="share_via" msgid="8725082736005677161">"આના દ્વારા શેર કરો"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">આ ફાઇલો બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{આ ફાઇલ બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી:}one{આ ફાઇલ બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી:}other{આ ફાઇલો બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{ક્લિપબોર્ડમાં # આઇટમ ઉમેરી}one{ક્લિપબોર્ડમાં # આઇટમ ઉમેરી}other{ક્લિપબોર્ડમાં # આઇટમ ઉમેરી}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"ફક્ત વાંચવા માટે"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"તમે આ ફાઇલો જોઈ શકો છો પણ અમુક ઍક્શન સપોર્ટેડ નથી"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"આ આર્કાઇવ ફક્ત વાંચવા માટેના લોકેશનમાં છે અને તેથી તેને અહીં એક્સટ્રેક્ટ કરી શકાતું નથી."</string>

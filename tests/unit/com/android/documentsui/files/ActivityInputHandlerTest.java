@@ -16,21 +16,34 @@
 
 package com.android.documentsui.files;
 
-import static org.junit.Assert.assertTrue;
+import static android.view.KeyEvent.KEYCODE_DEL;
+import static android.view.KeyEvent.META_ALT_LEFT_ON;
+import static android.view.KeyEvent.META_ALT_ON;
+import static android.view.KeyEvent.META_CTRL_LEFT_ON;
+import static android.view.KeyEvent.META_CTRL_ON;
+import static android.view.MotionEvent.ACTION_DOWN;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+
+import static com.google.common.truth.Truth.assertThat;
+
+import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 import androidx.test.filters.MediumTest;
 import androidx.test.runner.AndroidJUnit4;
 
+import com.android.documentsui.rules.OverrideFlagsRule;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
 public class ActivityInputHandlerTest {
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private ActivityInputHandler mActivityInputHandler;
     private boolean mDeleteHappened;
@@ -45,9 +58,24 @@ public class ActivityInputHandlerTest {
 
     @Test
     public void testDelete() {
-        KeyEvent event = new KeyEvent(0, 0, MotionEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL, 0,
-                KeyEvent.META_ALT_ON);
-        assertTrue(mActivityInputHandler.onKeyDown(event.getKeyCode(), event));
-        assertTrue(mDeleteHappened);
+        KeyEvent event =
+                new KeyEvent(0, 0, ACTION_DOWN, KEYCODE_DEL, 0, META_ALT_ON | META_ALT_LEFT_ON);
+        assertThat(mActivityInputHandler.onKeyDown(event.getKeyCode(), event)).isTrue();
+        assertThat(mDeleteHappened).isTrue();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testAltCtrlBackspaceShouldNotDelete() {
+        KeyEvent event =
+                new KeyEvent(
+                        0,
+                        0,
+                        ACTION_DOWN,
+                        KEYCODE_DEL,
+                        0,
+                        META_ALT_ON | META_ALT_LEFT_ON | META_CTRL_ON | META_CTRL_LEFT_ON);
+        assertThat(mActivityInputHandler.onKeyDown(event.getKeyCode(), event)).isFalse();
+        assertThat(mDeleteHappened).isFalse();
     }
 }

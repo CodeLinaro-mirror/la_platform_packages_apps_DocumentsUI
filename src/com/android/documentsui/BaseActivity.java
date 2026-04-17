@@ -74,7 +74,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
-import com.android.documentsui.NavigationViewManager.Breadcrumb;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
@@ -227,6 +226,27 @@ public abstract class BaseActivity
         return mTestTickDurationSupplier;
     }
 
+    /** Used by tests to set the drag spring timeout (in milliseconds). */
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        // Set the drag spring timeout for the drag-hover on the directory.
+        final DirectoryFragment dir = getDirectoryFragment();
+        if (dir != null) {
+            dir.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+
+        // Set the drag spring timeout for the drag-hover on the sidebar roots.
+        final RootsFragment roots = getRootsFragment();
+        if (roots != null) {
+            roots.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+        // Set the drag spring timeout for the drag-hover on the nav rail roots.
+        final RootsFragment navRailRoots = getNavRailRootsFragment();
+        if (navRailRoots != null) {
+            navRailRoots.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+    }
+
     /**
      * Initialization for the injector that is common between Files and Pick activity. Important:
      * This is called before the BaseActivity.onCreate(), so it can't rely on things initiated
@@ -310,20 +330,26 @@ public abstract class BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(getRes(R.id.toolbar));
         setSupportActionBar(toolbar);
 
-        Breadcrumb breadcrumb = findViewById(getRes(R.id.horizontal_breadcrumb));
-        assert (breadcrumb != null);
+        HorizontalBreadcrumb navBreadcrumb = findViewById(getRes(R.id.horizontal_breadcrumb));
+        assert (navBreadcrumb != null);
+        BreadcrumbView searchBreadcrumb =
+                isSearchV2Enabled() ? findViewById(getRes(R.id.breadcrumb_view_v2)) : null;
+        View breadcrumbDivider =
+                isUseMaterial3FlagEnabled()
+                        ? findViewById(getRes(R.id.breadcrumb_top_divider))
+                        : null;
         View profileTabsContainer = findViewById(getRes(R.id.tabs_container));
         assert (profileTabsContainer != null);
 
-        mNavigator = getNavigationViewManager(breadcrumb, profileTabsContainer);
+        BreadcrumbModel model =
+                isSearchV2Enabled() ? new ViewModelProvider(this).get(BreadcrumbModel.class) : null;
+        BreadcrumbController breadcrumbController =
+                new BreadcrumbController(
+                        this, model, navBreadcrumb, searchBreadcrumb, breadcrumbDivider);
         if (isSearchV2Enabled()) {
-            View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
-            if (breadcrumbView2 != null) {
-                BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
-                mInjector.setBreadcrumbController(
-                        new BreadcrumbController(this, model, (BreadcrumbView) breadcrumbView2));
-            }
+            mInjector.setBreadcrumbController(breadcrumbController);
         }
+        mNavigator = getNavigationViewManager(breadcrumbController, profileTabsContainer);
 
         AppBarLayout appBarLayout = findViewById(getRes(R.id.app_bar));
         if (appBarLayout != null) {
@@ -374,7 +400,7 @@ public abstract class BaseActivity
                         if (isSearchV2Enabled()) {
                             BreadcrumbController controller = mInjector.getBreadcrumbController();
                             if (controller != null) {
-                                controller.setVisible(false);
+                                controller.setSearchBreadcrumbVisible(false);
                             }
                         }
                         // Invalidating the options menu will affect both tab navigation and the
@@ -492,51 +518,51 @@ public abstract class BaseActivity
             mNavigator.update();
         });
 
-        mNavigator.setProfileTabsListener(userId -> {
-            // There are several possible cases that may trigger this callback.
-            // 1. A user click on tab layout.
-            // 2. A user click on tab layout, when filter is checked. (searching = true)
-            // 3. A user click on a open a dir of a different user in search (stack size > 1)
-            // 4. After tab layout is initialized.
+        mNavigator.setProfileTabsListener(
+                userId -> {
+                    // There are several possible cases that may trigger this callback.
+                    // 1. A user click on tab layout.
+                    // 2. A user click on tab layout, when filter is checked. (searching = true)
+                    // 3. A user click on a open a dir of a different user in search (stack size >
+                    // 1)
+                    // 4. After tab layout is initialized.
 
-            if (!mState.stack.isInitialized()) {
-                return;
-            }
+                    if (!mState.stack.isInitialized()) {
+                        return;
+                    }
 
-            // Reload the roots when the selected user is changed.
-            // After reloading, we have visually same roots in the drawer. But they are
-            // different by holding different userId. Next time when user select a root, it can
-            // bring the user to correct root doc.
-            final RootsFragment roots = RootsFragment.get(getSupportFragmentManager());
-            if (roots != null) {
-                roots.onSelectedUserChanged();
-            }
-            if (isUseMaterial3FlagEnabled()) {
-                final RootsFragment navRailRoots =
-                        RootsFragment.getNavRail(getSupportFragmentManager());
-                if (navRailRoots != null) {
-                    navRailRoots.onSelectedUserChanged();
-                }
-            }
+                    // Reload the roots when the selected user is changed.
+                    // After reloading, we have visually same roots in the drawer. But they are
+                    // different by holding different userId. Next time when user select a root, it
+                    // can bring the user to correct root doc.
+                    final RootsFragment roots = getRootsFragment();
+                    if (roots != null) {
+                        roots.onSelectedUserChanged();
+                    }
+                    final RootsFragment navRailRoots = getNavRailRootsFragment();
+                    if (navRailRoots != null) {
+                        navRailRoots.onSelectedUserChanged();
+                    }
 
+                    if (mState.stack.size() <= 1) {
+                        // We do not load cross-profile root if the stack contains two documents.
+                        // The stack may contain >1 docs when the user select a folder of the other
+                        // user in search. In that case, we don't want to reload the root. The whole
+                        // stack and the root will be updated in openFolderInSearchResult.
 
-            if (mState.stack.size() <= 1) {
-                // We do not load cross-profile root if the stack contains two documents. The
-                // stack may contain >1 docs when the user select a folder of the other user in
-                // search. In that case, we don't want to reload the root. The whole stack
-                // and the root will be updated in openFolderInSearchResult.
-
-                // When a user filters files by search chips on the root doc, we will be in
-                // searching mode and with stack size 1 (0 if rootDoc cannot be loaded).
-                // The activity will clear search on root picked. If we don't clear the search,
-                // user may see the search result screen show up briefly and then get cleared.
-                mSearchManager.cancelSearch();
-                // When a profile with user property SHOW_IN_QUIET_MODE_HIDDEN is currently
-                // selected, and it becomes unavailable, we reset the roots to recents.
-                // We do not reset it to recents when pick activity is due to ACTION_CREATE_DOCUMENT
-                mInjector.actions.loadCrossProfileRoot(getCurrentRoot(), userId);
-            }
-        });
+                        // When a user filters files by search chips on the root doc, we will be in
+                        // searching mode and with stack size 1 (0 if rootDoc cannot be loaded).
+                        // The activity will clear search on root picked. If we don't clear the
+                        // search, user may see the search result screen show up briefly and then
+                        // get cleared.
+                        mSearchManager.cancelSearch();
+                        // When a profile with user property SHOW_IN_QUIET_MODE_HIDDEN is currently
+                        // selected, and it becomes unavailable, we reset the roots to recents.
+                        // We do not reset it to recents when pick activity is due to
+                        // ACTION_CREATE_DOCUMENT
+                        mInjector.actions.loadCrossProfileRoot(getCurrentRoot(), userId);
+                    }
+                });
 
         mSortController = SortController.create(this, mState.derivedMode, mState.sortModel);
         if (isUseMaterial3FlagEnabled()) {
@@ -582,15 +608,15 @@ public abstract class BaseActivity
         mCurrentLocale = getResources().getConfiguration().getLocales().get(0);
     }
 
-    private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
-            View profileTabsContainer) {
+    private NavigationViewManager getNavigationViewManager(
+            BreadcrumbController breadcrumbController, View profileTabsContainer) {
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
             return new NavigationViewManager(
                     this,
                     mDrawer,
                     mState,
                     this,
-                    breadcrumb,
+                    breadcrumbController,
                     profileTabsContainer,
                     DocumentsApplication.getUserManagerState(this),
                     mConfigStore);
@@ -600,7 +626,7 @@ public abstract class BaseActivity
                 mDrawer,
                 mState,
                 this,
-                breadcrumb,
+                breadcrumbController,
                 profileTabsContainer,
                 DocumentsApplication.getUserIdManager(this),
                 mConfigStore);
@@ -1120,6 +1146,17 @@ public abstract class BaseActivity
         return DirectoryFragment.get(getSupportFragmentManager());
     }
 
+    private @Nullable RootsFragment getRootsFragment() {
+        return RootsFragment.get(getSupportFragmentManager());
+    }
+
+    private @Nullable RootsFragment getNavRailRootsFragment() {
+        if (isUseMaterial3FlagEnabled()) {
+            return RootsFragment.getNavRail(getSupportFragmentManager());
+        }
+        return null;
+    }
+
     /**
      * Returns true if a directory can be created in the current location.
      */
@@ -1188,16 +1225,13 @@ public abstract class BaseActivity
 
         refreshDirectory(anim);
 
-        final RootsFragment roots = RootsFragment.get(getSupportFragmentManager());
+        final RootsFragment roots = getRootsFragment();
         if (roots != null) {
             roots.onCurrentRootChanged();
         }
-        if (isUseMaterial3FlagEnabled()) {
-            final RootsFragment navRailRoots =
-                    RootsFragment.getNavRail(getSupportFragmentManager());
-            if (navRailRoots != null) {
-                navRailRoots.onCurrentRootChanged();
-            }
+        final RootsFragment navRailRoots = getNavRailRootsFragment();
+        if (navRailRoots != null) {
+            navRailRoots.onCurrentRootChanged();
         }
 
         String appName = getString(getRes(R.string.files_label));
@@ -1465,6 +1499,21 @@ public abstract class BaseActivity
         return mSearchManager.isExpanded();
     }
 
+    /**
+     * Called when the user hits the KeyEvent.KEYCODE_SEARCH key (or Alt-Space, which is an
+     * Android-wide equivalent).
+     */
+    public void onSearchKeyboardShortcut() {
+        if (isUseMaterial3FlagEnabled()) {
+            // The selection bar, visible whenever at least one file or folder is selected, hides
+            // the search bar (whether docked or regular). Since this keyboard shortcut should
+            // focus and/or expand the search bar's text-edit widget, we first clear the selection
+            // (which will hide the selection bar if it was showing).
+            mInjector.selectionMgr.clearSelection();
+        }
+        mInjector.searchManager.onSearchKeyboardShortcut();
+    }
+
     @Override
     public UserId getSelectedUser() {
         return mNavigator.getSelectedUser();
@@ -1578,7 +1627,7 @@ public abstract class BaseActivity
     }
 
     protected boolean focusSidebar() {
-        RootsFragment rf = RootsFragment.get(getSupportFragmentManager());
+        RootsFragment rf = getRootsFragment();
         assert (rf != null);
         return rf.requestFocus();
     }
@@ -1670,9 +1719,9 @@ public abstract class BaseActivity
             mProviders.updateAsync(
                     false,
                     () -> {
-                        RootsFragment fragment = RootsFragment.get(getSupportFragmentManager());
+                        RootsFragment fragment = getRootsFragment();
                         if (fragment == null) {
-                            fragment = RootsFragment.getNavRail(getSupportFragmentManager());
+                            fragment = getNavRailRootsFragment();
                         }
                         if (fragment != null) {
                             fragment.reloadRootsAndShortcuts(

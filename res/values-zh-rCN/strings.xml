@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"获取信息"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"显示隐藏的文件"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"不显示隐藏的文件"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"刷新"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"显示说明列"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"不显示说明列"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"在“<xliff:g id="SOURCE">%1$s</xliff:g>”中查看"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"最多只能分享 <xliff:g id="COUNT">%1$d</xliff:g> 个文件"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"不允许执行此操作"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"不允许执行此操作"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"打开方式…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"未找到任何应用"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"未安装任何受支持的应用。请尝试从 Google Play 商店安装一款应用。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"在 Google Play 商店中搜索"</string>
     <string name="share_via" msgid="8725082736005677161">"分享方式"</string>
@@ -179,7 +180,7 @@
     </plurals>
     <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{正在将 # 个文件移至回收站}other{正在将 # 个文件移至回收站}}"</string>
     <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{正在恢复 # 个文件}other{正在恢复 # 个文件}}"</string>
-    <string name="undo" msgid="2902438994196400565">"撤消"</string>
+    <string name="undo" msgid="2902438994196400565">"撤销"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"正在准备…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"正在准备…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"正在准备…"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">已将以下文件转换成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{以下文件已转换为其他格式：}other{以下文件已转换为其他格式：}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{已将 # 项内容添加到剪贴板}other{已将 # 项内容添加到剪贴板}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"只读"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"您可以查看这些文件，但无法执行某些操作"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"此归档文件位于只读位置，无法解压缩到此处。"</string>

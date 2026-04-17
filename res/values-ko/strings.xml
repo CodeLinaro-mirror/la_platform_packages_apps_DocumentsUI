@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"정보 확인"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"숨겨진 파일 표시"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"숨겨진 파일 표시 안함"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"새로고침"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"설명 열 표시"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"설명 열 표시 안함"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>에서 보기"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"파일은 <xliff:g id="COUNT">%1$d</xliff:g>개까지만 공유할 수 있습니다."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"허용되지 않는 작업"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"허용되지 않는 작업"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"연결 앱…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"앱을 찾을 수 없음"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"지원되는 앱이 설치되어 있지 않습니다. Google Play 스토어에서 앱을 설치해 보세요."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play 스토어 검색"</string>
     <string name="share_via" msgid="8725082736005677161">"공유에 사용할 앱"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">다음 파일이 다른 형식으로 변환되었습니다. <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{다음 파일이 다른 형식으로 변환되었습니다}other{다음 파일이 다른 형식으로 변환되었습니다}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{클립보드에 항목 #개 추가됨}other{클립보드에 항목 #개 추가됨}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"읽기 전용"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"이러한 파일을 볼 수 있지만 일부 작업은 지원되지 않습니다."</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"이 보관 파일은 읽기 전용 위치에 있으며, 여기에서 추출할 수 없습니다."</string>
@@ -391,7 +391,7 @@
     <string name="empty_trash_banner_message" msgid="2993707579621525486">"휴지통에 있는 항목은 30일이 지나면 자동으로 삭제됩니다."</string>
     <string name="empty_trash_banner_button" msgid="1519946484798771236">"휴지통 비우기"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"휴지통을 비우시겠습니까?"</string>
-    <string name="empty_trash_dialog_message" msgid="520865296928962854">"휴지통에 있는 모든 항목이 영구 삭제됩니다. 이 작업은 실행취소할 수 없습니다."</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"휴지통에 있는 모든 항목이 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다."</string>
     <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"영구 삭제"</string>
     <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{항목이 휴지통에 있음}other{항목이 휴지통에 있음}}"</string>
     <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{이 항목에 액세스하려면 복원하거나 휴지통 밖으로 드래그하세요.}other{이 항목에 액세스하려면 복원하거나 휴지통 밖으로 드래그하세요.}}"</string>

@@ -47,7 +47,7 @@ public class ItemDragListener<H extends DragHost> implements OnDragListener {
 
     protected final H mDragHost;
     private final Timer mHoverTimer;
-    private final int mSpringTimeout;
+    private int mSpringTimeout;
 
     public ItemDragListener(H dragHost) {
         this(dragHost, new Timer(), DEFAULT_SPRING_TIMEOUT);
@@ -88,6 +88,11 @@ public class ItemDragListener<H extends DragHost> implements OnDragListener {
         }
 
         return false;
+    }
+
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        mSpringTimeout = testDragSpringTimeout;
     }
 
     private void handleEnteredEvent(View v, DragEvent event) {

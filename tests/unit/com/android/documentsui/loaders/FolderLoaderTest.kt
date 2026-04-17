@@ -16,25 +16,34 @@
 package com.android.documentsui.loaders
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestDocumentsProvider
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
+import com.google.common.truth.Truth.assertThat
 import java.time.Duration
 import java.util.concurrent.CountDownLatch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -162,6 +171,7 @@ class FolderLoaderTest() {
 
     @SmallTest
     class PlainTests : BaseLoaderTest() {
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
         @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
@@ -319,6 +329,99 @@ class FolderLoaderTest() {
             assertEquals(2, getFileCount(result))
             val resultSet = getDocuments(result).map { it.displayName }.toSet()
             assertEquals(setOf(doc2.displayName, doc3.displayName), resultSet)
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenRootIsCloud() {
+            val rootFolderInfo = DocumentInfo()
+            // The Cloud root has limited functionality when offline.
+            rootFolderInfo.authority = TestProvidersAccess.getCloudRoot().authority
+            rootFolderInfo.userId = TestProvidersAccess.getCloudRoot().userId
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.getCloudRoot(),
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val directoryResult = loader.loadInBackground()
+            assertNotNull(directoryResult)
+            assertTrue(directoryResult!!.hasLimitedFunctionalityWhenOffline)
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isNotSet_whenRootIsDownloads() {
+            val rootFolderInfo = DocumentInfo()
+            // The Downloads root does not have limited functionality when offline.
+            rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
+            rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val directoryResult = loader.loadInBackground()
+            assertNotNull(directoryResult)
+            assertFalse(directoryResult!!.hasLimitedFunctionalityWhenOffline)
+        }
+
+        @Test
+        fun testLockedCursorLockDoesNotStopLoaderReset() {
+            val closeLatch = CountDownLatch(1)
+            val rootFolderInfo = DocumentInfo()
+            rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
+            rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+            mockProvider.setCloseLatch(closeLatch)
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel,
+                )
+            val listener = TestLoadCompletedListener(1)
+            loader.registerListener(1, listener)
+            // Must set the loader in the "started" state. This also causes the loader go through
+            // the full cycle, including a call to deliverResults.
+            loader.startLoading()
+
+            // Wait for the result and check we got them.
+            listener.await()
+            assertThat(listener.result).isNotNull()
+            assertThat(listener.loadCount).isEqualTo(1)
+
+            // Now we are ready with the reset path. The reset calls close, which is held
+            // indefinitely by the lock. Yet, as it is run on the background thread, we expect the
+            // reset method to complete with no delay.
+            loader.reset()
+            // Now release the close method of the cursor, which allows it to finally close.
+            closeLatch.countDown()
+            // While one could expect the cursor to be in the closed state, DirectoryResults not
+            // only closes the cursor but also sets it to null. Unfortunately, we have no signal
+            // when the background thread is done, so we just sleep for a short time, and expect
+            // the closeResult to complete its job.
+            Thread.sleep(100)
+            assertThat(listener.result?.cursor).isNull()
         }
     }
 }

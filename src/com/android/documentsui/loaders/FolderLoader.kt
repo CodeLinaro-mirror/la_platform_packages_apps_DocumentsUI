@@ -33,7 +33,9 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
+import com.android.documentsui.base.SharedMinimal.redact
 import com.android.documentsui.sorting.SortModel
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 
 /**
  * A specialization of the BaseFileLoader that loads the children of a single folder. To list a
@@ -119,16 +121,20 @@ class FolderLoader(
 
         result.doc = listedDir ?: DocumentInfo()
         result.cursor = sortedCursor
+        if (isSyncStateEnabled()) {
+            // Set if this is a root that has limited functionality when offline.
+            result.hasLimitedFunctionalityWhenOffline = root.hasLimitedFunctionalityWhenOffline()
+        }
         return result
     }
 
     /**
-     * Helper function that attempts to open an archive and return a long lasting content provider
-     * client to the soon to be scanned archive. This must be done before attempting to acquire the
+     * Helper function that attempts to open an archive and return a long-lasting content provider
+     * client to the soon-to-be scanned archive. This must be done before attempting to acquire the
      * cursor, as we depend on archive content to be read (see acquireArchive method).
      */
     private fun openArchive(folderChildrenUri: Uri): ContentProviderClient? {
-        // If we are opening an archive, we need, in the current approach, to have a long lived
+        // If we are opening an archive, we need, in the current approach, to have a long-lived
         // ContentProviderClient for it. This is so that the archive can be closed, once the
         // loader results are closed.
         var client: ContentProviderClient? = null
@@ -136,8 +142,9 @@ class FolderLoader(
             val resolver = root.userId.getContentResolver(context)
             client = resolver.acquireUnstableContentProviderClient(folderChildrenUri.authority!!)
             ArchivesProvider.acquireArchive(client, folderChildrenUri)
+            debugLog("Acquired archive ${redact(folderChildrenUri)}")
         } catch (e: RemoteException) {
-            Log.e(TAG, "Failed to acquire archive client", e)
+            Log.e(TAG, "Cannot acquire archive ${redact(folderChildrenUri)}", e)
             client?.close()
         }
         return client

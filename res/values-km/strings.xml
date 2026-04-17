@@ -64,6 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ទទួល​ព័ត៌មាន"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"បង្ហាញឯកសារ​ដែលបានលាក់"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"កុំបង្ហាញ​ឯកសារដែល​បានលាក់"</string>
+    <string name="menu_refresh" msgid="1724946627254685997">"ផ្ទុក​ឡើងវិញ"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"បង្ហាញជួរឈរការពណ៌នា"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"កុំបង្ហាញជួរឈរការពណ៌នា"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"មើល​នៅក្នុង <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -144,7 +145,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"មិនអាច​ចែករំលែក​ឯកសារ​ច្រើន​ជាង <xliff:g id="COUNT">%1$d</xliff:g> បាន​ទេ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"សកម្មភាពមិនត្រូវបានអនុញ្ញាត"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"មិនអនុញ្ញាតឱ្យធ្វើសកម្មភាពនេះទេ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"បើក​ដោយ​ប្រើ…"</string>
+    <string name="no_application_dialog_title" msgid="693344961697142788">"រកមិនឃើញកម្មវិធីទេ"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"មិនមានការដំឡើងកម្មវិធី​ដែលអាចប្រើបានទេ។ សាកល្បងដំឡើងកម្មវិធីពី Play Store។"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"ស្វែងរក​នៅលើ Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"ចែករំលែក​តាម"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ឯកសារ​នេះ​មិនត្រូវ​បាន​បម្លែង​ទៅ​ទម្រង់​ផ្សេង​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ឯកសារ​នេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}other{ឯកសារ​ទាំងនេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{បានបញ្ចូលធាតុ # ទៅឃ្លីបបត}other{បានបញ្ចូលធាតុ # ទៅឃ្លីបបត}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"បាន​តែ​អាន"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"អ្នកអាចមើលឯកសារទាំងនេះបាន ប៉ុន្តែសកម្មភាពមួយចំនួនមិនអាចប្រើបានទេ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"បណ្ណសារនេះស្ថិតនៅក្នុងទីតាំងដែលបានតែអានប៉ុណ្ណោះ និងមិនអាចដកស្រង់នៅទីនេះបានទេ។"</string>

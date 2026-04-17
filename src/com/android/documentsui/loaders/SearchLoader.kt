@@ -31,9 +31,9 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.sorting.SortModel
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
@@ -52,11 +52,11 @@ const val EXTRA_URI = "uri"
  * and completed tasks. Completed tasks may have cursor null, if this is what a given content
  * provider returns.
  */
-private data class QueryResult(var cursor: Cursor? = null)
+internal data class QueryResult(var rootInfo: RootInfo, var cursor: Cursor? = null)
 
 /**
  * A specialization of the BaseFileLoader that searches the set of specified roots. To search the
- * roots you must provider:
+ * roots you must a provider:
  * - The current application context
  * - A content lock for which a locking content observer is built
  * - A list of user IDs, on whose behalf we query content provider clients.
@@ -105,14 +105,10 @@ class SearchLoader(
                 try {
                     result = queryLocation(rootInfo, searchUri, queryArgs)
                 } catch (e: Exception) {
-                    if (DEBUG) {
-                        Log.d(TAG, "Failed to get cursor for ${searchUri.authority}", e)
-                    }
+                    debugLog("failed to get cursor for ${searchUri.authority}", e)
                 }
             }
-            if (DEBUG) {
-                Log.d(TAG, "Query on ${searchUri.authority} took $queryDuration")
-            }
+            debugLog("query on ${searchUri.authority} took $queryDuration")
             return result
         }
 
@@ -133,6 +129,9 @@ class SearchLoader(
             latch.countDown()
             Trace.endSection()
         }
+
+        internal val queryResult: QueryResult
+            get() = QueryResult(this.rootInfo, cursor)
     }
 
     override fun createRootCursorWrapper(
@@ -180,9 +179,7 @@ class SearchLoader(
      */
     private fun maybeRefreshContent(taskId: String) {
         if (firstPassDone.get()) {
-            if (DEBUG) {
-                Log.d(TAG, "Forcing refresh on cursor $taskId completed")
-            }
+            debugLog("forcing refresh on cursor $taskId completed")
             onContentChanged()
         }
     }
@@ -196,11 +193,9 @@ class SearchLoader(
     private fun firstPassRun(latch: CountDownLatch, rejectBeforeTimestamp: Long): Boolean {
         // Step 1: Create a list of new search tasks.
         createSearchTaskList(rejectBeforeTimestamp, latch)
-        if (DEBUG) {
-            Log.d(TAG, "First run created ${searchTaskList.size} tasks")
-        }
+        debugLog("first run created ${searchTaskList.size} tasks")
 
-        // Check if we are cancelled; if not copy the task list.
+        // Check if we are canceled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
             return false
         }
@@ -209,30 +204,25 @@ class SearchLoader(
         for (task in searchTaskList) {
             executorService.execute(task)
         }
-        if (DEBUG) {
-            Log.d(TAG, "Started ${searchTaskList.size} search tasks")
-        }
+        debugLog("started ${searchTaskList.size} search tasks")
 
         // Step 3: Wait for the results.
         if (options.isQueryTimeUnlimited()) {
-            if (DEBUG) {
-                Log.d(TAG, "Waiting for results with no time limit")
-            }
+            debugLog("waiting for results with no time limit")
             latch.await()
         } else {
-            if (DEBUG) {
-                Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
-            }
-            latch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
+            debugLog("waiting ${options.maxQueryTime!!.toMillis()}ms for results")
+            latch.await(options.maxQueryTime.toMillis(), TimeUnit.MILLISECONDS)
         }
-        if (DEBUG) {
-            Log.d(TAG, "Waiting for results is done")
-        }
+        debugLog("waiting for results is done")
         return true
     }
 
     /** The loadInBackground code run within a trace. */
     private fun loadInBackgroundTraced(): DirectoryResult? {
+        // While we are building results we do not wish the observer to send any notifications.
+        debugLog("pausing content change notifications")
+        observer.setPaused(true)
         val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
         val result = DirectoryResult()
         // TODO(b:378590632): If root list has one root use it to construct result.doc
@@ -247,16 +237,12 @@ class SearchLoader(
                 // Create a new task list and schedule it with the executor.
                 firstPassComplete = firstPassRun(countDownLatch, rejectBeforeTimestamp)
             } catch (e: InterruptedException) {
-                if (DEBUG) {
-                    Log.d(TAG, "Interrupted during first pass ${options.maxQueryTime}")
-                }
+                debugLog("interrupted during first pass ${options.maxQueryTime}")
                 // TODO(b:388336095): Record a metrics indicating incomplete search.
                 throw RuntimeException(e)
             } finally {
                 firstPassDone.set(firstPassComplete)
-                if (DEBUG) {
-                    Log.d(TAG, "SearchLoader#$myInstance set firstPassDone to $firstPassComplete")
-                }
+                debugLog("set firstPassDone to $firstPassComplete")
             }
         }
 
@@ -276,25 +262,46 @@ class SearchLoader(
                 if (cursor != null) {
                     cursorList.add(cursor)
                 }
+                if (
+                    isSyncStateEnabled() &&
+                        data.rootInfo.hasLimitedFunctionalityWhenOffline() &&
+                        (cursor?.count ?: 0) > 0
+                ) {
+                    // When there are multiple roots in the result, we set this condition when there
+                    // is at least one file from a root that has limited functionality when offline.
+                    result.hasLimitedFunctionalityWhenOffline = true
+                }
             }
         }
-        if (DEBUG) {
-            Log.d(TAG, "Search complete with ${cursorList.size} cursors collected")
+        if (
+            isSyncStateEnabled() &&
+                queryResults.size == 1 &&
+                queryResults[0]?.rootInfo?.hasLimitedFunctionalityWhenOffline() ?: false
+        ) {
+            // When there is only one root in the result, we set this condition when that root has
+            // limited functionality when offline. There do not need to be any files present.
+            result.hasLimitedFunctionalityWhenOffline = true
         }
+        debugLog("search complete with ${cursorList.size} cursors collected")
 
         // Assign the cursor, after adding filtering and sorting, to the results.
         val cursorExtras = Bundle().apply { putBoolean(DocumentsContract.EXTRA_LOADING, !allDone) }
         val mergedCursor = toSingleCursor(cursorList).apply { setExtras(cursorExtras) }
-        val filteringCursor = FilteringCursorWrapper(mergedCursor)
-        filteringCursor.filterHiddenFiles(options.showHidden)
-        filteringCursor.filterMimes(
+        val nonClosingFilteringCursor =
+            object : FilteringCursorWrapper(mergedCursor) {
+                override fun close() {
+                    debugLog("ignoring close action; closing in onReset")
+                }
+            }
+        nonClosingFilteringCursor.filterHiddenFiles(options.showHidden)
+        nonClosingFilteringCursor.filterMimes(
             computeAcceptableMimeTypes(options),
             if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null,
         )
         if (rejectBeforeTimestamp > 0L) {
-            filteringCursor.filterLastModified(rejectBeforeTimestamp)
+            nonClosingFilteringCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        result.cursor = sortModel.sortCursor(filteringCursor, mimeTypeLookup)
+        result.cursor = sortModel.sortCursor(nonClosingFilteringCursor, mimeTypeLookup)
 
         // TODO(b:388336095): Record the total time it took to complete search.
         return result
@@ -306,14 +313,14 @@ class SearchLoader(
      * task we check if we need to refresh the content.
      */
     private fun onTaskCompleted(searchTask: SearchTask) {
-        queryResults[searchTask.index] = QueryResult(searchTask.cursor)
+        queryResults[searchTask.index] = searchTask.queryResult
         maybeRefreshContent(searchTask.taskId)
     }
 
     /**
      * Determines if the query is for recent or search.
      *
-     * NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus we only
+     * NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus, we only
      * create the recents URI if both the query and other args are empty.
      */
     private fun isRecentQuery(): Boolean =
@@ -325,7 +332,7 @@ class SearchLoader(
             // to make its behavior, such as failure handling, more explicit.
             isUseLocalSearchProviderEnabled() &&
             semanticSearchRootInfo?.supportsSearch() == true &&
-            semanticSearchRootInfo?.isEmpty() == false &&
+            !semanticSearchRootInfo.isEmpty &&
             rootInfo.isLocalOnly
 
     /** Gets semantic search URI if applicable, or null otherwise. */
@@ -342,14 +349,12 @@ class SearchLoader(
     private fun createContentProviderQuery(rootInfo: RootInfo): List<Uri> {
         val semanticSearchUri = maybeGetSemanticSearchUri(rootInfo)
 
-        if (isRecentQuery()) {
-            return listOf(
-                DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId)
-            )
+        return if (isRecentQuery()) {
+            listOf(DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId))
         } else if (semanticSearchUri != null) {
-            return listOf(semanticSearchUri, buildSearchDocumentsUri(rootInfo))
+            listOf(semanticSearchUri, buildSearchDocumentsUri(rootInfo))
         } else {
-            return listOf(buildSearchDocumentsUri(rootInfo))
+            listOf(buildSearchDocumentsUri(rootInfo))
         }
     }
 
@@ -406,31 +411,44 @@ class SearchLoader(
             val searchUris = createContentProviderQuery(rootInfo)
             val queryArgs = createQueryArgs(rootInfo, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
-            if (DEBUG) {
-                Log.d(TAG, "Querying ${searchUris.map { it.authority }}")
-            }
+            debugLog("querying ${searchUris.map { it.authority }}")
             searchTaskList.add(SearchTask(rootInfo, searchUris, queryArgs, index, countDownLatch))
         }
     }
 
+    override fun deliverResult(result: DirectoryResult?) {
+        super.deliverResult(result)
+        debugLog("unpausing content change notifications")
+        observer.setPaused(false)
+    }
+
+    override fun onStopLoading() {
+        // If this loader is stopped, do not deliver any change notifications.
+        debugLog("pausing content change notifications")
+        observer.setPaused(true)
+        super.onStopLoading()
+    }
+
     override fun onReset() {
-        if (DEBUG) {
-            Log.d(TAG, "SearchLoader#$myInstance resetting.")
-        }
         resetInternal()
         super.onReset()
     }
 
     /** Overrides the method called when forced load takes place to force full cursor reload. */
     override fun resetInternal() {
-        for (data in queryResults) {
-            val cursor = data?.cursor
-            if (cursor != null) {
-                cursor.close()
-                cursor.unregisterContentObserver(observer)
+        debugLog("resetting internal data structures")
+        observer.setPaused(true)
+        val previousQueryResults = queryResults.copyOf()
+        queryResults.fill(null)
+        executor.execute {
+            for (data in previousQueryResults) {
+                val cursor = data?.cursor
+                if (cursor != null) {
+                    cursor.unregisterContentObserver(observer)
+                    cursor.close()
+                }
             }
         }
-        queryResults.fill(null)
         searchTaskList.clear()
         firstPassDone.set(false)
         countDownLatch = CountDownLatch(rootInfoList.size)

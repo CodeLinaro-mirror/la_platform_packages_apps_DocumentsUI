@@ -379,7 +379,7 @@
 -keep class com.android.documentsui.roots.ProvidersCache { *; }
 # TODO(lucmult): Remove these when they're used by the prod code.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
--keep class com.android.documentsui.loaders.SummaryLoader { *; }
+-keep class com.android.documentsui.dirlist.SummariesViewModel { *; }
 -keep interface com.android.documentsui.SummaryUpdateListener { *; }
 -keep class com.android.documentsui.ModelSummariesUpdate { *; }
 

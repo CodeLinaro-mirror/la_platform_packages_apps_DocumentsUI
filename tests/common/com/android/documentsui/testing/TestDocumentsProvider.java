@@ -61,15 +61,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
     };
 
     /** Faked result for {@link #queryChildDocuments(String, String[], String)}. */
-    private Cursor mNextChildDocuments;
+    private DocumentInfo[] mNextChildDocuments;
 
     /** Faked result for {@link #queryRecentDocuments(String, String[])}. */
-    private Cursor mNextRecentDocuments;
+    private DocumentInfo[] mNextRecentDocuments;
 
     /**
      * Faked result for {@link #queryTrashDocuments(String, String[], Bundle, CancellationSignal)}.
      */
-    private Cursor mNextTrashDocuments;
+    private DocumentInfo[] mNextTrashDocuments;
 
     /** Runtime exception thrown in either querySearchDocuments() or queryChildDocuments(). */
     private String mRuntimeMessage;
@@ -91,6 +91,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     /** The last query args passed to {@link #queryChildDocuments()}. */
     private @Nullable Bundle mLastQueryArgs = null;
+
+    /** Latch used to block cursor close operations. */
+    private CountDownLatch mCloseLatch = null;
 
     /** Sets the summaries that should be emulated. */
     public void setDocumentSummaries(Map<String, String> summaries) {
@@ -117,6 +120,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
      */
     @Nullable private CountDownLatch mQueryDelayLatch = null;
     private final String mAuthority;
+
+    private Cursor mLastChildDocumentsCursor;
+    private Cursor mLastRecentDocumentsCursor;
 
     // Emulates FileSystemProvider's support for search result limiting.
     private Boolean mSupportsSearchResultLimit = false;
@@ -148,7 +154,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
         if (projection == null) {
             projection = new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY};
         }
-        final MatrixCursor result = new MatrixCursor(projection);
+        final TestCursor result = new TestCursor(projection);
+        result.setCloseLatch(mCloseLatch);
 
         // This provider might be used to check for the existence of a doc.
         // If it doesn't exist in the test model, we should return an empty cursor.
@@ -173,20 +180,23 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
         if (mNextChildDocuments != null) {
             Log.d(TAG, "queryChildDocuments: returning from mNextChildDocuments");
-            return mNextChildDocuments;
+            mLastChildDocumentsCursor = createDocumentsCursor(mNextChildDocuments);
+            return mLastChildDocumentsCursor;
         }
 
         // If the summaries has been set, use it.
         if (!mNextSummaries.isEmpty()) {
-            final MatrixCursor result =
-                    new MatrixCursor(
+            final TestCursor result =
+                    new TestCursor(
                             new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY});
-            final MatrixCursor.RowBuilder row = result.newRow();
+            result.setCloseLatch(mCloseLatch);
             for (String documentId : mNextSummaries.keySet()) {
+                final MatrixCursor.RowBuilder row = result.newRow();
                 row.add(Document.COLUMN_DOCUMENT_ID, documentId);
                 row.add(Document.COLUMN_SUMMARY, mNextSummaries.getOrDefault(documentId, null));
             }
             Log.d(TAG, "queryChildDocuments: returning from mNextSummaries");
+            mLastChildDocumentsCursor = result;
             return result;
         }
         Log.d(TAG, "queryChildDocuments: returning null");
@@ -201,6 +211,16 @@ public class TestDocumentsProvider extends DocumentsProvider {
         return queryChildDocuments(parentDocumentId, projection, (String) null);
     }
 
+    /** Manually triggers a content change notification on the last returned cursor. */
+    public void dispatchContentChanged() {
+        if (mLastChildDocumentsCursor instanceof TestCursor) {
+            ((TestCursor) mLastChildDocumentsCursor).mockOnChange();
+        }
+        if (mLastRecentDocumentsCursor instanceof TestCursor) {
+            ((TestCursor) mLastRecentDocumentsCursor).mockOnChange();
+        }
+    }
+
     @Override
     public ParcelFileDescriptor openDocument(String documentId, String mode,
             CancellationSignal signal) throws FileNotFoundException {
@@ -209,7 +229,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryRecentDocuments(String rootId, String[] projection) {
-        return mNextRecentDocuments;
+        mLastRecentDocumentsCursor = createDocumentsCursor(mNextRecentDocuments);
+        return mLastRecentDocumentsCursor;
     }
 
     @Nullable
@@ -221,7 +242,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
             @Nullable CancellationSignal signal)
             throws FileNotFoundException {
         maybeThrowException();
-        return mNextTrashDocuments;
+        return createDocumentsCursor(mNextTrashDocuments);
     }
 
     private String getStringColumn(Cursor cursor, String name) {
@@ -254,36 +275,47 @@ public class TestDocumentsProvider extends DocumentsProvider {
         if (mNextChildDocuments == null) {
             return cursor;
         }
-        for (boolean hasNext = mNextChildDocuments.moveToFirst();
+
+        Cursor nextDocsCursor = createDocumentsCursor(mNextChildDocuments);
+        for (boolean hasNext = nextDocsCursor.moveToFirst();
                 hasNext && ((maxResults < 0) || (cursor.getCount() < maxResults));
-                hasNext = mNextChildDocuments.moveToNext()) {
-            String displayName = getStringColumn(mNextChildDocuments, Document.COLUMN_DISPLAY_NAME);
-            String mimeType = getStringColumn(mNextChildDocuments, Document.COLUMN_MIME_TYPE);
-            long lastModified = getLongColumn(mNextChildDocuments, Document.COLUMN_LAST_MODIFIED);
-            long size = getLongColumn(mNextChildDocuments, Document.COLUMN_SIZE);
+                hasNext = nextDocsCursor.moveToNext()) {
+            String displayName = getStringColumn(nextDocsCursor, Document.COLUMN_DISPLAY_NAME);
+            String mimeType = getStringColumn(nextDocsCursor, Document.COLUMN_MIME_TYPE);
+            long lastModified = getLongColumn(nextDocsCursor, Document.COLUMN_LAST_MODIFIED);
+            long size = getLongColumn(nextDocsCursor, Document.COLUMN_SIZE);
 
             if (DocumentsContract.matchSearchQueryArguments(queryArgs, displayName, mimeType,
                     lastModified, size)) {
                 cursor.newRow()
-                        .add(Document.COLUMN_DOCUMENT_ID,
-                                getStringColumn(mNextChildDocuments, Document.COLUMN_DOCUMENT_ID))
-                        .add(Document.COLUMN_MIME_TYPE,
-                                getStringColumn(mNextChildDocuments, Document.COLUMN_MIME_TYPE))
-                        .add(Document.COLUMN_DISPLAY_NAME,
-                                getStringColumn(mNextChildDocuments, Document.COLUMN_DISPLAY_NAME))
-                        .add(Document.COLUMN_LAST_MODIFIED,
-                                getLongColumn(mNextChildDocuments, Document.COLUMN_LAST_MODIFIED))
-                        .add(Document.COLUMN_FLAGS,
-                                getLongColumn(mNextChildDocuments, Document.COLUMN_FLAGS))
-                        .add(Document.COLUMN_SUMMARY,
-                                getStringColumn(mNextChildDocuments, Document.COLUMN_SUMMARY))
-                        .add(Document.COLUMN_SIZE,
-                                getLongColumn(mNextChildDocuments, Document.COLUMN_SIZE))
-                        .add(Document.COLUMN_ICON,
-                                getLongColumn(mNextChildDocuments, Document.COLUMN_ICON));
+                        .add(
+                                Document.COLUMN_DOCUMENT_ID,
+                                getStringColumn(nextDocsCursor, Document.COLUMN_DOCUMENT_ID))
+                        .add(
+                                Document.COLUMN_MIME_TYPE,
+                                getStringColumn(nextDocsCursor, Document.COLUMN_MIME_TYPE))
+                        .add(
+                                Document.COLUMN_DISPLAY_NAME,
+                                getStringColumn(nextDocsCursor, Document.COLUMN_DISPLAY_NAME))
+                        .add(
+                                Document.COLUMN_LAST_MODIFIED,
+                                getLongColumn(nextDocsCursor, Document.COLUMN_LAST_MODIFIED))
+                        .add(
+                                Document.COLUMN_FLAGS,
+                                getLongColumn(nextDocsCursor, Document.COLUMN_FLAGS))
+                        .add(
+                                Document.COLUMN_SUMMARY,
+                                getStringColumn(nextDocsCursor, Document.COLUMN_SUMMARY))
+                        .add(
+                                Document.COLUMN_SIZE,
+                                getLongColumn(nextDocsCursor, Document.COLUMN_SIZE))
+                        .add(
+                                Document.COLUMN_ICON,
+                                getLongColumn(nextDocsCursor, Document.COLUMN_ICON));
             }
         }
         Log.d(TAG, "Delivering " + cursor.getCount() + " results");
+        cursor.setCloseLatch(mCloseLatch);
         return cursor;
     }
 
@@ -295,7 +327,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
             return null;
         }
 
-        return filterCursorByString(mNextChildDocuments, query);
+        // Note that createDocumentsCursor sets the mCloseLatch on the cursor, thus we do not need
+        // to set it again.
+        return filterCursorByString(createDocumentsCursor(mNextChildDocuments), query);
     }
 
     @Override
@@ -308,7 +342,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
      * @param docs docs to return for next query.
      */
     public void setNextChildDocumentsReturns(DocumentInfo... docs) {
-        mNextChildDocuments = createDocumentsCursor(docs);
+        mNextChildDocuments = docs;
     }
 
     private void maybeThrowException() {
@@ -389,7 +423,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     }
 
     public void setNextRecentDocumentsReturns(DocumentInfo... docs) {
-        mNextRecentDocuments = createDocumentsCursor(docs);
+        mNextRecentDocuments = docs;
     }
 
     /**
@@ -399,10 +433,19 @@ public class TestDocumentsProvider extends DocumentsProvider {
      * @param docs The documents to be returned in the cursor.
      */
     public void setNextTrashDocumentsReturns(DocumentInfo... docs) {
-        mNextTrashDocuments = createDocumentsCursor(docs);
+        mNextTrashDocuments = docs;
+    }
+
+    /**
+     * Sets a latch to be used for close operation of returned cursors. To have an effect this
+     * method must be called before any document or search queries are received by this provider.
+     */
+    public void setCloseLatch(CountDownLatch latch) {
+        mCloseLatch = latch;
     }
 
     private Cursor createDocumentsCursor(DocumentInfo... docs) {
+        if (docs == null) return null;
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
         for (DocumentInfo doc : docs) {
             cursor.newRow()
@@ -418,14 +461,17 @@ public class TestDocumentsProvider extends DocumentsProvider {
                     .add(Document.COLUMN_ICON, doc.icon);
         }
 
+        cursor.setCloseLatch(mCloseLatch);
+
         return cursor;
     }
 
-    private static Cursor filterCursorByString(@NonNull Cursor cursor, String query) {
+    private Cursor filterCursorByString(@NonNull Cursor cursor, String query) {
         final int count = cursor.getCount();
         final String[] columnNames = cursor.getColumnNames();
 
-        final MatrixCursor resultCursor = new MatrixCursor(columnNames, count);
+        final TestCursor resultCursor = new TestCursor(columnNames);
+        resultCursor.setCloseLatch(mCloseLatch);
         cursor.moveToPosition(-1);
         for (int i = 0; i < count; i++) {
             cursor.moveToNext();

@@ -21,6 +21,7 @@ import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
+import android.provider.DocumentsContract.Document
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
@@ -98,5 +99,28 @@ class ConfigTest {
         // return false.
         doc.rootHasLimitedFunctionalityWhenOffline = true
         assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
+    fun testCanSelectType_returnsFalseWhenDocumentDisabled() {
+        state.action = State.ACTION_CREATE
+        state.acceptMimes = arrayOf("image/png")
+        // isDocumentEnabled returns true and all other conditions are met to allow the document to
+        // be selected.
+        var doc = DocumentInfo()
+        doc.mimeType = "image/png"
+        doc.flags = Document.FLAG_SUPPORTS_WRITE
+        doc.syncStateFlags = 0
+        doc.rootHasLimitedFunctionalityWhenOffline = false
+        assertTrue(config.isDocumentEnabled(doc, state, OFFLINE))
+        assertTrue(config.canSelectType(doc, state, OFFLINE))
+
+        // isDocumentEnabled returns false and so the doc can't be selected.
+        doc.rootHasLimitedFunctionalityWhenOffline = true
+        assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
+        assertFalse(config.canSelectType(doc, state, OFFLINE))
     }
 }

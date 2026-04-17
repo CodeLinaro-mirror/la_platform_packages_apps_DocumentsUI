@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -299,7 +300,6 @@ public class DirectoryListBot extends Bots.BaseBot {
                 android.R.id.progress,
                 R.id.sync_error_icon,
                 R.id.upload_icon,
-                R.id.download_icon,
                 R.id.progress_tick_icon);
     }
 
@@ -363,6 +363,19 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertEquals(message, messageTextView.getText());
     }
 
+    /** Checks that the no results page is displayed. */
+    public void waitAndAssertNoResultsMessage(String rootTitle) throws UiObjectNotFoundException {
+        String message;
+        if (isUseMaterial3FlagEnabled()) {
+            message = mContext.getString(getRes(R.string.no_results));
+        } else {
+            // When the flag is off, the message includes the root title.
+            message = String.format(mContext.getString(R.string.no_results), rootTitle);
+        }
+
+        waitAndAssertPlaceholderMessageText(message);
+    }
+
     private UiObject findHeaderMessageTextView() {
         return findObject(mDirContainerId, mTargetPackage + ":id/message_textview");
     }
@@ -404,7 +417,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         // Long finger-click (instead of long mouse-click and instead of regular (not-long)
         // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
         // not change the selectedness of other documents.
-        longClickWithToolTypeFinger(findSelectionHotspot(label));
+        longClickWithToolTypeFinger(findSelectionHotspot(label).getVisibleCenter());
 
         // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
         // also avoids a future click being registered as double clicking.
@@ -422,16 +435,27 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Select the first document that has a selectable region in the list or grid view. */
     public void selectFirstDocument() throws UiObjectNotFoundException {
+        // There must be at least one document to proceed to selection.
+        if (!mDevice.wait(Until.hasObject(By.res(mItemRootId)), mTimeout)) {
+            throw new UiObjectNotFoundException("No documents found to select");
+        }
+
         final BySelector list = By.res(mDirListId);
         final BySelector selectionRegionSelector = getSelectionRegionSelector();
-        longClickWithToolTypeFinger(mDevice.findObject(list).findObject(selectionRegionSelector));
+        longClickWithToolTypeFinger(
+                mDevice.findObject(list).findObject(selectionRegionSelector).getVisibleCenter());
         assertSelection(1);
     }
 
-    private void longClickWithToolTypeFinger(UiObject2 uiObject) {
+    private void longClickWithToolTypeFinger(Point center) {
         int toolType = Configurator.getInstance().getToolType();
         Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-        uiObject.longClick();
+
+        // Use a stationary drag with 0 step to perform a long click.
+        // This bypasses GestureController and uses the stable InteractionController path.
+        // Attempting to use longClick directly will result in scrolling observed on virtual
+        // devices causing test flakiness.
+        mDevice.drag(center.x, center.y, center.x, center.y, 0);
         Configurator.getInstance().setToolType(toolType);
     }
 

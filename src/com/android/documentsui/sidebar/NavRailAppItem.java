@@ -42,8 +42,9 @@ public class NavRailAppItem extends AppItem {
         final ImageView icon = convertView.findViewById(android.R.id.icon);
         final TextView titleView = convertView.findViewById(android.R.id.title);
 
-        titleView.setText(title);
-        titleView.setContentDescription(userId.getUserBadgedLabel(convertView.getContext(), title));
+        titleView.setText(getTitle());
+        titleView.setContentDescription(
+                userId.getUserBadgedLabel(convertView.getContext(), getTitle()));
 
         bindIcon(icon);
     }
