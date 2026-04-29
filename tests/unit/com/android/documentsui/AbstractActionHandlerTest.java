@@ -61,6 +61,9 @@ import androidx.core.util.Preconditions;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
+import androidx.recyclerview.selection.MutableSelection;
+import androidx.recyclerview.selection.Selection;
+import androidx.recyclerview.selection.SelectionTracker;
 import androidx.test.filters.MediumTest;
 
 import com.android.documentsui.base.DebugFlags;
@@ -72,6 +75,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.dirlist.FocusHandler;
 import com.android.documentsui.files.LauncherActivity;
 import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.flags.Flags;
@@ -179,48 +183,54 @@ public class AbstractActionHandlerTest {
             mTestConfigStore.enablePrivateSpaceInPhotoPicker();
             mEnv.state.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
         }
-        mHandler =
-                new AbstractActionHandler<TestActivity>(
-                        mActivity,
-                        mEnv.state,
-                        mEnv.providers,
-                        mEnv.docs,
-                        mEnv.searchViewManager,
-                        mEnv::lookupExecutor,
-                        mEnv.injector,
-                        mPeekViewManager,
-                        mActionModeAddons,
-                        mMockCloseSelectionBar,
-                        null,
-                        mMockHandler) {
-
-                    @Override
-                    public void openRoot(RootInfo root) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public boolean openItem(
-                            ItemDetails<String> doc, @ViewType int type, @ViewType int fallback) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void initLocation(Intent intent) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    protected void launchToDefaultLocation() {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    protected Uri getDefaultFallbackUri() {
-                        return null;
-                    }
-                };
+        mHandler = createHandler(mEnv.injector.focusManager, mEnv.injector.selectionMgr);
         mHandler.reset(new ContentLock());
+    }
+
+    private AbstractActionHandler<TestActivity> createHandler(
+            FocusHandler focusHandler, SelectionTracker<String> selectionMgr) {
+        return new AbstractActionHandler<TestActivity>(
+                mActivity,
+                mEnv.state,
+                mEnv.providers,
+                mEnv.docs,
+                mEnv.searchViewManager,
+                mEnv::lookupExecutor,
+                mEnv.injector,
+                mPeekViewManager,
+                mActionModeAddons,
+                mMockCloseSelectionBar,
+                null,
+                mMockHandler,
+                focusHandler,
+                selectionMgr) {
+
+            @Override
+            public void openRoot(RootInfo root) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean openItem(
+                    ItemDetails<String> doc, @ViewType int type, @ViewType int fallback) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void initLocation(Intent intent) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            protected void launchToDefaultLocation() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            protected Uri getDefaultFallbackUri() {
+                return null;
+            }
+        };
     }
 
     @Test
@@ -844,6 +854,84 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    public void testGetSelectedOrFocused_fromSelection() {
+        SelectionTracker<String> selectionMgr = mock(SelectionTracker.class);
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        doAnswer(
+                        invocation -> {
+                            MutableSelection<String> dest = invocation.getArgument(0);
+                            dest.clear();
+                            dest.add("selectedId");
+                            return null;
+                        })
+                .when(selectionMgr)
+                .copySelection(any());
+
+        when(focusHandler.getFocusModelId()).thenReturn("focusedId");
+
+        Selection<String> result = mHandler.getSelectedOrFocused();
+        assertThat(result).containsExactly("selectedId");
+    }
+
+    @Test
+    public void testGetSelectedOrFocused_fromFocus() {
+        SelectionTracker<String> selectionMgr = mock(SelectionTracker.class);
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        when(focusHandler.getFocusModelId()).thenReturn("focusedId");
+
+        Selection<String> result = mHandler.getSelectedOrFocused();
+        assertThat(result).containsExactly("focusedId");
+    }
+
+    @Test
+    public void testGetFocusedOrSelected_fromFocus() {
+        SelectionTracker<String> selectionMgr = mock(SelectionTracker.class);
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        doAnswer(
+                        invocation -> {
+                            MutableSelection<String> dest = invocation.getArgument(0);
+                            dest.clear();
+                            dest.add("selectedId");
+                            return null;
+                        })
+                .when(selectionMgr)
+                .copySelection(any());
+
+        when(focusHandler.getFocusModelId()).thenReturn("focusedId");
+
+        Selection<String> result = mHandler.getFocusedOrSelected();
+        assertThat(result).containsExactly("focusedId");
+    }
+
+    @Test
+    public void testGetFocusedOrSelected_fromSelection() {
+        SelectionTracker<String> selectionMgr = mock(SelectionTracker.class);
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        doAnswer(
+                        invocation -> {
+                            MutableSelection<String> dest = invocation.getArgument(0);
+                            dest.clear();
+                            dest.add("selectedId");
+                            return null;
+                        })
+                .when(selectionMgr)
+                .copySelection(any());
+
+        when(focusHandler.getFocusModelId()).thenReturn(null);
+
+        Selection<String> result = mHandler.getFocusedOrSelected();
+        assertThat(result).containsExactly("selectedId");
+    }
+
+    @Test
     public void testDeleteSelectedDocuments() {
         mEnv.populateStack();
 
@@ -860,6 +948,27 @@ public class AbstractActionHandlerTest {
         } else {
             Assert.assertTrue(mActionModeAddons.finishActionModeCalled);
         }
+    }
+
+    @Test
+    public void testToggleFocusedItemSelection() {
+        DocumentInfo doc = mEnv.model.createFile("file1");
+        mEnv.model.update();
+        String id = ModelId.build(doc.userId, doc.authority, doc.documentId);
+
+        FocusHandler focusHandler = mock(FocusHandler.class);
+        SelectionTracker<String> selectionMgr = SelectionHelpers.createTestInstance(List.of(id));
+        mHandler = createHandler(focusHandler, selectionMgr);
+
+        when(focusHandler.getFocusModelId()).thenReturn(id);
+
+        // Toggle on
+        mHandler.toggleFocusedItemSelection();
+        assertThat(selectionMgr.getSelection()).containsExactly(id);
+
+        // Toggle off
+        mHandler.toggleFocusedItemSelection();
+        assertThat(selectionMgr.getSelection()).isEmpty();
     }
 
     @SuppressLint("VisibleForTests")

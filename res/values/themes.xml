@@ -17,6 +17,7 @@
 <resources>
     <style name="LauncherTheme" parent="DocumentsTheme">
         <item name="android:windowBackground">@drawable/launcher_screen</item>
+        <item name="colorSearchBarBackground">@color/search_bar_background_light</item>
     </style>
     <!-- DocumentsTheme is allow customize by run time overlay -->
     <style name="DocumentsTheme" parent="@android:style/Theme.DeviceDefault.DocumentsUI">
