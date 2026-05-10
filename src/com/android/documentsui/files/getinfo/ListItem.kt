@@ -23,4 +23,7 @@ sealed class ListItem {
 
     // Represents a Data Row (e.g., "Type", "Image")
     data class Info(val label: String, val value: String) : ListItem()
+
+    // Represents a Data Row where the value is selectable.
+    data class InfoSelectable(val label: String, val value: String) : ListItem()
 }

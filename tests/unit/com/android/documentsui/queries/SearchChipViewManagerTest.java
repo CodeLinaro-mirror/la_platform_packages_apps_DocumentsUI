@@ -24,6 +24,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import static java.util.Objects.requireNonNull;
@@ -332,6 +333,9 @@ public final class SearchChipViewManagerTest {
         ViewParent result = mChipGroup.getParent().getParent();
         assertEquals(grandparent, result);
 
+        // Mock isAttachedToWindow so reorderCheckedChips executes the animation/scroll block
+        doReturn(true).when(mChipGroup).isAttachedToWindow();
+
         mSearchChipViewManager.initChipSets(
                 new String[] {"image/*", "audio/*", "video/*", "text/*"});
         mSearchChipViewManager.updateChips(new String[] {"*/*"});
@@ -343,11 +347,11 @@ public final class SearchChipViewManagerTest {
         assertEquals(6, mChipGroup.getChildCount());
         Chip lastChip = (Chip) mChipGroup.getChildAt(5);
 
-        // chip.setChecked will trigger reorder animation, which needs to be run inside
+        // performClick will trigger reorder animation, which needs to be run inside
         // the looper thread.
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
-            // Check last chip will move it to the first child and reset scroll view.
-            lastChip.setChecked(true);
+            // Click last chip will move it to the first child and reset scroll view.
+            lastChip.performClick();
             assertEquals(0, grandparent.getScrollX());
         });
     }

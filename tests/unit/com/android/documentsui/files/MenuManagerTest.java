@@ -29,6 +29,8 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 import static kotlinx.coroutines.test.TestCoroutineDispatchersKt.StandardTestDispatcher;
 
+import static android.os.Process.myUid;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -49,9 +51,12 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.LauncherApps;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Process;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -72,6 +77,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
@@ -213,6 +219,7 @@ public final class MenuManagerTest {
     private ResolveInfo resolveInfo = new ResolveInfo();
     private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
+    private ApprovedDocMenuController mApprovedDocMenuController;
     private TestActionHandler mActionHandler;
     private TestLifecycleOwner mLifecycleOwner;
 
@@ -360,6 +367,9 @@ public final class MenuManagerTest {
         mApprovedDocHandlers =
                 new ApprovedDocHandlers(
                         activity.getApplicationContext(), activity.injector, testDispatcher);
+        mApprovedDocMenuController = new ApprovedDocMenuController(
+                CoroutineScopeKt.CoroutineScope(testDispatcher),
+                mApprovedDocHandlers, activity.injector, testDispatcher);
 
         mSummaryProviderManager =
                 spy(
@@ -383,20 +393,9 @@ public final class MenuManagerTest {
                         this::getUriFromModelId,
                         this::getFilesCount,
                         activity.injector,
-                        mApprovedDocHandlers);
+                        mApprovedDocMenuController);
 
-        mApprovedDocHandlers
-                .getUpdateEvents()
-                .observe(
-                        mLifecycleOwner,
-                        unit -> {
-                            if (mgr != null) {
-                                mgr.updateContextMenu();
-                                if (selectionDetails.size() > 0) {
-                                    mgr.updateActionMenu(testMenu, selectionDetails);
-                                }
-                            }
-                        });
+        activity.injector.menuManager = mgr;
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -828,7 +827,7 @@ public final class MenuManagerTest {
                         this::getUriFromModelId,
                         this::getFilesCount,
                         activity.injector,
-                        mApprovedDocHandlers);
+                        mApprovedDocMenuController);
 
         selectionDetails.canViewInOwner = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -2150,7 +2149,7 @@ public final class MenuManagerTest {
         int foundCount = countAllMenuItems(testMenu, "App ");
         assertEquals(
                 "Should limit the number of approved document handlers as menu items",
-                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS,
                 foundCount);
     }
 
@@ -2174,12 +2173,12 @@ public final class MenuManagerTest {
         assertEquals(
                 "Should limit the total number of approved document handlers in the menu including"
                     + " buttons",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
-                foundCount);
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS +
+                    ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS, foundCount);
 
         assertEquals(
                 "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS,
                 buttonCount);
     }
 
@@ -2200,7 +2199,7 @@ public final class MenuManagerTest {
         int foundCount = countAllMenuItems(testMenu, "App ");
         assertEquals(
                 "Should limit the number of approved document handlers as menu items",
-                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS,
                 foundCount);
     }
 
@@ -2224,12 +2223,12 @@ public final class MenuManagerTest {
         assertEquals(
                 "Should limit the total number of approved document handlers in the menu including"
                         + " buttons",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
-                foundCount);
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS +
+                    ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS, foundCount);
 
         assertEquals(
                 "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS,
                 buttonCount);
     }
 
@@ -2246,18 +2245,18 @@ public final class MenuManagerTest {
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNotNull("Item should be present after initial load", item);
         item.assertEnabledAndVisible();
+
+        ArgumentCaptor<LauncherApps.Callback> callbackCaptor =
+                ArgumentCaptor.forClass(LauncherApps.Callback.class);
+        verify(activity.launcherApps)
+                .registerCallback(callbackCaptor.capture(), any());
+        LauncherApps.Callback callback = callbackCaptor.getValue();
+
         // Reset interactions on the mock item after initial setup
         reset(item);
 
-        ArgumentCaptor<BroadcastReceiver> receiverCaptor =
-                ArgumentCaptor.forClass(BroadcastReceiver.class);
-        verify(activity).registerReceiver(receiverCaptor.capture(), any(IntentFilter.class));
-        BroadcastReceiver receiver = receiverCaptor.getValue();
-
-        // Mark as outdated via broadcast.
-        Intent intent = new Intent(Intent.ACTION_PACKAGE_CHANGED);
-        intent.setData(Uri.parse("package:com.test.package"));
-        receiver.onReceive(activity, intent);
+        // Mark as outdated via callback.
+        callback.onPackageChanged("com.test.package", Process.myUserHandle());
 
         // Let the entire sequence of updates complete.
         testScheduler.advanceUntilIdle();

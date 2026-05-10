@@ -32,4 +32,6 @@
         <attr name="state_error" format="boolean"/>
     </declare-styleable>
 
+    <attr name="colorSearchBarBackground" format="color" />
+
 </resources>

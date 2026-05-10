@@ -24,6 +24,8 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.android.documentsui.ConsentCallbacks
 import com.android.documentsui.R
 import com.android.documentsui.SummaryConsentFragment
@@ -36,7 +38,10 @@ import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -124,6 +129,26 @@ open class SummaryProviderManager(
 
     private var contentObserver: ContentObserver? = null
     private val contentResolver = context.contentResolver
+
+    /** isEnabledFlow emits a boolean indicating whether summary is enabled or disabled */
+    val isEnabledFlow: StateFlow<Boolean> =
+        state
+            .map { currentState ->
+                currentState is SummaryProviderState.Available && currentState.isUserEnabled
+            }
+            .stateIn(
+                scope = scope,
+                // We want this flow to start running ASAP since there are places that just look at
+                // its value without collecting.
+                started = SharingStarted.Eagerly,
+                initialValue = false,
+            )
+
+    /**
+     * isEnabledLiveData is the LiveData version of isEnabledFlow, provided here to make it easier
+     * for java code to observe the enabled/disabled state of summary.
+     */
+    val isEnabledLiveData: LiveData<Boolean> = isEnabledFlow.asLiveData()
 
     companion object {
         private const val TAG = "SummaryProviderManager"
@@ -254,10 +279,7 @@ open class SummaryProviderManager(
      * one-time checks. For UI components that need to react to state changes, it's better to
      * collect the `state` flow.
      */
-    fun isEnabled(): Boolean {
-        val currentState = state.value
-        return currentState is SummaryProviderState.Available && currentState.isUserEnabled
-    }
+    fun isEnabled(): Boolean = isEnabledFlow.value
 
     @VisibleForTesting
     fun userSwitchSummaryEnabled() {
@@ -267,7 +289,8 @@ open class SummaryProviderManager(
         scope.launch { notifyProvider() }
     }
 
-    private fun userSwitchSummaryDisabled() {
+    @VisibleForTesting
+    fun userSwitchSummaryDisabled() {
         LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_UNKNOWN)
         _state.value = SummaryProviderState.Available(isUserEnabled = false)
     }
@@ -302,7 +325,7 @@ open class SummaryProviderManager(
     }
 
     /** Shows the consent dialog proactively at start up. */
-    fun showStartupConsent(fragmentManager: FragmentManager, refreshCallback: () -> Unit) {
+    fun showStartupConsent(fragmentManager: FragmentManager) {
         val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
         val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
         dialogLauncher.show(
@@ -310,10 +333,7 @@ open class SummaryProviderManager(
             title,
             message,
             ConsentCallbacks(
-                onEnable = {
-                    userSwitchSummaryEnabled()
-                    refreshCallback()
-                },
+                onEnable = { userSwitchSummaryEnabled() },
                 onCancel = {
                     LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
                 },
@@ -328,11 +348,10 @@ open class SummaryProviderManager(
      * Handles the click on the "Show summary column" menu item. If the summary is already enabled,
      * it disables it. Otherwise, it shows the consent dialog.
      */
-    fun onShowSummaryMenuClicked(fragmentManager: FragmentManager, refreshCallback: () -> Unit) {
+    fun onShowSummaryMenuClicked(fragmentManager: FragmentManager) {
         if (LocalPreferences.isSummaryEnabled(context)) {
             // Disabling the summary column.
             userSwitchSummaryDisabled()
-            refreshCallback()
             return
         }
 
@@ -343,7 +362,6 @@ open class SummaryProviderManager(
         if (!showConsent) {
             // This means that the summary feature doesn't require consent.
             userSwitchSummaryEnabled()
-            refreshCallback()
             return
         }
 
@@ -355,10 +373,7 @@ open class SummaryProviderManager(
             title,
             message,
             ConsentCallbacks(
-                onEnable = {
-                    userSwitchSummaryEnabled()
-                    refreshCallback()
-                },
+                onEnable = { userSwitchSummaryEnabled() },
                 // The "Don't ask me again" button is only displayed if the dialog is shown
                 // proactively.
                 onCancel = null,

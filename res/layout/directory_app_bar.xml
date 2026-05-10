@@ -49,6 +49,9 @@
             android:elevation="@dimen/search_bar_elevation"
             app:collapseContentDescription="@string/button_back"
             app:titleTextAppearance="@style/ToolbarTitle"
+            app:contentInsetStartWithNavigation="0dp"
+            app:contentInsetEnd="16dp"
+            app:contentInsetStart="0dp"
             app:layout_collapseMode="pin">
 
             <TextView

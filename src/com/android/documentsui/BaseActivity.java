@@ -111,8 +111,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.DynamicColors;
 
-import kotlin.Unit;
-
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -1110,13 +1108,7 @@ public abstract class BaseActivity
             if (mInjector.getSummaryProviderManager() != null) {
                 mInjector
                         .getSummaryProviderManager()
-                        .onShowSummaryMenuClicked(
-                                this.getSupportFragmentManager(),
-                                () -> {
-                                    updateColumnHeaders(mState.stack.getRoot());
-                                    refreshDirectory(AnimationView.ANIM_NONE);
-                                    return Unit.INSTANCE;
-                                });
+                        .onShowSummaryMenuClicked(this.getSupportFragmentManager());
                 return true;
             }
         } else if (id == getRes(R.id.sub_menu_grid)) {

@@ -53,7 +53,7 @@
     <string name="menu_select" msgid="1366061076507142387">"انتخاب"</string>
     <string name="menu_sort" msgid="3362419226163725275">"مرتب کردن براساس..."</string>
     <string name="menu_copy" msgid="7404820171352314754">"کپی در..."</string>
-    <string name="menu_move" msgid="2310760789561129882">"انتقال به…"</string>
+    <string name="menu_move" msgid="2310760789561129882">"بردن به…"</string>
     <string name="menu_compress" msgid="37539111904724188">"فشرده کردن"</string>
     <string name="menu_zip" msgid="5734673122376258045">"فایل فشرده"</string>
     <string name="menu_extract" msgid="8171946945982532262">"استخراج در…"</string>
@@ -70,13 +70,13 @@
     <string name="menu_view_in_owner" msgid="7228948660557554770">"مشاهده در <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"پنجره جدید"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"برش"</string>
-    <string name="menu_copy_to_clipboard" msgid="5064081159073330776">"کپی"</string>
+    <string name="menu_copy_to_clipboard" msgid="5064081159073330776">"کپی کردن"</string>
     <string name="menu_paste_from_clipboard" msgid="360947260414135827">"جای‌گذاری"</string>
     <string name="menu_paste_into_folder" msgid="8000644546983240101">"جای‌گذاری در پوشه"</string>
     <string name="menu_advanced_show" msgid="7558626506462906726">"نمایش فضای ذخیره‌سازی داخلی"</string>
     <string name="menu_advanced_hide" msgid="6488381508009246334">"پنهان کردن فضای ذخیره‌سازی داخلی"</string>
     <string name="button_select" msgid="240863497069321364">"انتخاب"</string>
-    <string name="button_copy" msgid="8219059853840996027">"کپی"</string>
+    <string name="button_copy" msgid="8219059853840996027">"کپی کردن"</string>
     <string name="button_compress" msgid="8951561310857223966">"فشرده کردن"</string>
     <string name="button_extract" msgid="1038674453689912247">"استخراج"</string>
     <string name="button_move" msgid="8596460499325291272">"انتقال"</string>
@@ -380,7 +380,7 @@
     <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"اطلاعات کلی"</string>
     <string name="peek_metadata_size" msgid="2377426288276139988">"اندازه"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"نوع"</string>
-    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"تاریخ اصلاح شدن"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"تاریخ اصلاح"</string>
     <string name="get_info_positive_button" msgid="667388202590744953">"تأیید"</string>
     <string name="get_info_unknown_file_type" msgid="7976646447316381912">"نامشخص"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"پنهان کردن پیش‌نمای فایل"</string>

@@ -244,7 +244,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.main.switchToGridMode();
         // right side of dir1 area
-        bots.directory.rightClickDocument(new Point(dirListBounds.right - 1, dirBounds.centerY()));
+        bots.directory.rightClick(new Point(dirListBounds.right - 1, dirBounds.centerY()));
         bots.menu.assertPresentMenuItems(menuItems);
     }
 }

@@ -54,7 +54,13 @@ class SelectionBarControllerTest {
         menuManager = mock(MenuManager::class.java)
         selectionManager = SelectionHelpers.createTestInstance()
         selectionBarController =
-            SelectionBarController(appBar, selectionBar, menuManager, selectionManager)
+            SelectionBarController(
+                appBar,
+                selectionBar,
+                null, // FocusManager
+                menuManager,
+                selectionManager,
+            )
     }
 
     @Test
