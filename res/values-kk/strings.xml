@@ -49,7 +49,7 @@
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Себетке жіберу"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Қалпына келтіру"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Барлығын таңдау"</string>
-    <string name="menu_deselect_all" msgid="7729916068862742979">"Барлық белгілерді алу"</string>
+    <string name="menu_deselect_all" msgid="7729916068862742979">"Барлық таңдаудан бас тарту"</string>
     <string name="menu_select" msgid="1366061076507142387">"Таңдау"</string>
     <string name="menu_sort" msgid="3362419226163725275">"Сұрыптау шарты..."</string>
     <string name="menu_copy" msgid="7404820171352314754">"Көшіру…"</string>
